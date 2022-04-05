@@ -1,11 +1,11 @@
 <template>
-  <div class="hello">
+  <div class="container">
     <h1>{{ msg }}</h1>
     <div v-if="hasToken">
         <span :sp="salesperson">Welcome {{ salesperson.fname }} </span>
      </div>
     <div v-else>
-    <form
+    <form>
         <label for="credentials" class="form-label">Enter Password
             <input name="credentials"
                  id="credentials"
@@ -24,7 +24,7 @@
 import AuthenticationService from '@/services/AuthenticationService'
 
 export default {
-  name: 'hello',
+  name: 'homeComponent',
   data () {
     return {
       hasToken: false,
