@@ -1,0 +1,10 @@
+.env
+node_modules
+*.key
+*.crt
+*.local
+migrate*
+*/config.js
+public/files/*
+sailmakers.json
+sailmakers_redacted.json
