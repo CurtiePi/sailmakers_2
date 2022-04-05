@@ -24,14 +24,16 @@ Vue.config.ignoredElements = [/^ion-/]
                 v-for="(subNavLink, subindex) in link.subNavLinks"
                 :key="subindex"
             >
-                <router-link v-if="subNavLink.param"
+                <router-link class="text-decoration-none" v-if="subNavLink.param"
                     :to="{name: subNavLink.name, params: {'atomic': subNavLink.param.value } }"
+                    :style="{color: '#FFF'}"
                 >
                     <ion-icon :name="subNavLink.icon"></ion-icon>
                     {{ subNavLink.text }}
                 </router-link>
-                <router-link v-else
+                <router-link class="text-decoration-none" v-else
                     :to="{ name: subNavLink.name }"
+                    :style="{color: '#FFF'}"
                 >
                     <ion-icon :name="subNavLink.icon"></ion-icon>
                     {{ subNavLink.text }}
