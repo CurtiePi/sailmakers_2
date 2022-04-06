@@ -1,118 +1,60 @@
 <template>
   <div class="container-xl">
-    <div class="row filter-div">
-      Request Filter 
-      <span class="quote_types">
-        <label>New Sail
-          <input type="checkbox" name="q_type" value="new sail" 
-            @change="filterQuoteType()"
-            v-model="quote_type" />
-        </label>
-        <label>Sail Repair
-          <input type="checkbox" name="q_type" value="sail repair"
-            @change="filterQuoteType()"
-            v-model="quote_type" />
-        </label>
-        <label>Winter Service
-          <input type="checkbox" name="q_type" value="winter service"
-            @change="filterQuoteType()"
-            v-model="quote_type" />
-        </label>
-        <label>Sail Cover
-          <input type="checkbox" name="q_type" value="sail cover"
-            @change="filterQuoteType()"
-            v-model="quote_type" />
-        </label>
-        <label>Other
-          <input type="checkbox" name="q_type" value="other"
-            @change="filterQuoteType()"
-            v-model="quote_type" />
-        </label>
-      </span>
-    </div>  
-    <div class="row filter-div">
-      Status Filter
-      <span class="status">
-       <label>
-         <input type="checkbox" name="status" value="quote request" 
-           @change="filterQuoteStatus()"
-           v-model="f_registry.statusFilter.status_list" />
-           Quote Request
-       </label>
-       <label>
-         <input type="checkbox" name="status" value="pending"
-           @change="filterQuoteStatus()"
-           v-model="f_registry.statusFilter.status_list" />
-           Pending
-       </label>
-       <label>
-         <input type="checkbox" name="status" value="production"
-           @change="filterQuoteStatus()"
-           v-model="f_registry.statusFilter.status_list" />
-           In Production
-       </label>
-       <label>
-         <input type="checkbox" name="status" value="ready"
-           @change="filterQuoteStatus()"
-           v-model="f_registry.statusFilter.status_list" />
-           Ready
-       </label>
-       <label>
-         <input type="checkbox" name="status" value="follow up"
-           @change="filterQuoteStatus()"
-           v-model="f_registry.statusFilter.status_list" />
-           Follow Up
-       </label>
-       <label>
-         <input type="checkbox" name="status" value="delivered"
-           @change="filterQuoteStatus()"
-           v-model="f_registry.statusFilter.status_list" />
-           Delivered
-       </label>
-       <label>
-         <input type="checkbox" name="status" value="no sale"
-           @change="filterQuoteStatus()"
-           v-model="f_registry.statusFilter.status_list" />
-           No Sale
-       </label>
-      </span>
-      <span class="stat_controller">
-        <label>
-          <input type="radio" name="s_control" value="all" 
-            @change="updateStatusView()"
-            v-model="status_view" />
-            All
-        </label>
-        <label>
-          <input type="radio" name="s_control" value="active"
-            @change="updateStatusView()"
-            v-model="status_view" />
-            Active
-        </label>
-        <label>
-          <input type="radio" name="s_control" value="inactive" 
-            @change="updateStatusView()"
-            v-model="status_view" />
-            Inactive
-        </label>
-      </span>
-      <br/>
+    <p>
+        <button class="btn btn-primary m-5" data-bs-toggle="collapse" href="#requestFilter" role="button" aria-expanded="false" aria-controls="requestFilter">Request Filter</button>
+        <button class="btn btn-primary m-5" type="button" data-bs-toggle="collapse" data-bs-target="#statusFilter" aria-expanded="false" aria-controls="statusFilter">Status Filter</button>
+        <button class="btn btn-primary m-5" type="button" data-bs-toggle="collapse" data-bs-target="#deliveryFilter" aria-expanded="false" aria-controls="deliveryFilter">Delivery Filter</button>
+    </p>
+    <div class="row">
+        <div class="col">
+            <div class="collapse multi-collapse" id="requestFilter">
+                <select class="form-select" multiple aria-label="multiple select example" @change="filterRequestType()" v-model="f_registry.requestFilter.request_list">
+                    <option value="new sail">New Sail</option>
+                    <option value="sail repair">Sail Repair</option>
+                    <option value="winter service">Winter Service</option>
+                    <option value="sail cover">Sail Cover</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+        </div>
+        <div class="col">
+            <div class="collapse multi-collapse" id="statusFilter">
+                <select class="form-select" multiple aria-label="multiple select example" @change="filterStatusType()" v-model="f_registry.statusFilter.status_list">
+                    <option value="quote request">Quote Request</option>
+                    <option value="pending">Pending</option>
+                    <option value="production">In Production</option>
+                    <option value="ready">Ready</option>
+                    <option value="follow up">Follow Up</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="no sale">No Sale</option>
+                </select>
+            </div>
+        </div>
+        <div class="col">
+            <div class="collapse multi-collapse" id="deliveryFilter">
+                <select class="form-select" multiple aria-label="multiple select example" @change="updateColumnView()" v-model="col_view">
+                    <option value="PICK">Pick-up</option>
+                    <option value="CLUB">Customer Club</option>
+                    <option value="PORT">Boat Port</option>
+                </select>
+            </div>
+        </div>
     </div>
-    <div class="row filter-div">
+    <!-- div class="row filter-div">
       <span>
-        <div v-if="col_view === 'PICK'">
+        <div v-if="col_view[0] === 'PICK'">
           Pick Up Filter 
           <span>
             <v-select class="pickdropselect" :options="pickDropOptions" v-model="pickDropSelection" @input="filterPickDrop"/>
           </span>
         </div>
-        <div v-if="col_view === 'CLUB'">
+        <div v-if="col_view[0] === 'CLUB'">
           Customer Club Filter 
           <span>
             <v-select class="pickdropselect" :options="custClubOptions" v-model="custClubSelection" @input="filterCustClub"/>
           </span>
         </div>
-        <div v-if="col_view === 'PORT'">
+        <div v-if="col_view[0] === 'PORT'">
           Boat Port Filter 
           <span>
             <v-select class="pickdropselect" :options="boatPortOptions" v-model="boatPortSelection" @input="filterBoatPort"/>
@@ -120,27 +62,26 @@
         </div>
       </span>
       <span class="col_view_controller">
-        Column Select:
         <label>
           <input type="radio" name="c_control" value="PICK" 
             @change="updateColumnView()"
-            v-model="col_view" />
+            v-model="col_view[0]" />
             Pick-Up 
         </label>
         <label>
           <input type="radio" name="c_control" value="CLUB"
             @change="updateColumnView()"
-            v-model="col_view" />
+            v-model="col_view[0]" />
             Customer Club
         </label>
         <label>
           <input type="radio" name="c_control" value="PORT" 
             @change="updateColumnView()"
-            v-model="col_view" />
+            v-model="col_view[0]" />
             Boat Port
         </label>
       </span>
-    </div>
+    </div -->
     <div>
       <h1>Requests List</h1>
       <table>
@@ -149,9 +90,9 @@
           <th>Request Type</th>
           <th>Phone</th>
           <th>Status</th>
-          <th v-if="col_view === 'PICK'">Pick Up</th>
-          <th v-else-if="col_view === 'CLUB'">Customer Club</th>
-          <th v-else-if="col_view === 'PORT'">Boat Port</th>
+          <th v-if="col_view[0] === 'PICK'">Pick Up</th>
+          <th v-else-if="col_view[0] === 'CLUB'">Customer Club</th>
+          <th v-else-if="col_view[0] === 'PORT'">Boat Port</th>
           <th>Created Date</th>
           <th></th>
         </tr>
@@ -166,9 +107,9 @@
           <td>{{ quote.quote_type.join(', ') }}</td>
           <td class='phone'>{{ quote.customer.phone }}</td>
           <td>{{ quote.status }}</td>
-          <td v-if="col_view === 'PICK'">{{ quote.pick_drop }}</td>
-          <td v-else-if="col_view === 'CLUB'">{{ quote.customer.club }}</td>
-          <td v-else-if="col_view === 'PORT'">{{ quote.boat_home }}</td>
+          <td v-if="col_view[0] === 'PICK'">{{ quote.pick_drop }}</td>
+          <td v-else-if="col_view[0] === 'CLUB'">{{ quote.customer.club }}</td>
+          <td v-else-if="col_view[0] === 'PORT'">{{ quote.boat_home }}</td>
           <td>{{ formatDate(quote.createdAt) }}</td>
           <td>
             <button @click="viewQuote(quote)">View</button>
@@ -188,7 +129,6 @@ export default {
     return {
       quotes: [],
       quotes_display: [],
-      quote_type: [],
       pickDropOptions: [],
       boatPortOptions: [],
       custClubOptions: [],
@@ -196,13 +136,14 @@ export default {
       pickDropSelection: null,
       custClubSelection: null,
       boatPortSelection: null,
-      col_view: 'PICK',
+      col_view: ['PICK'],
       f_registry: {
         activeFilter: {
           filter: [],
           status: false
         },
-        typeFilter: {
+        requestFilter: {
+          request_list: [],
           filter: [],
           status: false
         },
@@ -243,7 +184,7 @@ export default {
       this.quotes = response.data
       this.quotes_display = response.data
       this.sortList()
-      this.filterQuoteStatus()
+      this.filterStatusType()
       this.populateDropDown()
     },
     viewQuote (quoteObj) {
@@ -285,7 +226,7 @@ export default {
       this.filterQuoteStatus()
     },
     updateColumnView () {
-      switch (this.col_view) {
+      switch (this.col_view[0]) {
         case 'PICK': this.f_registry.custClubFilter.filter = []
           this.f_registry.boatPortFilter.filter = []
           this.f_registry.custClubFilter.status = false
@@ -337,16 +278,16 @@ export default {
       }
       this.applyFilters()
     },
-    filterQuoteType () {
-      if (this.quote_type.length !== 0) {
-        this.f_registry.typeFilter.filter = this.quotes.filter((quote) => { return quote.quote_type.reduce((acc, val) => { return acc || this.quote_type.includes(val) }, false) })
-        this.f_registry.typeFilter.status = true
+    filterRequestType () {
+      if (this.f_registry.requestFilter.request_list.length !== 0) {
+        this.f_registry.requestFilter.filter = this.quotes.filter((quote) => { return quote.quote_type.reduce((acc, val) => { return acc || this.f_registry.requestFilter.request_list.includes(val) }, false) })
+        this.f_registry.requestFilter.status = true
       } else {
-        this.f_registry.typeFilter.status = false
+        this.f_registry.requestFilter.status = false
       }
       this.applyFilters()
     },
-    filterQuoteStatus () {
+    filterStatusType () {
       if (this.f_registry.statusFilter.status_list.length !== 0) {
         this.f_registry.statusFilter.filter = this.quotes.filter((quote) => { return this.f_registry.statusFilter.status_list.includes(quote.status) })
         this.f_registry.statusFilter.status = true

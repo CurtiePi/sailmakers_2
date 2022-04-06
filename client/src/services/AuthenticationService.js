@@ -2,7 +2,7 @@ import Api from '@/services/Api'
 
 export default {
   login (payload) {
-    return Api().insecure.post('/user/login', payload)
+    return Api().insecure.post('/user/login', payload, { withCredentials: true} )
   },
   customerList () {
     return Api().insecure.get('/api/customer')

@@ -22,6 +22,7 @@
 
 <script>
 import AuthenticationService from '@/services/AuthenticationService'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'homeComponent',
@@ -33,7 +34,16 @@ export default {
       salesperson: null
     }
   },
+  computed: {
+    ...mapGetters("auth", {
+      getLoginApiStatus: "getLoginApiStatus"
+    })
+  },
   methods: {
+    ...mapActions('auth', {
+      userLogin: "userLogin"
+    }),
+
     async getSalespersonByName (name) {
       console.log(`Getting ${name}`)
       let response = await AuthenticationService.salespersonByName(name)
@@ -47,8 +57,15 @@ export default {
         username: 'captainDave',
         password: this.credential
       }
-      let response = await AuthenticationService.login(payload)
-      console.log(response)
+
+      console.log(payload)
+      await this.userLogin(payload)
+      if (this.getLoginApiStatus) {
+        this.$router.push("/customers")
+      }
+      else {
+        this.$router.push("/")
+      }
     }
   },
   created () {

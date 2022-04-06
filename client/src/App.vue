@@ -1,18 +1,24 @@
 <template>
   <div id="app">
-      <HeaderNav 
+      <HeaderNav v-if="getLoginApiStatus"  
         :nav-links="navLinks"/>
       <router-view></router-view>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import HeaderNav from '@/components/HeaderNavigation'
 
 export default {
   name: 'App',
   components: {
    HeaderNav 
+  },
+  computed: {
+    ...mapGetters("auth", {
+      getLoginApiStatus: "getLoginApiStatus"
+    })
   }
 }
 </script>

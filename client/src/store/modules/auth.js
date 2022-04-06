@@ -1,12 +1,43 @@
+import authenticationService from '../../services/AuthenticationService';
+
 const state = () => ({
-    loginApiStatus: "",
+    loginApiStatus: false,
+    loginToken: '',
 });
 
-const getters = {};
+const getters = {
+    getLoginApiStatus(state) {
+        return state.loginApiStatus;
+    },
+    getLoginToken(state) {
+        return state.loginToken;
+    }
+};
 
-const actions = {};
+const actions = {
+    async userLogin({commit}, payload) {
+        const response = await authenticationService.login(payload)
+            .catch((err) => {
+                console.log(err)
+            });
+        console.log(response);
+        console.log(response.data.token);
+        if (response && response.data) {
+            commit('setLoginApiStatus', true);
+            commit('setLoginToken', response.data.token);
 
-const mutations = {};
+        }
+    }
+};
+
+const mutations = {
+    setLoginApiStatus(state, payload) {
+        state.loginApiStatus = payload;
+    },
+    setLoginToken(state, payload) {
+        state.loginToken = payload;
+    }
+};
 
 export default {
     namespaced: true,

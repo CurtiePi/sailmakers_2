@@ -39,10 +39,12 @@ router.post('/signup', (req, res, next) => {
 router.post('/login', (req, res, next) => {
     passport.authenticate('local', (err, user, info) => {
         if (err) {
+            console.log(err);
             return next(err);
         }
 
         if (!user) {
+            console.log("NO USER FOUND!!");
             res.statusCode = 401;
             res.setHeader('Content-Type', 'text/plain');
             res.json({ success: false, status: 'Login unsuccessful!', err: info });
@@ -50,6 +52,7 @@ router.post('/login', (req, res, next) => {
 
         req.login(user, (err) => {
             if (err) {
+                console.log("PROBLEM LOGGIN IN USER!");
                 res.statusCode = 401;
                 res.setHeader('Content-Type', 'text/plain');
                 res.json({ success: false, status: 'Login unsuccessful!', err: 'Could not log in user!' });
