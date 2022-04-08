@@ -13,6 +13,8 @@ const mongoose          = require('mongoose');
 // const amqpConnection    = require('amqplib');
 const config            = require('./config/config');
 const passport          = require('passport');
+const cron              = require('node-cron');
+const cleaner           = require('./scripts/sweepPDFs.js');
 global.Blob             = function() {};
 
 //require('./lib/strategies')(passport)
@@ -84,6 +86,22 @@ smapp.use('/api/quote', quoteRouter);
 smapp.use('/api/port', portRouter);
 smapp.use('/api/utils', utilsRouter);
 smapp.use('/api/email', emailRouter);
+
+
+// Set up the cron job
+task_1 = cron.schedule('0 1 */14 * *', async () =>  {
+    console.log("Running cronjob.....");
+    let result = await cleaner.getPDFKillList();
+    if (result.length > 0 ) {
+        cleaner.removeQuoteDoc(result);
+        cleaner.removeQuoteEntry(result);
+    } else {
+        console.log("No files to delete! Another time highlander!");
+    }
+});
+
+task_1.stop();
+task_1.start();
 /*
  * Include the RabbitMQ channel in requests to send an email
  *
