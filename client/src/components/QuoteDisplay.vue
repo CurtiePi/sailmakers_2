@@ -1,118 +1,116 @@
 <template>
-  <div v-if="!isFetching" class="container">
-    <div class="card">
-      <div class="flex-grid">
-        <span class="col hilite">Request for {{ customer.fname }} {{ customer.lname }}</span>
-      </div>
-      <div class="flex-grid">
-        <span class="col small-print">Status: {{ capitalizeFirst(quote.status) }}</span>
-        <span class="col small-print">Create Date: {{ formatDate(quote.createdAt) }}</span>
-      </div>
-      <hr />
-      <div class="flex-grid">
-        <span class="col">Address: {{ customer.address }}</span>
-      </div>
-      <div class="flex-grid-halfs">
-        <span class="col">
-          Email:
-          <router-link :to="{ name: 'CreateMessage', params: {'targets': [customer.email], 'cbdata': quote, 'caller': ['QuoteDisplay', callerName]} }">
-            {{ customer.email }}
-          </router-link>
-        </span>
-        <span class="col">Phone: {{ customer.phone }}</span>
-      </div>
-      <hr />
-      <div class="flex-grid">
-        <span class="col">Club: {{ customer.club }}</span>
-      </div>
-      <hr />
-      <div class="flex-grid">
-        <span class="col">Home Port: {{ quote.boat_home }}</span>
-      </div>
-      <div class="flex-grid-halfs">
-        <span class="col">Boat Name: {{ quote.boat_name }}</span>
-        <span class="col">Boat Type: {{ quote.boat_model }}</span>
-      </div>
-      <hr />
-      <div class="flex-grid">
-        <span class="col">Request Type: {{ quote.quote_type.join(', ') }}</span>
-      </div>
-      <div class="flex-grid">
-        <span class="col" style="white-space: pre-wrap;">Sail Request: {{ quote.sail_request }}</span>
-      </div>
-      <div class="flex-grid-halfs">
-        <span class="col">Numbers/Logo: {{ quote.num_logo }}</span>
-        <span class="col">Battens: {{ quote.battens }}</span>
-      </div>
-      <div class="flex-grid-halfs">
-        <span class="col">Reefing Points: {{ quote.reefing_pts }}</span>
-        <span class="col">Furling System: {{ quote.furl_sys }}</span>
-      </div>
-      <div class="flex-grid-halfs">
-        <span class="col">UV Color: {{ quote.uv_color }}</span>
-        <span class="col">Pick-up\Drop-off: {{ quote.pick_drop }}</span>
-      </div>
-      <div class="flex-grid-halfs">
-        <span class="col">Price: {{ quote.quote_price }}</span>
-        <span class="col">Balance Due: {{ quote.quote_price - quote.amount_paid }}</span>
-      </div>
-      <hr />
-      <div class="flex-grid">
-        <span class="col">Sailing Type: {{ quote.sailing_type }}</span>
-      </div>
-      <hr />
-      <div class="flex-grid">
-        <span class="col" style="white-space: pre-wrap;">Additional Notes: {{ quote.notes }}</span>
-      </div>
-      <hr />
-      <div v-if="haveDocs" class="flex-grid">
-        <div class="col">
-          <tr>
-            <th>Document Name</th>
-            <th></th>
-            <th></th>
-          </tr>
-          <tr v-for= "(doc, index) in quote.doc_path"
-            :key="index">
-            <td style="width: 90%;">
-              <router-link :to="{ name: 'QuoteViewPDF' , params: {'payload': quote, 'caller': ['QuoteDisplay', callerName], 'filename': doc} }">
-                {{ doc }}
+  <div v-if="!isFetching" class="container mt-5">
+    <div class="card col-md-12 m-5">
+      <h2 class="card-title hilite">Request for {{ customer.fname }} {{ customer.lname }}</h2>
+      <div class="card-body row">
+          <div class="row mb-2">
+            <div class="col small-print">Status: {{ capitalizeFirst(quote.status) }}</div>
+            <div class="col small-print">Created: {{ formatDate(quote.createdAt) }}</div>
+          </div>
+          <h3 class="card-title text-decoration-underline">Customer Information</h3>
+          <br />
+          <div class="card-text row text-start">
+            <div class="col med-print" style="white-space: pre-wrap;">Address: {{ customer.address }}</div>
+            <div class="col bd-highlight med-print">
+              Email:
+              <router-link :to="{ name: 'CreateMessage', params: {'targets': [customer.email], 'cbdata': quote, 'caller': ['QuoteDisplay', callerName]} }">
+                {{ customer.email }}
               </router-link>
-            </td>
-            <td style="width: 5%;">
-              <a @click='emailDocument(doc)'>
-                <ion-icon name="mail"></ion-icon>
-              </a>
-            </td>
-            <td style="width: 5%;">
-              <a @click="getFile(doc)">
-                <ion-icon name="download"></ion-icon>
-              </a>
-            </td>
-            <td style="width: 5%;">
-              <a @click='deleteDocument(doc)'>
-                <ion-icon name="trash"></ion-icon>
-              </a>
-            </td>
-          </tr>
-        </div> 
+            </div>
+          </div>
+          <div class="card-text row text-start">
+            <div class="col med-print">Phone: {{ customer.phone }}</div>
+            <div class="col bd-highlight med-print">Club: {{ customer.club }}</div>
+          </div>
+          <div class="card-text row text-start mb-3">
+            <div class="col med-print">Home Port: {{ quote.boat_home }}</div>
+            <div class="col med-print">Boat Type: {{ quote.boat_model }}</div>
+          </div>
+          <h3 class="card-title text-decoration-underline">{{ capitalizeFirst(quote.quote_type.join(', ')) }} Request</h3>
+          <br />
+          <div class="card-text row text-start mt-1">
+            <div class="col med-print" style="white-space: pre-wrap;">Sail Request: {{ quote.sail_request }}</div>
+            <div class="col med-print">Pick Up/Drop Off: {{ quote.pick_drop }}</div>
+          </div>
+          <br />
+          <div class="card-text row text-start">
+            <div class="col med-print">Numbers/Logo: {{ quote.num_logo }}</div>
+            <div class="col med-print">Furling Sys: {{ quote.furl_sys }}</div>
+          </div>
+          <div class="card-text row text-start mb-3">
+            <div class="col med-print">Reef Pt: {{ quote.reefing_pts }}</div>
+            <div class="col med-print">Battens: {{ quote.battens }}</div>
+            <div class="col med-print">UV Color: {{ quote.uv_color }}</div>
+          </div>
+          <div class="card-text row text-start mb-3">
+            <div class="col med-print">Price: {{ quote.quote_price }}</div>
+            <div class="col med-print">Balance Due: {{ quote.quote_price - quote.amount_paid }}</div>
+          </div>
+          <div class="card-text row text-start mb-5">
+            <div class="col med-print">Sailing Type: {{ quote.sailing_type }}</div>
+          </div>
+          <div class="card-text row text-start mb-5">
+            <div class="col med-print" style="white-space: pre-wrap;">Additional Notes: {{ quote.notes }}</div>
+          </div>
+          <div v-if="haveDocs" class="row">
+            <div class="col med-print">
+              <tr>
+                <th>Document Name</th>
+                <th></th>
+                <th></th>
+              </tr>
+              <tr v-for= "(doc, index) in quote.doc_path"
+                :key="index">
+                <td style="width: 90%;">
+                  <router-link :to="{ name: 'QuoteViewPDF' , params: {'payload': quote, 'caller': ['QuoteDisplay', callerName], 'filename': doc} }">
+                    {{ doc }}
+                  </router-link>
+                </td>
+                <td style="width: 5%;">
+                  <a @click='emailDocument(doc)'>
+                    <i class="fa fa-envelope" aria-hidden="true"></i>
+                  </a>
+                </td>
+                <td style="width: 5%;">
+                  <a @click="getFile(doc)">
+                    <i class="fa fa-download" aria-hidden="true"></i>
+                  </a>
+                </td>
+                <td style="width: 5%;">
+                  <a @click='deleteDocument(doc)'>
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                  </a>
+                </td>
+              </tr>
+            </div> 
+          </div>
+          <span class="error" v-if="errorMsg">{{ errorMsg }}</span>
+          <h3 class="card-title text-decoration-underline">Actions</h3>
+          <div class="d-flex justify-content-evenly">
+            <button title="Edit Quote" @click="timeToEdit()">
+              <i class="fa fa-pencil" aria-hidden="true"></i>
+            </button>
+            <button v-if="!haveDocs" title="Create PDF" @click="printQuote()">
+              <i class="fa fa-file" aria-hidden="true"></i>
+            </button>
+            <button v-if="haveFile" title="Upload File" @click="uploadFile">
+              <i class="fa fa-upload" aria-hidden="true"></i>
+            </button>
+            <button v-if="!haveFile" title="Select File For Upload" @click="selectFileForUpload()">
+              <i class="fa fa-folder-open" aria-hidden="true"></i>
+            </button>
+            <input
+              style="display:none;"
+              type="file"
+              ref="file"
+              @change="onSelect" />
+            <button title="Delete Quote" @click="deleteQuote()">
+              <i class="fa fa-trash" aria-hidden="true"></i>
+            </button>
+            <button @click="goBack()">Back</button>
+          </div>
       </div>
-      <hr />
-      <span class="error" v-if="errorMsg">{{ errorMsg }}</span>
-      <p>
-        <button class="edit_btn" @click="timeToEdit()">Edit</button>
-        <button class="pdf_btn" v-if="!haveDocs" @click="printQuote()">Create PDF</button>
-        <button
-          class="upload_btn" 
-          @click="uploadFile">Upload File</button>
-          <input
-            type="file"
-            ref="file"
-            @change="onSelect" />
-        <button class="delete_btn" @click="deleteQuote()">Delete</button>
-        <button @click="goBack()">Back</button>
-      </p>
-    </div>     
+    </div>
   </div>
 </template>
 <script>
@@ -123,6 +121,7 @@ export default {
   props: ['payload', 'caller'],
   data () {
     return {
+      haveFile: false,
       quote: null,
       customer: null,
       salesperson: null,
@@ -235,9 +234,14 @@ export default {
         console.log(err)
       }
     },
+    selectFileForUpload () {
+        console.log("selecting file")
+        this.$refs.file.click()
+    },
     onSelect () {
       const file = this.$refs.file.files[0]
       this.file = file
+      this.haveFile = true;
     },
     async getSalespeopleToEmail () {
       var response = await AuthenticationService.getEmailSalespeople()
@@ -267,6 +271,7 @@ export default {
       } else {
         this.errorMsg = 'Only .pdf files can be uploaded!'
       }
+      this.haveFile = false
     },
     hasValue (inputField) {
       return inputField.value != null &&
@@ -297,7 +302,7 @@ export default {
   },
   mounted () {
     if (this.payload) {
-      this.quote = this.payload
+      this.quote = JSON.parse(this.$route.params.payload)
       this.customer = this.quote.customer
       this.salesperson = this.quote.salesperson
       if (this.caller) {
@@ -338,29 +343,6 @@ export default {
   font-size: 19px;
 }
 
-.flex-grid {
-  display: flex;
-}
-
-.flex-grid .col {
-  flex: 1;
-}
-
-.flex-grid-halfs {
-  display: flex;
-  justify-content: space-between;
-}
-
-.flex-grid-halfs .col {
-  .width: 45%;
-}
-
-hr.solid {
-  border-top: 3px solid #bbb;
-  width: 80%;
-  margin: auto;
-}
-
 .hilite {
   font-weight: bold;
   font-size: 40px; 
@@ -368,12 +350,10 @@ hr.solid {
 
 .small-print {
   font-size: 18px; 
-  margin-right: 20px;
 }
 
-span {
-  color: #000081;
-  font-size: 30px; 
+.med-print {
+  font-size: 25px; 
 }
 
 button {
@@ -382,21 +362,6 @@ button {
   font-weight: bold;
 }
 
-.edit_btn {
-  background: #ffff00;
-}
-
-.pdf_btn {
-  background: #36b0ea;
-}
-
-.upload_btn {
-  background: #b936ea;
-}
-
-.delete_btn {
-  background: #ff0000;
-}
 
 button:hover, a:hover {
   opacity: 0.7;

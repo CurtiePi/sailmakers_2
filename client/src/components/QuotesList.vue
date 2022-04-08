@@ -127,6 +127,7 @@ export default {
   name: 'quoteList',
   data () {
     return {
+      exampleModalShowing: false,
       quotes: [],
       quotes_display: [],
       pickDropOptions: [],
@@ -163,8 +164,8 @@ export default {
           status_list: ['quote request', 'pending', 'production', 'ready'],
           filter: [],
           status: false
-        }
-      }
+        },
+      },
     }
   },
   methods: {
@@ -188,7 +189,8 @@ export default {
       this.populateDropDown()
     },
     viewQuote (quoteObj) {
-      this.$router.replace({ name: 'QuoteDisplay', params: { 'payload': quoteObj, 'caller': 'Quotes' } })
+      console.log(quoteObj)
+      this.$router.replace({ name: 'QuoteDisplay', params: { 'payload': JSON.stringify(quoteObj), 'caller': 'Quotes' } })
     },
     temporalSort (a, b) {
       return (a.createdAt < b.createdAt) ? 1 : (a.createdAt > b.createdAt) ? -1 : 0
@@ -336,6 +338,30 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
+  .home {
+    background-color: rgba(0, 176, 234, 0.5);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .modal-content {
+      display: flex;
+      flex-direction: column;
+
+      h1,p {
+        margin-bottom: 16px;
+      }
+
+      h1 {
+        font-size: 32px;
+      }
+
+      p {
+        font-size: 18px;
+      }
+    } 
+  }
 html, body{
     margin:0;
     padding:0;
