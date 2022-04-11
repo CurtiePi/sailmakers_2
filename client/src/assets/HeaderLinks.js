@@ -1,22 +1,22 @@
 export default [ 
         {
           text: 'Customer',
-          icon: 'person',
+          icon: 'fa-solid fa-person',
           subNavLinks: [
             {
               text: 'Customer List',
               name: 'Customers',
-              icon: 'people'
+              icon: 'fa-solid fa-people-group',
             },
             {
               text: 'Message Customers',
               name: 'SelectCustomers',
-              icon: 'documents'
+              icon: 'fa-solid fa-message'
             },
             {
               text: 'Add Customer',
               name: 'CustomerAdd',
-              icon: 'person-add',
+              icon: 'fa-solid fa-person-circle-plus',
               param: {
                 name: 'atomic',
                 value: true
@@ -25,7 +25,7 @@ export default [
             {
               text: 'New Customer Request',
               name: 'CustomerAdd',
-              icon: 'document-attach',
+              icon: 'fa-solid fa-file-circle-plus',
               param: {
                 name: 'atomic',
                 value: false
@@ -35,17 +35,17 @@ export default [
         },
         {
           text: 'Request',
-          icon: 'document',
+          icon: 'fa-solid fa-file-invoice',
           subNavLinks: [
             {
               text: 'Request List',
               name: 'Quotes',
-              icon: 'documents'
+              icon: 'fa-solid fa-table-list'
             },
             {
               text: 'New Customer Request',
               name: 'CustomerAdd',
-              icon: 'document-attach',
+              icon: 'fa-solid fa-file-circle-plus',
               param: {
                 name: 'atomic',
                 value: false
@@ -55,33 +55,33 @@ export default [
         },
         {
           text: 'Salespeople',
-          icon: 'people',
+          icon: 'fa-solid fa-people-group',
           subNavLinks: [
             {
               text: 'Salespeople List',
               name: 'StaffList',
-              icon: 'list-circle'
+              icon: 'fa-solid fa-table-list'
             },
             {
               text: 'Add Salesperson',
               name: 'StaffCreate',
-              icon: 'person'
+              icon: 'fa-solid fa-person-circle-plus',
             }
           ]
         },
         {
           text: 'Port',
-          icon: 'home',
+          icon: 'fa-solid fa-anchor',
           subNavLinks: [
             {
               text: 'Ports List',
               name: 'PortsList',
-              icon: 'list-circle'
+              icon: 'fa-solid fa-table-list'
             },
             {
               text: 'Add Port',
               name: 'PortCreate',
-              icon: 'boat'
+              icon: 'fa-solid fa-sailboat'
             }
           ]
         }
