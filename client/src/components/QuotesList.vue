@@ -1,5 +1,6 @@
 <template>
   <div class="container-xl">
+   <h1>Requests List</h1>
     <p>
         <button class="btn btn-primary m-5" data-bs-toggle="collapse" href="#requestFilter" role="button" aria-expanded="false" aria-controls="requestFilter">Request Filter</button>
         <button class="btn btn-primary m-5" type="button" data-bs-toggle="collapse" data-bs-target="#statusFilter" aria-expanded="false" aria-controls="statusFilter">Status Filter</button>
@@ -83,38 +84,41 @@
       </span>
     </div -->
     <div>
-      <h1>Requests List</h1>
-      <table>
-        <tr>
-          <th>Customer</th>
-          <th>Request Type</th>
-          <th>Phone</th>
-          <th>Status</th>
-          <th v-if="col_view[0] === 'PICK'">Pick Up</th>
-          <th v-else-if="col_view[0] === 'CLUB'">Customer Club</th>
-          <th v-else-if="col_view[0] === 'PORT'">Boat Port</th>
-          <th>Created Date</th>
-          <th></th>
-        </tr>
-        <tr v-for= "quote in quotes_display"
-          :class="quote.status.replace(' ', '_')"
-          :key="quote._id">
-          <td>
-            <router-link :to="{ name: 'CustomerProfile', params: { 'payload': quote.customer, 'caller': 'Quotes' } }">
-              {{ quote.customer.fname }} {{ quote.customer.lname }}
-            </router-link>
-          </td>
-          <td>{{ quote.quote_type.join(', ') }}</td>
-          <td class='phone'>{{ quote.customer.phone }}</td>
-          <td>{{ quote.status }}</td>
-          <td v-if="col_view[0] === 'PICK'">{{ quote.pick_drop }}</td>
-          <td v-else-if="col_view[0] === 'CLUB'">{{ quote.customer.club }}</td>
-          <td v-else-if="col_view[0] === 'PORT'">{{ quote.boat_home }}</td>
-          <td>{{ formatDate(quote.createdAt) }}</td>
-          <td>
-            <button @click="viewQuote(quote)">View</button>
-          </td>
-        </tr>
+      <table class="responsive-table">
+        <thead>
+          <tr>
+            <th scope="col">Customer</th>
+            <th scope="col">Request Type</th>
+            <th scope="col">Phone</th>
+            <th scope="col">Status</th>
+            <th scope="col" v-if="col_view[0] === 'PICK'">Pick Up</th>
+            <th scope="col" v-else-if="col_view[0] === 'CLUB'">Customer Club</th>
+            <th scope="col" v-else-if="col_view[0] === 'PORT'">Boat Port</th>
+            <th scope="col">Created Date</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for= "quote in quotes_display"
+            :class="quote.status.replace(' ', '_')"
+            :key="quote._id">
+            <th scope="row">
+              <router-link :to="{ name: 'CustomerProfile', params: { 'payload': quote.customer, 'caller': 'Quotes' } }">
+                {{ quote.customer.fname }} {{ quote.customer.lname }}
+              </router-link>
+            </th>
+            <td data-title="Request">{{ quote.quote_type.join(', ') }}</td>
+            <td data-title="Phone">{{ quote.customer.phone }}</td>
+            <td data-title="Status">{{ quote.status }}</td>
+            <td data-title="Pick Up" v-if="col_view[0] === 'PICK'">{{ quote.pick_drop }}</td>
+            <td data-title="Customer Club" v-else-if="col_view[0] === 'CLUB'">{{ quote.customer.club }}</td>
+            <td data-title="Boat Port" v-else-if="col_view[0] === 'PORT'">{{ quote.boat_home }}</td>
+            <td data-title="Created Date">{{ formatDate(quote.createdAt) }}</td>
+            <td data-title="Request Details">
+              <button @click="viewQuote(quote)">View</button>
+            </td>
+          </tr>
+        </tbody>
       </table>
     </div>
   </div>
@@ -186,7 +190,7 @@ export default {
       this.quotes_display = response.data
       this.sortList()
       this.filterStatusType()
-      this.populateDropDown()
+      // this.populateDropDown()
     },
     viewQuote (quoteObj) {
       console.log(quoteObj)
@@ -337,75 +341,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
-  .home {
-    background-color: rgba(0, 176, 234, 0.5);
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    .modal-content {
-      display: flex;
-      flex-direction: column;
-
-      h1,p {
-        margin-bottom: 16px;
-      }
-
-      h1 {
-        font-size: 32px;
-      }
-
-      p {
-        font-size: 18px;
-      }
-    } 
-  }
-html, body{
-    margin:0;
-    padding:0;
-    min-width: 1140px; /* this is the important part*/
-}
-
-h1, h2 {
-  font-weight: normal;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-table {
-  width: 100%;
-}
-
-a {
-  color: #35495E;
-}
-
-td, th {
-  padding: 8px;
-}
-
-label {
-  margin-left: 5px;
-  margin-right: 3px;
-}
-/*
-#.row span {
-#  margin: 0 8px;
-#}
-*/
-.phone {
-  width: 12%;
-}
+<style lang="scss" scoped>
 
 .quote_request {
   background-color: #FFFF99;
@@ -431,30 +367,243 @@ label {
   background-color: #FF8000;
 }
 
-.status {
-  margin-top: 3px;
-  margin-right: 35px;
-  padding: 2px;
-}
-
-.stat_controller {
-  margin-top: 3px;
-  margin-left: 30px;
-  padding: 2px;
-}
-
-.col_view_controller {
-  margin-top: 30px;
-  margin-left: 45px;
-  padding: 2px;
-}
-
-.quote_types {
-  margin-bottom: 3px;
-  padding: 2px;
-}
-
 .pickdropselect {
   width: 25em;
+}
+
+
+@import "bourbon";
+
+/*  Breakpoints */
+$bp-maggie: 15em; 
+$bp-lisa: 30em;
+$bp-bart: 48em;
+$bp-marge: 62em;
+$bp-homer: 75em;
+
+/* Styles */
+html {
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: $font-stack-system;
+  color: rgba(0,0,0,.87);
+}
+
+a {
+  color: rgba(64,64,255,1);
+  
+  &:hover,
+  &:focus {
+    color: rgba(4,106,56,1); 
+  }
+}
+
+.container {
+  margin: 5% 3%;
+  
+  @media (min-width: $bp-bart) {
+    margin: 2%; 
+  }
+  
+  @media (min-width: $bp-homer) {
+    margin: 2em auto;
+    max-width: $bp-homer;
+  }
+}
+
+.responsive-table {
+  width: 100%;
+  margin-bottom: 1.5em;
+  border-spacing: 0;
+  
+  @media (min-width: $bp-bart) {
+    font-size: .9em; 
+  }
+  
+  @media (min-width: $bp-marge) {
+    font-size: 1em; 
+  }
+  
+  thead {
+    /* Accessibly hide <thead> on narrow viewports */
+    position: absolute;
+    clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+    padding: 0;
+    border: 0;
+    height: 1px; 
+    width: 1px; 
+    overflow: hidden;
+    
+    @media (min-width: $bp-bart) {
+      /* Unhide <thead> on wide viewports */
+      position: relative;
+      clip: auto;
+      height: auto;
+      width: auto;
+      overflow: auto;
+    }
+    
+    th {
+      background-color: rgba(170,195,197,1);
+      border: 1px solid rgba(134,188,37,1);
+      font-weight: normal;
+      text-align: center;
+      color: brown;
+      
+      &:first-of-type {
+        text-align: left; 
+      }
+    }
+  }
+  
+  /* Set these items to display: block for narrow viewports */
+  tbody,
+  tr,
+  th,
+  td {
+    display: block;
+    padding: 0;
+    text-align: left;
+    white-space: normal;
+  }
+  
+  tr {   
+    @media (min-width: $bp-bart) {
+      /* Undo display: block */ 
+      display: table-row; 
+    }
+  }
+  
+  th,
+  td {
+    padding: .5em;
+    vertical-align: middle;
+    
+    @media (min-width: $bp-lisa) {
+      padding: .75em .5em; 
+    }
+    
+    @media (min-width: $bp-bart) {
+      /* Undo display: block */
+      display: table-cell;
+      padding: .5em;
+    }
+    
+    @media (min-width: $bp-marge) {
+      padding: .75em .5em; 
+    }
+    
+    @media (min-width: $bp-homer) {
+      padding: .75em; 
+    }
+  }
+  
+  caption {
+    margin-bottom: 1em;
+    font-size: 1em;
+    font-weight: bold;
+    text-align: center;
+    
+    @media (min-width: $bp-bart) {
+      font-size: 1.5em;
+    }
+  }
+  
+  tfoot {
+    font-size: .8em;
+    font-style: italic;
+    
+    @media (min-width: $bp-marge) {
+      font-size: .9em;
+    }
+  }
+  
+  tbody {
+    @media (min-width: $bp-bart) {
+      /* Undo display: block  */
+      display: table-row-group; 
+    }
+    
+    tr {
+      margin-bottom: 1em;
+      
+      @media (min-width: $bp-bart) {
+        /* Undo display: block  */
+        display: table-row;
+        border-width: 1px;
+      }
+      
+      &:last-of-type {
+        margin-bottom: 0; 
+      }
+/*      
+      &:nth-of-type(even) {
+        @media (min-width: $bp-bart) {
+          background-color: rgba(0,0,0,.12);
+        }
+      }
+*/
+    }
+    
+    th[scope="row"] {
+      background-color: rgba(170,195,197,1);
+      color: yellow;
+      
+      @media (min-width: $bp-lisa) {
+        border-left: 1px solid rgba(134,188,37,1);
+        border-bottom: 1px solid rgba(134,188,37,1);
+      }
+      
+      @media (min-width: $bp-bart) {
+        background-color: transparent;
+        color: rgba(0,0,0.87);
+        text-align: left;
+      }
+    }
+    
+    td {
+      text-align: right;
+      
+      @media (min-width: $bp-bart) {
+        border-left: 1px solid rgba(134,188,37,1);
+        border-bottom: 1px solid rgba(134,188,37,1);
+        text-align: center; 
+      }
+
+      &:last-of-type {
+        @media (min-width: $bp-bart) {
+          border-right: 1px solid rgba(134,188,37,1);
+        } 
+      }
+    }
+    
+    td[data-type=currency] {
+      text-align: right; 
+    }
+    
+    td[data-title]:before {
+      content: attr(data-title);
+      float: left;
+      font-size: .8em;
+      color: rgba(0,0,0,.54);
+      
+      @media (min-width: $bp-lisa) {
+        font-size: .9em; 
+      }
+      
+      @media (min-width: $bp-bart) {
+        /* Don’t show data-title labels */
+        content: none; 
+      }
+    } 
+  }
 }
 </style>

@@ -1,8 +1,121 @@
 <template>
-  <div class="container">
+<div class="page-wrapper bg-red p-t-180 p-b-100 font-robo">                      
+        <div class="wrapper wrapper--w960">                                          
+            <div class="card card-2">                                                
+                <div class="card-heading">                                     
     <h1>{{ headerText }}</h1>
+</div>
+                <div class="card-body">
+        <form class="form-style-7">
+            <div class="row col-md-12">
+                <div class="col-md-6">
+            <ul>
+                <li> 
+                    <label for="name">First Name</label>
+                    <input type="text" name="fname" maxlength="100"
+                        v-model.trim="custFields.fname" />
+                    <span>Enter first name here</span>
+                </li>
+                <li>
+                    <label for="phone">Phone</label>
+                    <input type="text" name="phone" maxlength="100"
+                        v-model="custFields.phone" />
+                    <span>Enter a phone number</span>
+                </li>
+                <li>
+                    <label for="address">Address</label>
+                    <input type="text" name="address" style={width:100%;} maxlength="100"
+                        v-model="custFields.address" />
+                    <span>Enter an address</span>
+                </li>
+            </ul>
+                </div>
+                <div class="col-md-6">
+            <ul>
+                <li>
+                    <label for="name">Last Name</label>
+                    <input type="text" name="lname" maxlength="100"
+                        v-model.trim="custFields.lname" />
+                    <span>Enter last name here</span>
+                </li>
+                <li>
+                    <label for="email">Email</label>
+                    <input type="email" name="email" maxlength="100"
+                        v-model.trim="custFields.email" />
+                    <span>Enter a valid email address</span>
+                </li>
+            </ul>
+                </div>
+                <div class="col-md-6">
+            <ul>
+                <li>
+                    <label for="club">Club</label>
+                    <select name="club" @change="checkForOther($event)" v-model="custFields.club">
+                <option v-for="option in selectOptions" :key="option.id">
+                  {{ option.name }}
+                </option>
+                <option value='other'>Other</option>
+              </select>
+                    <span>Select a club</span>
+                </li>
+                <li v-if="needOtherClub">
+                    <label for="otherClub">Other Club</label>
+                    <input type="text" size="20" v-model="otherClubValue" />
+                    <span>Specify club name</span>
+                </li>
+                <li>
+                    <label for="boat_name">Boat Name</label>
+                    <input type="text" name="boat_name" maxlength="100"
+                        v-model="custFields.boat_name" />
+                    <span>Enter a boat name</span>
+                </li>
+                <li>
+                    <label for="notes">Customer Notes</label>
+                    <textarea cols="60" name="notes"
+                         @keyup="adjustTextarea"
+                         ref="bio"
+                         v-model="custFields.cnotes" />
+                    <span>Enter notes about the customer</span>
+                </li>
+            </ul>
+                </div>
+                <div class="col-md-6">
+            <ul>
+                <li>
+                    <label for="port">Boat Port</label>
+                <select name="port" @change="checkForOther($event)" v-model="custFields.boat_home">
+                  <option v-for="option in selectOptions" :key="option.id">
+                    {{ option.name }}
+                  </option>
+                  <option value='other'>Other</option>
+                </select>
+                    <span>Select a port</span>
+                </li>
+                <li v-if="needOtherPort">
+                    <label for="otherClub">Other Port</label>
+                    <input type="text" size="20" v-model="otherPortValue" />
+                    <span>Specify port name</span>
+                </li>
+                <li>
+                    <label for="boat_model">Boat Model</label>
+                    <input type="text" name="boat_model" maxlength="100"
+                        v-model="custFields.boat_model"/>
+                    <span>Enter a boat model</span>
+                </li>
+            </ul>
+                </div>
+            </div>
+        </form>
+<button type="button" class="btn btn-primary"
+        @click="isEditing ? updateCustomer() : createCustomer()"
+        :disabled="!allowSubmitForm">{{ headerText }}</button>
+      <button type="button" class="btn btn-primary"
+        @click="cancel()">Cancel</button>
+            </div>
+        </div>
+    </div>
     <br />
-      <form>
+      <!-- form>
         <div class="flex-grid-halfs">
           <label class="col">First Name
             <input type="text" name="fname" v-model.trim="custFields.fname" />
@@ -70,7 +183,7 @@
         :disabled="!allowSubmitForm">{{ headerText }}</button>
       <button type="button" class="btn btn-primary"
         @click="cancel()">Cancel</button>
-      <!-- button type="button" class="btn btn-primary"
+      <button type="button" class="btn btn-primary"
         @click="checkoutput()"
         :disabled="!allowSubmitForm">Check Sanity</button>
       <button type="button" class="btn btn-primary"
@@ -113,10 +226,14 @@ export default {
       return Object.values(this.custFields).some(this.hasValue)
     },
     headerText: function () {
-      return this.isEditing ? 'Update Customer' : 'Create Customer'
+      return this.isEditing ? 'Edit Customer' : 'Add New Customer'
     }
   },
   methods: {
+    adjustTextarea () {
+      this.$refs.bio.style.height = "20px"
+      this.$refs.bio.style.height = (this.$refs.bio.scrollHeight) + "px"
+    }, 
     checkForChanges () {
       var changeLog = {}
       for (var key in this.custFields) {
@@ -293,84 +410,173 @@ export default {
 }
 </script>
 <style scoped>
-.div {
-  margin: 50px 28px;
+
+button {
+    margin: 5px 10px;
 }
 
-label {
-  margin-right: 5px;
+.form-style-7{
+	max-width:600px;
+	margin:5px;
+	background:#fff;
+	border-radius:2px;
+	padding:20px;
+	font-family: Georgia, "Times New Roman", Times, serif;
+}
+.form-style-7 div {
+	margin-top:5px;
+	margin-bottom:35px;
+}
+.form-style-7 h1{
+	display: block;
+	text-align: center;
+	padding: 0;
+	margin: 0px 0px 20px 0px;
+	color: #5C5C5C;
+	font-size:x-large;
+}
+.form-style-7 ul{
+	list-style:none;
+	padding:0;
+	margin:0;	
+}
+.form-style-7 li {
+    position:relative;
+	display: block;
+	padding: 9px;
+	border:1px solid #DDDDDD;
+	margin-bottom: 30px;
+	border-radius: 3px;
+}
+.form-style-7 li:last-child{
+	margin-bottom: 0px;
+	text-align: center;
+}
+.form-style-7 li > label{
+	display: block;
+	float: left;
+	margin-top: -30px;
+	background: #FFFFFF;
+	height: 19px;
+	padding: 2px 5px 2px 5px;
+	color: #0E6EFB;
+	font-size: 14px;
+	overflow: hidden;
+	font-family: Arial, Helvetica, sans-serif;
+}
+.form-style-7 input[type="text"],
+.form-style-7 input[type="date"],
+.form-style-7 input[type="datetime"],
+.form-style-7 input[type="email"],
+.form-style-7 input[type="number"],
+.form-style-7 input[type="search"],
+.form-style-7 input[type="time"],
+.form-style-7 input[type="url"],
+.form-style-7 input[type="password"],
+.form-style-7 textarea,
+.form-style-7 select 
+{
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	width: 100%;
+	display: block;
+	outline: none;
+	border: none;
+	height: 25px;
+	line-height: 25px;
+	font-size: 16px;
+	padding: 0;
+	font-family: Georgia, "Times New Roman", Times, serif;
+}
+.form-style-7 input[type="text"]:focus,
+.form-style-7 input[type="date"]:focus,
+.form-style-7 input[type="datetime"]:focus,
+.form-style-7 input[type="email"]:focus,
+.form-style-7 input[type="number"]:focus,
+.form-style-7 input[type="search"]:focus,
+.form-style-7 input[type="time"]:focus,
+.form-style-7 input[type="url"]:focus,
+.form-style-7 input[type="password"]:focus,
+.form-style-7 textarea:focus,
+.form-style-7 select:focus 
+{
+}
+.form-style-7 li > span{
+	background: #0EFEFB;
+	display: block;
+	padding: 3px;
+	margin: 0 -9px -9px -9px;
+	text-align: center;
+	color: #0000FF;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+}
+.form-style-7 textarea{
+	resize:none;
+}
+.form-style-7 input[type="submit"],
+.form-style-7 input[type="button"]{
+	background: #2471FF;
+	border: none;
+	padding: 10px 20px 10px 20px;
+	border-bottom: 3px solid #5994FF;
+	border-radius: 3px;
+	color: #D2E2FF;
+}
+.form-style-7 input[type="submit"]:hover,
+.form-style-7 input[type="button"]:hover{
+	background: #6B9FFF;
+	color:#fff;
+}
+/* ==========================================================================
+   #CARD
+   ========================================================================== */
+.card {
+  overflow: hidden;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background: #fff;
 }
 
-.flex-grid {
-  display: flex;
-  margin-bottom: 10px;
+.card-2 {
+  -webkit-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+  box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  width: 100%;
+  display: table;
 }
 
-.flex-grid .col {
-  flex: 1;
-  margin-bottom: 10px;
+.card-2 .card-heading {
+  background: url('/public/img/images/sailboat_one.jpg') top left/cover no-repeat;
+  width: 29.1%;
+  display: table-cell;
 }
 
-.flex-grid-halfs {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
+.card-2 .card-body {
+  display: table-cell;
+  padding: 80px 90px;
+  padding-bottom: 88px;
 }
 
-.flex-grid-halfs .col {
-  .width: 45%;
-  margin-bottom: 10px;
+@media (max-width: 767px) {
+  .card-2 {
+    display: block;
+  }
+  .card-2 .card-heading {
+    width: 100%;
+    display: block;
+    padding-top: 300px;
+    background-position: left center;
+  }
+  .card-2 .card-body {
+    display: block;
+    padding: 60px 50px;
+  }
 }
 
-.flex-grid-thirds {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.flex-grid-thirds .col {
-  .width: 33%;
-  margin-bottom: 10px;
-}
-
-.flex-grid-quarters {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.flex-grid-quarters .col {
-  .width: 25%;
-  margin-bottom: 10px;
-}
-
-.input_holder {
-  position: relative;
-}
-
-input[type=text] {
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid #000000;
-}
-
-input[type=number] {
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid #000000;
-}
-
-input[type=checkbox] {
-  margin: 0px 10px;
-}
-
-.radio {
-  margin: 0px 10px;
-  display: inline-block;
-}
-
-.textarea {
-  display: flex;
-  flex-direction: column;
-}
 </style>

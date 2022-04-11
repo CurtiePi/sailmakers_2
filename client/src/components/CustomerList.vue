@@ -1,6 +1,80 @@
 <template>
-  <div class="container">
-    <div class="row filter-div">
+  <div class="container-xl">
+    <h1>Customer List</h1>
+      <div class="row">
+        <ul class="fancy m-5">
+          <li class="fancy">
+            <label for="nameFilter">Name Filter</label>
+            <input type="text" v-model="f_name" @input="filterName()" />
+            <span>Filter on a name</span>
+          </li>
+        </ul>
+        <button class="btn btn-primary m-5" data-bs-toggle="collapse" href="#requestFilter" role="button" aria-expanded="false" aria-controls="requestFilter" :style="{width: '150px'}">Request Filter</button>
+        <button class="btn btn-primary m-5" type="button" data-bs-toggle="collapse" data-bs-target="#statusFilter" aria-expanded="false" aria-controls="statusFilter" :style="{width: '150px'}" >Status Filter</button>
+    </div>
+    <div class="row mb-5">
+      <div class="collapse multi-collapse" id="requestFilter" :style="{width: '250px'}">
+        <select class="form-select" multiple aria-label="multiple select example" @change="filterRequestType($event)">
+          <option value="new sail">New Sail</option>
+          <option value="sail repair">Sail Repair</option>
+          <option value="winter service">Winter Service</option>
+          <option value="sail cover">Sail Cover</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="collapse multi-collapse" id="statusFilter" :style="{width: '250px'}">
+        <select class="form-select" multiple aria-label="multiple select example" @change="filterStatusType($event)">
+          <option value="quote request">Quote Request</option>
+          <option value="pending">Pending</option>
+          <option value="production">In Production</option>
+          <option value="ready">Ready</option>
+          <option value="follow up">Follow Up</option>
+          <option value="delivered">Delivered</option>
+          <option value="no sale">No Sale</option>
+        </select>
+      </div>
+    </div>
+  <table class="responsive-table">
+    <!-- caption>Top 10 Grossing Animated Films of All Time</caption -->
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Email</th>
+        <th scope="col">Phone</th>
+        <th scope="col">Club</th>
+        <th scope="col">Boat Name</th>
+        <th scope="col">Boat Home</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <!-- tfoot>
+      <tr>
+        <td colspan="7">Sources: <a href="http://en.wikipedia.org/wiki/List_of_highest-grossing_animated_films" rel="external">Wikipedia</a> &amp; <a href="http://www.boxofficemojo.com/genres/chart/?id=animation.htm" rel="external">Box Office Mojo</a>. Data is current as of March 31, 2021.</td>
+      </tr>
+    </tfoot -->
+    <tbody>
+      <tr v-for= "customer in customer_display"
+             :key="customer._id">
+        <th scope="row">
+          <router-link :to="{ name: 'CustomerProfile', params: { 'payload': customer, 'caller': 'Customers' } }">
+            {{ customer.fname }}  {{ customer.lname }}
+          </router-link>
+        </th>
+        <td data-title="Email"><router-link :to="{ name: 'CreateMessage', params: { 'targets': [customer.email], 'caller': 'Customers' } }">{{ customer.email }}</router-link></td>
+        <td data-title="Phone">{{ customer.phone }}</td>
+        <td data-title="Club">{{ customer.club }}</td>
+        <td data-title="Boat Name">{{ customer.boat_name }}</td>
+        <td data-title="Boat Home">{{ customer.boat_home }}</td>
+        <td data-title="View Quotes">
+          <button v-if="customer.quotes.length > 0"
+            @click="viewQuotes(customer)">
+              View Requests({{ customer.quotes.length }})
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+    <!-- div class="row filter-div">
       <label>Name:<input type="text" v-model="f_name" @input="filterName()" /></label>
       <label>Quote Type:
         <select @change="filterQuoteType($event)">
@@ -65,7 +139,7 @@
               </td>
           </tr>
       </div>
-    </div>
+    </div -->
   </div>
 </template>
 
@@ -156,7 +230,7 @@ export default {
 
       this.applyFilters()
     },
-    filterQuoteType: function (evt) {
+    filterRequestType: function (evt) {
       if (evt.target.value !== 'all') {
         this.f_registry.typeFilter.filter = this.customers.filter((cus) => { return cus.quotes.reduce((acc, val) => { return acc || val.quote_type.indexOf(evt.target.value) !== -1 }, false) })
         this.f_registry.typeFilter.status = true
@@ -165,7 +239,7 @@ export default {
       }
       this.applyFilters()
     },
-    filterQuoteStatus: function (evt) {
+    filterStatusType: function (evt) {
       if (evt.target.value !== 'all') {
         this.f_registry.statusFilter.filter = this.customers.filter((cust) => { return cust.quotes.reduce((acc, val) => { return acc || val.status.indexOf(evt.target.value) !== -1 }, false) })
         this.f_registry.statusFilter.status = true
@@ -212,7 +286,8 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style lang="scss" scoped>
+/**
 h1, h2 {
   font-weight: normal;
 }
@@ -246,5 +321,284 @@ tr:nth-child(even) {
 
 tr:nth-child(odd) {
     background-color: #cccccc;
+}
+*/
+@import "bourbon";
+
+/*  Breakpoints */
+$bp-maggie: 15em; 
+$bp-lisa: 30em;
+$bp-bart: 48em;
+$bp-marge: 62em;
+$bp-homer: 75em;
+
+/* Styles */
+html {
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: $font-stack-system;
+  color: rgba(0,0,0,.87);
+}
+
+a {
+  color: rgba(64,64,255,1);
+  
+  &:hover,
+  &:focus {
+    color: rgba(4,106,56,1); 
+  }
+}
+
+ul.fancy {
+  list-style: none;
+  width: 20%;
+  padding: 0;
+  margin: 0;
+}
+
+li.fancy {
+  position:relative;
+  display: block;
+  padding: 9px;
+  border:1px solid #DDDDDD;
+  margin-bottom: 30px;
+  border-radius: 3px;
+}
+
+li.fancy:last-child{
+	margin-bottom: 0px;
+	text-align: center;
+}
+
+li.fancy > label{
+	display: block;
+	float: left;
+	margin-top: -30px;
+	background: #FFFFFF;
+	height: 19px;
+	padding: 2px 5px 2px 5px;
+	color: #0E6EFB;
+	font-size: 14px;
+	overflow: hidden;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+li.fancy > span{
+	background: #0EFEFB;
+	display: block;
+	padding: 3px;
+	margin: 0 -9px -9px -9px;
+	text-align: center;
+	color: #0000FF;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+}
+
+.container {
+  margin: 5% 3%;
+  
+  @media (min-width: $bp-bart) {
+    margin: 2%; 
+  }
+  
+  @media (min-width: $bp-homer) {
+    margin: 2em auto;
+    max-width: $bp-homer;
+  }
+}
+
+.responsive-table {
+  width: 100%;
+  margin-bottom: 1.5em;
+  border-spacing: 0;
+  
+  @media (min-width: $bp-bart) {
+    font-size: .9em; 
+  }
+  
+  @media (min-width: $bp-marge) {
+    font-size: 1em; 
+  }
+  
+  thead {
+    /* Accessibly hide <thead> on narrow viewports */
+    position: absolute;
+    clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+    padding: 0;
+    border: 0;
+    height: 1px; 
+    width: 1px; 
+    overflow: hidden;
+    
+    @media (min-width: $bp-bart) {
+      /* Unhide <thead> on wide viewports */
+      position: relative;
+      clip: auto;
+      height: auto;
+      width: auto;
+      overflow: auto;
+    }
+    
+    th {
+      background-color: rgba(170,195,197,1);
+      border: 1px solid rgba(134,188,37,1);
+      font-weight: normal;
+      text-align: center;
+      color: brown;
+      
+      &:first-of-type {
+        text-align: left; 
+      }
+    }
+  }
+  
+  /* Set these items to display: block for narrow viewports */
+  tbody,
+  tr,
+  th,
+  td {
+    display: block;
+    padding: 0;
+    text-align: left;
+    white-space: normal;
+  }
+  
+  tr {   
+    @media (min-width: $bp-bart) {
+      /* Undo display: block */ 
+      display: table-row; 
+    }
+  }
+  
+  th,
+  td {
+    padding: .5em;
+    vertical-align: middle;
+    
+    @media (min-width: $bp-lisa) {
+      padding: .75em .5em; 
+    }
+    
+    @media (min-width: $bp-bart) {
+      /* Undo display: block */
+      display: table-cell;
+      padding: .5em;
+    }
+    
+    @media (min-width: $bp-marge) {
+      padding: .75em .5em; 
+    }
+    
+    @media (min-width: $bp-homer) {
+      padding: .75em; 
+    }
+  }
+  
+  caption {
+    margin-bottom: 1em;
+    font-size: 1em;
+    font-weight: bold;
+    text-align: center;
+    
+    @media (min-width: $bp-bart) {
+      font-size: 1.5em;
+    }
+  }
+  
+  tfoot {
+    font-size: .8em;
+    font-style: italic;
+    
+    @media (min-width: $bp-marge) {
+      font-size: .9em;
+    }
+  }
+  
+  tbody {
+    @media (min-width: $bp-bart) {
+      /* Undo display: block  */
+      display: table-row-group; 
+    }
+    
+    tr {
+      margin-bottom: 1em;
+      
+      @media (min-width: $bp-bart) {
+        /* Undo display: block  */
+        display: table-row;
+        border-width: 1px;
+      }
+      
+      &:last-of-type {
+        margin-bottom: 0; 
+      }
+      
+      &:nth-of-type(even) {
+        @media (min-width: $bp-bart) {
+          background-color: rgba(0,0,0,.12);
+        }
+      }
+    }
+    
+    th[scope="row"] {
+      background-color: rgba(170,195,197,1);
+      color: white;
+      
+      @media (min-width: $bp-lisa) {
+        border-left: 1px solid rgba(134,188,37,1);
+        border-bottom: 1px solid rgba(134,188,37,1);
+      }
+      
+      @media (min-width: $bp-bart) {
+        background-color: transparent;
+        color: rgba(0,0,0.87);
+        text-align: left;
+      }
+    }
+    
+    td {
+      text-align: right;
+      
+      @media (min-width: $bp-bart) {
+        border-left: 1px solid rgba(134,188,37,1);
+        border-bottom: 1px solid rgba(134,188,37,1);
+        text-align: center; 
+      }
+      
+      &:last-of-type {
+        @media (min-width: $bp-bart) {
+          border-right: 1px solid rgba(134,188,37,1);
+        } 
+      }
+    }
+    
+    td[data-type=currency] {
+      text-align: right; 
+    }
+    
+    td[data-title]:before {
+      content: attr(data-title);
+      float: left;
+      font-size: .8em;
+      color: rgba(0,0,0,.54);
+      
+      @media (min-width: $bp-lisa) {
+        font-size: .9em; 
+      }
+      
+      @media (min-width: $bp-bart) {
+        /* Don’t show data-title labels */
+        content: none; 
+      }
+    } 
+  }
 }
 </style>
