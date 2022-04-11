@@ -114,9 +114,8 @@ module.exports = {
     listQuotes: async () => {
         try {
             let quotes = await Quote.find()
-                                       .sort({createAt: -1})
-                                       .populate('customer')
-                                       .populate('salesperson');
+                                    .sort({createAt: -1})
+                                    .populate('customer')
             return quotes;
         }
         catch(err) {
