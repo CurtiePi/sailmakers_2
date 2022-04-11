@@ -6,7 +6,7 @@ Vue.config.ignoredElements = [/^ion-/]
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#Navbar">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand mr-auto" href="#"><img src="img/icons/sailmakers_logo.png" height="40" width="41" alt="Sailmakers"/></a>
+            <a class="navbar-brand mr-auto" href="#"><img src="img/icons/sailing_logo.png" height="40" width="41" alt="Sailmakers"/></a>
 <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
       <ul class="navbar-nav">
         <li class="nav-item dropdown ms-3"
