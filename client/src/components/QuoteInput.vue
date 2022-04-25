@@ -1,153 +1,214 @@
 <template>
-  <div v-if="!isFetching" class="container">
-    <h1>{{ headerText }}</h1>
-    <br />
-    <div>
-      <form>
-        <div class="flex-grid-halfs">
-          <div class="col">
-            <label>Customer Name:
-              <span> {{ custFields.customer }}</span>
-            </label>
-            <br/>
-            <label>Due Date:</label>
-            <datepicker name="due-date"
-              @selected="dateSelected()"
-              v-model="quoteFields.due_date"
-              :disabled-dates="setDisabledDates"></datepicker>
+    <section>
+      <div class="left-panel">
+      </div>
+      <div class="right-panel">
+        <form class="form-style-7">
+          <div class="customer-static-div">
+            <h4 :style="{margin: '0px'}">{{ custFields.customer }}</h4>
+              <br/>
+              <p><i class='fa fa-home'></i>{{ custFields.address }}</p>
+              <p><i class='fa fa-phone'></i>{{ custFields.phone }}</p>
+              <p><i class='fa fa-envelope'></i>{{ custFields.email }}</p>
+              <p><i class='fa fa-anchor'></i>{{ custFields.club }}</p>
           </div>
-          <div v-if="isEditing" class="col">
-            <label class="col">Quote Price:
-              <input type="number" step="0.05" name="quote_price" v-model="quoteFields.quote_price" />
-            </label>
-            <label class="col">Amount Paid:
-              <input type="number" step="0.05" name="amount_paid" v-model="quoteFields.amount_paid" />
-            </label>
+          <div class="types-list-div">
+            <ul>
+              <li>
+                <label>Quote Type</label>
+                <p class="status-input">
+                  <input type="checkbox" name="new_sail" value="new sail"  v-model="quoteFields.quote_type" />New Sail
+                </p>
+                <p class="status-input">
+                  <input type="checkbox" name="sail_repair" value="sail repair" v-model="quoteFields.quote_type" />Sail Repair
+                </p>
+                <p class="status-input">
+                  <input type="checkbox" name="winter_service" value="winter service" v-model="quoteFields.quote_type" />Winter Service
+                </p>
+                <p class="status-input">
+                  <input type="checkbox" name="sail_cover" value="sail cover" v-model="quoteFields.quote_type" />Sail Cover
+                </p>
+                <p class="status-input">
+                  <input type="checkbox" name="other" value="other" v-model="quoteFields.quote_type" />Other
+                </p>
+                <span>Select Quote Type(s)</span>
+              </li>
+            </ul>
           </div>
-          <div v-else class="col">
-            <label class="col">Customer Notes:
-            <textarea cols="60" rows="5"  name="customer_notes" v-model="custFields.cnotes" />
-          </label>
+          <div class="status-list-div">   
+            <ul>
+              <li>
+                <label>Status</label>
+                <p class="status-input">
+                  <input type="radio" name="status" value="quote request" v-model="quoteFields.status" />Quote Request
+                </p>
+                <p class="status-input">
+                  <input type="radio" name="status" value="pending" v-model="quoteFields.status" />Pending
+                </p>
+                <p class="status-input">
+                  <input type="radio" name="status" value="production" v-model="quoteFields.status" />Production
+                </p>
+                <p class="status-input">
+                  <input type="radio" name="status" value="ready" v-model="quoteFields.status" />Ready
+                </p>
+                <p class="status-input">
+                  <input type="radio" name="status" value="follow up" v-model="quoteFields.status" />Follow Up
+                </p>
+                <p class="status-input">
+                  <input type="radio" name="status" value="delivered" v-model="quoteFields.status" />Delivered
+                </p>
+                <p class="status-input">
+                  <input type="radio" name="status" value="no sale" v-model="quoteFields.status" />No Sale
+                </p>
+                <span>Select Request Status</span>
+              </li>
+            </ul>
+          </div>
+          <div class="date-picker-div">
+            <ul>
+              <li>
+                <label>Due Date:</label>
+                <datepicker name="due-date"
+                   @selected="dateSelected()"
+                   v-model="quoteFields.due_date"
+                   :disabled-dates="setDisabledDates">
+                </datepicker>
+              </li>
+            </ul>
+          </div>
+          <div class="customer-dynamic-div">
+            <div class="center">
+              <ul>
+                <li>
+                  <label for="customer_notes">Customer Notes</label>
+                  <textarea name="customer_notes" v-model="custFields.cnotes" />
+                  <span>Enter customer notes</span>
+                </li>
+              </ul>
+            </div>
+          <div class="left">
+            <ul>
+              <li>
+                <label for="boat_name">Boat Name</label>
+                <input type="text" name="boat_name" v-model="quoteFields.boat_name" />
+                <span>Enter boat name</span>
+              </li>
+              <li>
+                <label for="boat_home">Boat Port</label>
+                <input type="text" name="boat_home" v-model="quoteFields.boat_home" />
+                <span>Enter boat home</span>
+              </li>
+            </ul>
+          </div>
+          <div class="right">
+            <ul>
+              <li>
+                <label for="boat_model">Boat Model</label>
+                <input type="text" name="boat_model" v-model="quoteFields.boat_model" />
+                <span>Enter boat model</span>
+              </li>
+              <li>
+                <label for="pick_drop">Pick Up/Drop Off</label>
+                <input type="text" name="pick_drop" v-model="quoteFields.pick_drop" />
+                <span>Enter pick up location</span>
+              </li>
+            </ul>
           </div>
         </div>
-        <div class="flex-grid">
-          <label class="col">Address:
-            <span>{{ custFields.address }}</span>
-          </label>
-          <label class="col">Email:
-            <span>{{ custFields.email }} </span>
-          </label>
-          <label class="col">Phone:
-            <span>{{ custFields.phone }}</span>
-          </label>
+        <div class="sail-request-div">
+          <ul>
+            <li>
+              <label for="sail_request">Sail Request</label>
+              <textarea name="sail_request" v-model="quoteFields.sail_request" />
+              <span>Enter sail information</span>
+            </li>
+          </ul>
         </div>
-        <div class="flex-grid-halfs">
-          <label class="col">Customer Club:
-            <span>{{ custFields.club }}</span>
-          </label>
-          <label class="col">Boat Port:
-            <input type="text" name="boat_home" v-model="quoteFields.boat_home" />
-          </label>
+        <div class="sail-type-div">
+          <ul>
+            <li>
+              <label for="sailing_type">Sail Type</label>
+              <textarea name="sailing_type" v-model="quoteFields.sailiing_type" />
+              <span>Enter sailing type information</span>
+            </li>
+          </ul>
         </div>
-        <div class="flex-grid-halfs">
-          <label class="col">Boat Model:
-            <input type="text" name="boat_model" v-model="quoteFields.boat_model" />
-          </label>
-          <label class="col">Boat Name:
-            <input type="text" name="boat_name" v-model="quoteFields.boat_name" />
-          </label>
+        <div class="extras-div">
+          <ul class="horizontal">
+            <li>
+              <label for="battens">Battens</label>
+              <input type="text" name="battens" v-model="quoteFields.battens" />
+              <span>Enter a number</span>
+            </li>
+            <li>
+              <label for="reefing_pts">Reefing Points</label>
+              <input type="number" name="reefing_pts" v-model="quoteFields.reefing_pts" />
+              <span>Enter a number</span>
+            </li>
+            <li>
+              <label for="furl_sys">Furling System</label>
+              <input type="text" name="furl_sys" v-model="quoteFields.furl_sys" />
+              <span>Enter a system</span>
+            </li>
+            <li>
+              <label for="num_logo">Numbers/Logo</label>
+              <input type="text" name="num_logo" v-model="quoteFields.num_logo" />
+              <span>Enter a number</span>
+            </li>
+            <li>
+              <label for="uv_color">UV Color</label>
+              <input type="text" name="uv_color" v-model="quoteFields.uv_color" />
+              <span>Enter a color</span>
+            </li>
+          </ul>
         </div>
-        <div class="flex-grid-halfs">
-          <div class="col">
-            <p>Quote Type:</p>
-            <input class="status_input" type="checkbox" name="new_sail" value="new sail"  v-model="quoteFields.quote_type" />
-              New Sail
-            <input class="status_input" type="checkbox" name="sail_repair" value="sail repair" v-model="quoteFields.quote_type" />
-              Sail Repair
-            <input class="status_input" type="checkbox" name="winter_service" value="winter service" v-model="quoteFields.quote_type" />
-              Winter Service
-            <br/>
-            <input class="status_input" type="checkbox" name="sail_cover" value="sail cover" v-model="quoteFields.quote_type" />
-              Sail Cover
-            <input class="status_input" type="checkbox" name="other" value="other" v-model="quoteFields.quote_type" />
-              Other
-          </div>
-          <div v-if="isEditing" class="col">
-            <p>Status:</p>
-            <input class="status_input" type="radio" name="status" value="quote request" v-model="quoteFields.status" />
-              Quote Request
-            <input class="status_input" type="radio" name="status" value="pending" v-model="quoteFields.status" />
-              Pending
-            <input class="status_input" type="radio" name="status" value="production" v-model="quoteFields.status" />
-              Production
-            <br/>
-            <input class="status_input" type="radio" name="status" value="ready" v-model="quoteFields.status" />
-              Ready
-            <input class="status_input" type="radio" name="status" value="follow up" v-model="quoteFields.status" />
-              Follow Up
-            <input class="status_input" type="radio" name="status" value="delivered" v-model="quoteFields.status" />
-              Delivered
-            <input class="status_input" type="radio" name="status" value="no sale" v-model="quoteFields.status" />
-              No Sale
-          </div>
+        <div class="finances-div">
+          <ul class="horizontal">
+            <li>
+              <label for="quote_price">Price</label>
+              <input type="number" step="0.5" name="quote_price" v-model="quoteFields.quote_price" />
+              <span>Enter the price</span>
+            </li>
+            <li>
+              <label for="amount_paid">Amnt Paid</label>
+              <input type="number" step="0.5" name="amount_paid" v-model="quoteFields.amount_paid" />
+              <span>Enter amount paid</span>
+            </li>
+          </ul>
         </div>
-        <div class="flex-grid-halfs">
-          <label class="col">Sail Request:
-            <textarea cols="60" rows="5"  name="sail_request" v-model="quoteFields.sail_request" />
-          </label>
-          <label class="col">Pick Up/Drop Off:
-            <input type="text" name="pick_drop" v-model="quoteFields.pick_drop" />
-          </label>
-        </div>
-        <div class="flex-grid-quarters">
-          <label class="col">Battens:
-            <input type="text" name="battens" v-model="quoteFields.battens" />
-          </label>
-          <label class="col">Reefing Points:
-            <input type="number" name="reefing_pts" v-model="quoteFields.reefing_pts" />
-          </label>
-          <label class="col">Furling System:
-            <input type="text" name="furl_sys" v-model="quoteFields.furl_sys" />
-          </label>
-          <label class="col">Numbers/Logo:
-            <input type="text" name="num_logo" v-model="quoteFields.num_logo" />
-          </label>
-          <label class="col">UV Color:
-            <input type="text" name="uv_color" v-model="quoteFields.uv_color" />
-          </label>
-        </div>
-        <div class="flex-grid-halfs">
-          <div>
-            <label class="col">Sailing Type:
-              <textarea cols="60" rows="5" name="notes" v-model="quoteFields.sailing_type" />
-            </label>
-          </div>
-          <div class="col">
-            <label class="col">Additional Notes:
-              <textarea cols="60" rows="5" name="notes" v-model="quoteFields.notes" />
-            </label>
-          </div>
+        <div class="additional-notes-div">
+          <ul>
+            <li>
+              <label for="additional_notes">Additional Notes</label>
+              <textarea name="additional_notes" v-model="quoteFields.notes" />
+              <span>Enter additional notes</span>
+            </li>
+          </ul>
         </div>
       </form>
-    </div>
-    <button type="button" class="btn btn-primary"
-      @click="isEditing ? updateQuote() : createQuote()"
-      :disabled="!allowSubmitForm">{{ headerText }}</button>
-    <button type="button" class="btn btn-primary"
-      @click="cancel()">
-      Cancel
-    </button>
-    <!-- button type="button" class="btn btn-primary"
-      @click="checkoutput()">
-      Check New Quote
-    </button>
-    <button type="button" class="btn btn-primary"
-      @click="checkForChanges()">
-      Change check
-    </button>
-    <label v-if="isEditing" style="margin-left: 50px">Get File With Price:<input type="file" ref="fileInput" class="btn btn-primary"
-      @change="getPrice()" /></label -->
-  </div>
+      <div class="button-div">
+        <button type="button" class="btn btn-primary"
+          @click="isEditing ? updateQuote() : createQuote()"
+          :disabled="!allowSubmitForm">{{ headerText }}
+        </button>
+        <button type="button" class="btn btn-primary"
+          @click="cancel()">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-primary"
+          @click="checkoutput()">
+          Check New Quote
+        </button>
+        <button type="button" class="btn btn-primary"
+          @click="checkForChanges()">
+          Change check
+        </button>
+        <label v-if="isEditing" style="margin-left: 50px">Get File With Price:<input type="file" ref="fileInput" class="btn btn-primary"
+          @change="getPrice()" /></label>
+             </div>
+      </div>
+    </section>
+
 </template>
 
 <script>
@@ -363,94 +424,292 @@ export default {
 </script>
 
 <style scoped>
-.div {
-  margin: 50px 28px;
+button {
+    margin: 5px 10px;
 }
 
-label {
-  margin-right: 5px;
+.form-style-7{
+	max-width:600px;
+	margin:5px;
+	background:#fff;
+	border-radius:2px;
+	padding:20px;
+	font-family: Georgia, "Times New Roman", Times, serif;
+}
+.form-style-7 h1{
+	display: block;
+	text-align: center;
+	padding: 0;
+	margin: 0px 0px 20px 0px;
+	color: #5C5C5C;
+	font-size:x-large;
 }
 
-.flex-grid {
-  display: flex;
-  margin-bottom: 15px;
+.form-style-7 ul{
+	list-style:none;
+	padding:0;
+	margin:0;	
 }
 
-.flex-grid .col {
-  flex: 1;
-  margin-bottom: 15px;
+.form-style-7 ul.horizontal{
+    display: flex;
+	list-style:none;
+	padding:0;
+	margin:0;
+    height: inherited;
 }
 
-.flex-grid-halfs {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
+.form-style-7 ul.horizontal > li {
+    margin-right: 2%;
+    margin-bottom: 0px;
 }
 
-.flex-grid-halfs .col {
-  .width: 45%;
-  margin-bottom: 15px;
+.form-style-7 li {
+    position:relative;
+	display: block;
+	padding: 9px;
+	border:1px solid #DDDDDD;
+	margin-bottom: 30px;
+	border-radius: 3px;
 }
 
-.flex-grid-halfs .col-align {
-  .width: 45%;
-  margin-bottom: 15px;
-  flex-direction: column;
+.form-style-7 li:last-child{
+	margin-bottom: 0px;
+	text-align: center;
 }
 
-.flex-grid-thirds {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
+.form-style-7 li > label{
+	display: block;
+	float: left;
+	margin-top: -30px;
+	background: #FFFFFF;
+	height: 19px;
+	padding: 2px 5px 2px 5px;
+	color: #0E6EFB;
+	font-size: 14px;
+	overflow: hidden;
+	font-family: Arial, Helvetica, sans-serif;
 }
 
-.flex-grid-thirds .col {
-  .width: 33%;
-  margin-bottom: 15px;
+.form-style-7 input[type="text"],
+.form-style-7 input[type="date"],
+.form-style-7 input[type="datetime"],
+.form-style-7 input[type="email"],
+.form-style-7 input[type="number"],
+.form-style-7 input[type="search"],
+.form-style-7 input[type="time"],
+.form-style-7 input[type="url"],
+.form-style-7 input[type="password"],
+.form-style-7 textarea,
+.form-style-7 select 
+{
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	width: 100%;
+	display: block;
+	outline: none;
+	border: none;
+	height: 25px;
+	line-height: 25px;
+	font-size: 16px;
+	padding: 0;
+	font-family: Georgia, "Times New Roman", Times, serif;
 }
 
-.flex-grid-quarters {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
+.form-style-7 input[type="text"]:focus,
+.form-style-7 input[type="date"]:focus,
+.form-style-7 input[type="datetime"]:focus,
+.form-style-7 input[type="email"]:focus,
+.form-style-7 input[type="number"]:focus,
+.form-style-7 input[type="search"]:focus,
+.form-style-7 input[type="time"]:focus,
+.form-style-7 input[type="url"]:focus,
+.form-style-7 input[type="password"]:focus,
+.form-style-7 textarea:focus,
+.form-style-7 select:focus 
+{
 }
 
-.flex-grid-quarters .col {
-  .width: 25%;
-  margin-bottom: 15px;
+.form-style-7 li > span{
+	background: #0EFEFB;
+	display: block;
+	padding: 3px;
+	margin: 0 -9px -9px -9px;
+	text-align: center;
+	color: #0000FF;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
 }
 
-.input_holder {
+.form-style-7 textarea{
+	resize:none;
+}
+
+.form-style-7 input[type="submit"],
+.form-style-7 input[type="button"]{
+	background: #2471FF;
+	border: none;
+	padding: 10px 20px 10px 20px;
+	border-bottom: 3px solid #5994FF;
+	border-radius: 3px;
+	color: #D2E2FF;
+}
+
+.form-style-7 input[type="submit"]:hover,
+.form-style-7 input[type="button"]:hover{
+	background: #6B9FFF;
+	color:#fff;
+}
+
+.left-div {
+  float: left;
+  width: 25%;
+  height: 100%;
+  background: url('/public/img/images/sailboat_three.jpg') top left/cover no-repeat;
+}
+
+.right-div {
+  float: right;
+  width: 80%;
+  height: 100%;
+}
+
+.form-div {
+  position :relative;
+  top: 10%;
+}
+
+.customer-static-div {
   position: relative;
+  text-align: left;
+  line-height: .9em;
+  border: 1px gray solid;
+  border-radius: 10px;
+  -webkit-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+  box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  height: 190px;
+  width: 400px;
+  padding: 5px;
+  font-size: 1.2em;
+  background-color: beige;
 }
 
-input[type=text] {
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid #000000;
+.customer-dynamic-div {
+  position: absolute;
+  width: 35%;
+  top: 40%;
+  line-height: .5em;
 }
 
-input[type=number] {
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid #000000;
+.customer-dynamic-div > div.left {
+  float: left;
+  width: 45%;
+  margin-right: 5%;
 }
 
-input[type=checkbox] {
-  margin: 0px 10px;
+.customer-dynamic-div > div.right {
+  float: right;
+  width: 45%;
 }
 
-.radio {
-  margin: 0px 10px;
-  display: inline-block;
+.customer-dynamic-div > div.center {
+  float: left;
+  width: 100%;
+  margin-bottom: 25px;
 }
 
-.textarea {
-  display: flex;
-  flex-direction: column;
+.status-input {
+  display: block;
+  text-align: left;
+  line-height: .5em;
 }
 
-.status_input {
-  margin-left: 15px;
+.status-input > input {
+  margin: 0% 2%;
+}
+
+.types-list-div {
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  width: 150px;
+  margin-right: 1%;
+}
+
+.status-list-div {
+  position: absolute;
+  top: 5%;
+  left: 70%;
+  width: 150px;
+  margin-left: 1%;
+}
+
+.date-picker-div {
+  position: absolute;
+  top: 35%;
+  left: 45%;
+  margin-left: 1%;
+}
+
+.sail-request-div {
+    position: absolute;
+    width: 45%;
+    left: 45%;
+    top: 50%;;
+}
+
+.sail-type-div {
+    position: absolute;
+    width: 45%;
+    left: 45%;
+    top: 65%;
+}
+
+.extras-div {
+  position: absolute;
+  width: 65%;
+  top: 80%;
+}
+
+.finances-div {
+  position: absolute;
+  width: 20%;
+  top: 80%;
+  left: 70%
+}
+
+.additional-notes-div {
+    position: absolute;
+    width: 39%;
+    top: 95%;
+}
+
+.button-div {
+    position: absolute;
+    bottom: -20%;;
+    margin-left: 15%;
+}
+
+.left-panel{
+  position: fixed;
+  float: left;
+  height: 100vh;
+  overflow:hidden;
+  background: linear-gradient(to right, transparent 50%, #fff 50%), url('/public/img/images/sailboat_three.jpg') no-repeat center;
+ background-size: cover;
+ width: 50%;
+}
+
+.right-panel {
+  position: absolute;
+  left: 25%;
+  height: 100vh;
+  max-width:100vw;
+  width:75%;
+  overflow-x: hidden;
 }
 </style>
