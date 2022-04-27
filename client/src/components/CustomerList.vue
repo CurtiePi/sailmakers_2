@@ -44,7 +44,7 @@
         <th scope="col">Club</th>
         <th scope="col">Boat Name</th>
         <th scope="col">Boat Home</th>
-        <th scope="col"></th>
+        <th scope="col">Requests</th>
       </tr>
     </thead>
     <!-- tfoot>
@@ -56,7 +56,7 @@
       <tr v-for= "customer in customer_display"
              :key="customer._id">
         <th scope="row">
-          <router-link :to="{ name: 'CustomerProfile', params: { 'payload': customer, 'caller': 'Customers' } }">
+          <router-link :to="{ name: 'CustomerProfile', params: { 'payload': JSON.stringify(customer), 'caller': 'Customers' } }">
             {{ customer.fname }}  {{ customer.lname }}
           </router-link>
         </th>
@@ -66,10 +66,10 @@
         <td data-title="Boat Name">{{ customer.boat_name }}</td>
         <td data-title="Boat Home">{{ customer.boat_home }}</td>
         <td data-title="View Quotes">
-          <button v-if="customer.quotes.length > 0"
+          <span v-if="customer.quotes.length > 0"
             @click="viewQuotes(customer)">
-              View Requests({{ customer.quotes.length }})
-          </button>
+              <i class="fa fa-eye"></i> ({{ customer.quotes.length }})
+          </span>
         </td>
       </tr>
     </tbody>

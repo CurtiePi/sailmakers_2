@@ -566,7 +566,7 @@ button {
   float: left;
   width: 25%;
   height: 100%;
-  background: url('/public/img/images/sailboat_three.jpg') top left/cover no-repeat;
+  background: url('~@/assets/images/sailboat_three.jpg') top left/cover no-repeat;
 }
 
 .right-div {
@@ -699,7 +699,7 @@ button {
   float: left;
   height: 100vh;
   overflow:hidden;
-  background: linear-gradient(to right, transparent 50%, #fff 50%), url('/public/img/images/sailboat_three.jpg') no-repeat center;
+  background: linear-gradient(to right, transparent 50%, #fff 50%), url('~@/assets/images/sailboat_three.jpg') no-repeat center;
  background-size: cover;
  width: 50%;
 }

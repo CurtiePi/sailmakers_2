@@ -552,7 +552,7 @@ button {
 }
 
 .card-2 .card-heading {
-  background: url('/public/img/images/sailboat_one.jpg') top left/cover no-repeat;
+  background: url('~@/assets/images/sailboat_one.jpg') top left/cover no-repeat;
   width: 29.1%;
   display: table-cell;
 }

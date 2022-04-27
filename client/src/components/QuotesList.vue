@@ -115,7 +115,9 @@
             <td data-title="Boat Port" v-else-if="col_view[0] === 'PORT'">{{ quote.boat_home }}</td>
             <td data-title="Created Date">{{ formatDate(quote.createdAt) }}</td>
             <td data-title="Request Details">
-              <button @click="viewQuote(quote)">View</button>
+              <span @click="viewQuote(quote)">
+                <i class="fa fa-eye"></i>
+              </span>
             </td>
           </tr>
         </tbody>

@@ -15,7 +15,7 @@
     "core-js": "^3.8.3",
     "fs": "^0.0.1-security",
     "lodash": "^4.17.21",
-    "vue": "^3.2.13",
+    "vue": "^3.2.33",
     "vue-router": "^4.0.14",
     "vue-select-3": "^1.0.1",
     "vue3-datepicker": "^0.3.2",
