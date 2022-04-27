@@ -300,7 +300,8 @@ export default {
     },
     cancel () {
       if (this.isEditing) {
-        this.$router.push({name: 'QuoteDisplay', params: {'payload': this.quote}})
+        let payload = JSON.stringify(this.quote)
+        this.$router.push({name: 'QuoteDisplay', params: { 'payload': payload }})
       } else {
         this.$router.push({name: 'Customers'})
       }
@@ -344,7 +345,9 @@ export default {
         var response = await AuthenticationService.quoteUpdate(payload)
         this.quote = response.data
         this.clearInputs()
-        this.$router.push({ name: 'QuoteDisplay', params: {'payload': this.quote} })
+        
+        let quote_payload = JSON.stringify(this.quote)
+        this.$router.push({ name: 'QuoteDisplay', params: { 'payload': quote_payload } })
       } else {
         var message = 'No values have been changed!\nChange a value before updating or Cancel'
         let options = {
@@ -410,10 +413,9 @@ export default {
   },
   mounted () {
     if (this.create_payload) {
-      console.log(this.create_payload)
-      this.customer = this.create_payload
+      this.customer = JSON.parse(this.$route.params.create_payload)
     } else if (this.edit_payload) {
-      this.quote = this.edit_payload
+      this.quote = JSON.parse(this.$route.params.edit_payload)
       this.customer = this.quote.customer
       this.isEditing = true
     }
@@ -592,7 +594,7 @@ button {
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   height: 190px;
-  width: 400px;
+  width: 450px;
   padding: 5px;
   font-size: 1.2em;
   background-color: beige;

@@ -195,7 +195,7 @@ import AuthenticationService from '@/services/AuthenticationService'
 
 export default {
   name: 'customerForm',
-  props: [ 'atomic', 'edit_payload' ],
+  props: [ 'atomic', 'payload' ],
   data () {
     return {
       selectOptions: null,
@@ -401,9 +401,10 @@ export default {
     if (this.atomic) {
       this.singleOp = this.atomic
     }
-    if (this.edit_payload) {
+    if (this.payload) {
+      console.log("Mounting the Customer Input!")
       this.isEditing = true
-      this.customer = this.edit_payload
+      this.customer = JSON.parse(this.$route.params.payload)
     }
     this.loadInputs()
   }

@@ -62,7 +62,7 @@
               <tr v-for= "(doc, index) in quote.doc_path"
                 :key="index">
                 <td style="width: 90%;">
-                  <router-link :to="{ name: 'QuoteViewPDF' , params: {'payload': quote, 'caller': ['QuoteDisplay', callerName], 'filename': doc} }">
+                  <router-link :to="{ name: 'QuoteViewPDF' , params: {'payload': JSON.stringify(quote), 'caller': ['QuoteDisplay', callerName], 'filename': doc} }">
                     {{ doc }}
                   </router-link>
                 </td>
@@ -142,7 +142,8 @@ export default {
   },
   methods: {
     timeToEdit () {
-      this.$router.replace({ name: 'QuoteEdit', params: { 'edit_payload': this.quote } })
+      let payload = JSON.stringify(this.quote)
+      this.$router.replace({ name: 'QuoteEdit', params: { 'edit_payload': payload } })
     },
     async getFile (filename) {
       console.log(`Getting ${filename}`)
@@ -296,7 +297,8 @@ export default {
       if (['Quotes', 'Customers', 'StaffList'].includes(this.callerName)) {
         this.$router.replace({name: this.callerName})
       } else {
-        this.$router.replace({ name: this.callerName[0], params: { 'payload': this.customer, 'caller': this.callerName.splice(1) } })
+        let payload = JSON.stringify(this.customer)
+        this.$router.replace({ name: this.callerName[0], params: { 'payload': payload, 'caller': this.callerName.splice(1) } })
       }
     }
   },

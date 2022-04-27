@@ -98,7 +98,8 @@ export default {
   },
   methods: {
     timeToEdit () {
-      this.$router.replace({ name: 'CustomerEdit', params: { 'edit_payload': this.customer_data } })
+      let edit_data = JSON.stringify(this.customer_data)
+      this.$router.replace({ name: 'CustomerEdit', params: { 'payload': edit_data } })
     },
     async update_customer () {
       let data = {}
@@ -123,11 +124,12 @@ export default {
         inputField.value !== ''
     },
     createQuote () {
-      let payload = this.customer_data
+      let payload = JSON.stringify(this.customer_data)
       this.$router.replace({ name: 'QuoteCreate', params: {'create_payload': payload} })
     },
     seeQuotes () {
-      this.$router.replace({ name: 'CustomerQuotes', params: { 'payload': this.customer_data } })
+      let payload_data = JSON.stringify(this.customer_data)
+      this.$router.replace({ name: 'CustomerQuotes', params: { 'payload': payload_data } })
     },
     async deleteCustomer () {
       let message = {
@@ -169,7 +171,8 @@ export default {
       if (['Quotes', 'Customers', 'StaffList'].includes(this.callerName)) {
         this.$router.replace({name: this.callerName})
       } else {
-        this.$router.replace({ name: this.callerName[0], params: { 'payload': this.customer, 'caller': this.callerName.splice(1) } })
+        let payload = JSON.stringify(this.customer)
+        this.$router.replace({ name: this.callerName[0], params: { 'payload': payload, 'caller': this.callerName.splice(1) } })
       }
     }
   },
