@@ -103,7 +103,7 @@
             :class="quote.status.replace(' ', '_')"
             :key="quote._id">
             <th scope="row">
-              <router-link :to="{ name: 'CustomerProfile', params: { 'payload': quote.customer, 'caller': 'Quotes' } }">
+              <router-link :to="{ name: 'CustomerProfile', params: { 'payload': JSON.stringify(quote.customer), 'caller': 'Quotes' } }">
                 {{ quote.customer.fname }} {{ quote.customer.lname }}
               </router-link>
             </th>

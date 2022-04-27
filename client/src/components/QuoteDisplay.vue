@@ -1,114 +1,155 @@
 <template>
-  <div v-if="!isFetching" class="container mt-5">
-    <div class="card col-md-12 m-5">
-      <h2 class="card-title hilite">Request for {{ customer.fname }} {{ customer.lname }}</h2>
-      <div class="card-body row">
-          <div class="row mb-2">
-            <div class="col small-print">Status: {{ capitalizeFirst(quote.status) }}</div>
-            <div class="col small-print">Created: {{ formatDate(quote.createdAt) }}</div>
-          </div>
-          <h3 class="card-title text-decoration-underline">Customer Information</h3>
-          <br />
-          <div class="card-text row text-start">
-            <div class="col med-print" style="white-space: pre-wrap;">Address: {{ customer.address }}</div>
-            <div class="col bd-highlight med-print">
-              Email:
-              <router-link :to="{ name: 'CreateMessage', params: {'targets': [customer.email], 'cbdata': quote, 'caller': ['QuoteDisplay', callerName]} }">
-                {{ customer.email }}
-              </router-link>
+  <div class="container">
+    <div v-if="isFetching" className="col-12">
+      <span className="fa fa-spinner fa-pulse fa-3x fa-fw text-primary"></span>
+      <p>Loading . . .</p>
+    </div>
+    <div v-else class="card">
+      <div class="center-div">
+        <p class="hilite label-clr">{{ capitalizeFirst(quote.quote_type.join(', ')) }} Request for {{ customer.fname }} {{ customer.lname }}
+          <span @click="toggleCustomerInfo()" :style="{'font-size': '8px'}">{{ toggleText }}</span>
+        </p>
+        <p v-if="!customerHidden" class="med-print"><i class="fa fa-home"></i>{{ customer.address }}</p>
+        <br />
+        <p v-if="!customerHidden" class="med-print"><i class="fa fa-phone"></i>{{ customer.phone }}</p>
+        <br />
+        <p v-if="!customerHidden" class="med-print"><i class="fa fa-envelope"></i>
+          <router-link :to="{ name: 'CreateMessage', params: { 'targets': [customer.email], 'caller': ['CustomerProfile', callerName], 'cbdata': JSON.stringify(customer) } }">
+            {{ customer.email }}
+          </router-link>
+        </p>
+        <br />
+        <p v-if="!customerHidden" class="med-print"><span class="label-clr">Club:</span> {{ customer.club }}</p>
+      </div>
+      <div class="row col-md-12">
+        <div class="col-md-6 offset-md-2">
+          <p class="small-print"><span class="label-clr">Status:</span> {{ capitalizeFirst(quote.status) }}</p>
+        </div>
+        <div class="col-md-4">
+          <p class="small-print"><span class="label-clr">Created:</span> {{ formatDate(quote.createdAt) }}</p>
+        </div>
+      </div>
+      <br />
+      <div class="row col-md-12 offset-md-2">
+          <p class="large-print"><span class="label-clr">Boat Home:</span> {{ quote.boat_home }}</p>
+          <p class="large-print"><span class="label-clr">Boat Model:</span> {{ quote.boat_model }}</p>
+          <p class="large-print"><span class="label-clr">Pick Up/Drop Off:</span> {{ quote.pick_drop }}</p>
+      </div>
+      <div class="row col-md-12">
+        <div class="col-md-10 offset-md-1">
+          <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+              <button class="nav-link active" id="nav-request-tab" data-bs-toggle="tab" data-bs-target="#nav-sail-request" type="button" role="tab" aria-controls="nav-sail-request" aria-selected="true">Sail Request</button>
+              <button class="nav-link" id="nav-type-tab" data-bs-toggle="tab" data-bs-target="#nav-sailing-type" type="button" role="tab" aria-controls="nav-sailing-type" aria-selected="false">Sailing Type</button>
+              <button class="nav-link" id="nav-notes-tab" data-bs-toggle="tab" data-bs-target="#nav-additional-notes" type="button" role="tab" aria-controls="nav-additional-notes" aria-selected="false">Additional Notes</button>
             </div>
-          </div>
-          <div class="card-text row text-start">
-            <div class="col med-print">Phone: {{ customer.phone }}</div>
-            <div class="col bd-highlight med-print">Club: {{ customer.club }}</div>
-          </div>
-          <div class="card-text row text-start mb-3">
-            <div class="col med-print">Home Port: {{ quote.boat_home }}</div>
-            <div class="col med-print">Boat Type: {{ quote.boat_model }}</div>
-          </div>
-          <h3 class="card-title text-decoration-underline">{{ capitalizeFirst(quote.quote_type.join(', ')) }} Request</h3>
-          <br />
-          <div class="card-text row text-start mt-1">
-            <div class="col med-print" style="white-space: pre-wrap;">Sail Request: {{ quote.sail_request }}</div>
-            <div class="col med-print">Pick Up/Drop Off: {{ quote.pick_drop }}</div>
-          </div>
-          <br />
-          <div class="card-text row text-start">
-            <div class="col med-print">Numbers/Logo: {{ quote.num_logo }}</div>
-            <div class="col med-print">Furling Sys: {{ quote.furl_sys }}</div>
-          </div>
-          <div class="card-text row text-start mb-3">
-            <div class="col med-print">Reef Pt: {{ quote.reefing_pts }}</div>
-            <div class="col med-print">Battens: {{ quote.battens }}</div>
-            <div class="col med-print">UV Color: {{ quote.uv_color }}</div>
-          </div>
-          <div class="card-text row text-start mb-3">
-            <div class="col med-print">Price: {{ quote.quote_price }}</div>
-            <div class="col med-print">Balance Due: {{ quote.quote_price - quote.amount_paid }}</div>
-          </div>
-          <div class="card-text row text-start mb-5">
-            <div class="col med-print">Sailing Type: {{ quote.sailing_type }}</div>
-          </div>
-          <div class="card-text row text-start mb-5">
-            <div class="col med-print" style="white-space: pre-wrap;">Additional Notes: {{ quote.notes }}</div>
-          </div>
-          <div v-if="haveDocs" class="row">
-            <div class="col med-print">
-              <tr>
-                <th>Document Name</th>
-                <th></th>
-                <th></th>
-              </tr>
-              <tr v-for= "(doc, index) in quote.doc_path"
-                :key="index">
-                <td style="width: 90%;">
-                  <router-link :to="{ name: 'QuoteViewPDF' , params: {'payload': JSON.stringify(quote), 'caller': ['QuoteDisplay', callerName], 'filename': doc} }">
-                    {{ doc }}
-                  </router-link>
-                </td>
-                <td style="width: 5%;">
-                  <a @click='emailDocument(doc)'>
-                    <i class="fa fa-envelope" aria-hidden="true"></i>
-                  </a>
-                </td>
-                <td style="width: 5%;">
-                  <a @click="getFile(doc)">
-                    <i class="fa fa-download" aria-hidden="true"></i>
-                  </a>
-                </td>
-                <td style="width: 5%;">
-                  <a @click='deleteDocument(doc)'>
-                    <i class="fa fa-trash" aria-hidden="true"></i>
-                  </a>
-                </td>
-              </tr>
-            </div> 
-          </div>
-          <span class="error" v-if="errorMsg">{{ errorMsg }}</span>
-          <h3 class="card-title text-decoration-underline">Actions</h3>
-          <div class="d-flex justify-content-evenly">
-            <button title="Edit Quote" @click="timeToEdit()">
-              <i class="fa fa-pencil" aria-hidden="true"></i>
-            </button>
-            <button v-if="!haveDocs" title="Create PDF" @click="printQuote()">
-              <i class="fa fa-file" aria-hidden="true"></i>
-            </button>
-            <button v-if="haveFile" title="Upload File" @click="uploadFile">
-              <i class="fa fa-upload" aria-hidden="true"></i>
-            </button>
-            <button v-if="!haveFile" title="Select File For Upload" @click="selectFileForUpload()">
-              <i class="fa fa-folder-open" aria-hidden="true"></i>
-            </button>
-            <input
-              style="display:none;"
-              type="file"
-              ref="file"
-              @change="onSelect" />
-            <button title="Delete Quote" @click="deleteQuote()">
-              <i class="fa fa-trash" aria-hidden="true"></i>
-            </button>
-            <button @click="goBack()">Back</button>
-          </div>
+           </nav>
+           <div class="tab-content" id="nav-tabContent">
+             <div class="tab-pane fade show active" id="nav-sail-request" role="tabpanel" aria-labelledby="nav-request-tab">
+               <span class="col med-print" style="white-space: pre-wrap;">
+                 {{ quote.sail_request }}
+               </span>
+             </div>
+             <div class="tab-pane fade" id="nav-sailing-type" role="tabpanel" aria-labelledby="nav-type-tab">
+               <span class="col med-print" style="white-space: pre-wrap;">
+                 {{ quote.sailing_type }}
+               </span>
+             </div>
+             <div class="tab-pane fade" id="nav-additional-notes" role="tabpanel" aria-labelledby="nav-notes-tab">
+               <span class="col med-print" style="white-space: pre-wrap;">
+                {{ quote.notes }}
+               </span>
+             </div>
+           </div>
+        </div>
+      </div>
+      <div class="row col-md-9 offset-md-2" :style="{'margin': 35+'px auto'}">
+        <table class="extras-table">
+          <thead>
+            <tr>
+              <th>Battens</th>
+              <th>Reefing Pts.</th>
+              <th>Furling</th>
+              <th>Num/Logo</th>
+              <th>UV/Color</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ quote.battens }}</td>
+              <td>{{ quote.reefing_pts }}</td>
+              <td>{{ quote.furl_sys }}</td>
+              <td>{{ quote.num_logo }}</td>
+              <td>{{ quote.uv_color }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="row col-md-12">
+        <div class="col-md-6 offset-md-2">
+          <p class="med-print"><span class="label-clr">Price:</span> {{ quote.price }}</p>
+        </div>
+        <div class="col-md-4">
+          <p class="med-print"><span class="label-clr">Balance Due:</span> {{ quote.quote_price - quote.amount_paid }}</p>
+        </div>
+      </div>
+      <div v-if="haveDocs" class="row col-md-10" :style="{'margin': 35 + 'px auto'}">
+        <div class="col med-print">
+          <tr>
+            <th>Document Name</th>
+            <th></th>
+            <th></th>
+          </tr>
+          <tr v-for= "(doc, index) in quote.doc_path"
+            :key="index">
+            <td style="width: 90%;">
+              <router-link :to="{ name: 'QuoteViewPDF' , params: {'payload': JSON.stringify(quote), 'caller': ['QuoteDisplay', callerName], 'filename': doc} }">
+                {{ doc }}
+              </router-link>
+            </td>
+            <td style="width: 5%;">
+              <a @click='emailDocument(doc)'>
+                <i class="fa fa-envelope" aria-hidden="true"></i>
+              </a>
+            </td>
+            <td style="width: 5%;">
+              <a @click="getFile(doc)">
+                <i class="fa fa-download" aria-hidden="true"></i>
+              </a>
+            </td>
+            <td style="width: 5%;">
+              <a @click='deleteDocument(doc)'>
+                <i class="fa fa-trash" aria-hidden="true"></i>
+              </a>
+            </td>
+          </tr>
+        </div> 
+      </div>
+      <div class="row col-md-10">
+        <span class="error" v-if="errorMsg">{{ errorMsg }}</span>
+        <div class="d-flex justify-content-evenly">
+          <button title="Edit Quote" @click="timeToEdit()">
+            <i class="fa fa-pencil" aria-hidden="true"></i>
+          </button>
+          <button v-if="!haveDocs" title="Create PDF" @click="printQuote()">
+            <i class="fa fa-file" aria-hidden="true"></i>
+          </button>
+          <button v-if="haveFile" title="Upload File" @click="uploadFile">
+            <i class="fa fa-upload" aria-hidden="true"></i>
+          </button>
+          <button v-if="!haveFile" title="Select File For Upload" @click="selectFileForUpload()">
+            <i class="fa fa-folder-open" aria-hidden="true"></i>
+          </button>
+          <input
+            style="display:none;"
+            type="file"
+            ref="file"
+            @change="onSelect" />
+          <button title="Delete Quote" @click="deleteQuote()">
+            <i class="fa fa-trash" aria-hidden="true"></i>
+          </button>
+          <button @click="goBack()">Back</button>
+        </div>
       </div>
     </div>
   </div>
@@ -129,7 +170,9 @@ export default {
       callerName: 'Quotes',
       file: null,
       errorMsg: null,
-      isFetching: true
+      isFetching: true,
+      toggleText: 'show',
+      customerHidden: true 
     }
   },
   computed: {
@@ -144,6 +187,10 @@ export default {
     timeToEdit () {
       let payload = JSON.stringify(this.quote)
       this.$router.replace({ name: 'QuoteEdit', params: { 'edit_payload': payload } })
+    },
+    toggleCustomerInfo () {
+      this.customerHidden = !this.customerHidden
+      this.toggleText = (this.customerHidden) ? 'show' : 'hide'
     },
     async getFile (filename) {
       console.log(`Getting ${filename}`)
@@ -325,6 +372,18 @@ export default {
     margin: auto;
     text-align: center;
     flex-direction: column;
+    background-color: #F5F5DC;
+    text-align: left;
+    line-height: .9em;
+    border: 1px gray solid;
+    border-radius: 10px;
+    -webkit-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+    box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    padding: 5px;
+    font-size: 0.5em;
   }
 
   .sector {
@@ -338,16 +397,38 @@ export default {
 
 .card {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  max-width: 900px;
   width: 80%;
   margin: auto;
+  margin-top: 10%;
   background-color: #F5F5DC;
-  font-size: 19px;
+  text-align: left;
+  line-height: .9em;
+  border: 1px gray solid;
+  border-radius: 10px;
+  -webkit-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+  box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  max-width: 900px;
+  padding: 8px;
+  font-size: 1.5em;
+}
+
+.center-div {
+  margin: auto;
+  text-align: center;
+  line-height: 0.3em;
+  padding: 10px;
 }
 
 .hilite {
   font-weight: bold;
-  font-size: 40px; 
+  font-size: 30px; 
+}
+
+.label-clr {
+  color: #0E6EFB;
 }
 
 .small-print {
@@ -355,7 +436,11 @@ export default {
 }
 
 .med-print {
-  font-size: 25px; 
+  font-size: 19px; 
+}
+
+.large-print {
+  font-size: 22px; 
 }
 
 button {
@@ -374,4 +459,31 @@ span.error {
   color: #FF0000;
 }
 
+
+tr {
+  text-align: center;
+}
+
+td {
+  text-align: center;
+}
+
+.extras-table {
+  width: 100%;
+  margin-bottom: 1.5em;
+  border-spacing: 0;
+}
+
+.extras-table thead {
+  font-size: 0.8em;
+  color: #0E6EFB;
+}
+
+.extras-table tr {
+  border:1px solid #000000;
+}
+
+.extras-table td {
+  border:1px solid #000000;
+}
 </style>
