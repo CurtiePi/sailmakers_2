@@ -81,7 +81,10 @@
               <ul>
                 <li>
                   <label for="customer_notes">Customer Notes</label>
-                  <textarea name="customer_notes" v-model="custFields.cnotes" />
+                  <textarea name="customer_notes"
+                    @keyup="adjustTextarea($event)"
+                    ref="cust_notes_area"
+                    v-model="custFields.cnotes" />
                   <span>Enter customer notes</span>
                 </li>
               </ul>
@@ -119,17 +122,12 @@
           <ul>
             <li>
               <label for="sail_request">Sail Request</label>
-              <textarea name="sail_request" v-model="quoteFields.sail_request" />
+              <textarea name="sail_request"
+                @keyup="adjustTextarea($event)"
+                ref="request_area"
+                v-model="quoteFields.sail_request" />
+
               <span>Enter sail information</span>
-            </li>
-          </ul>
-        </div>
-        <div class="sail-type-div">
-          <ul>
-            <li>
-              <label for="sailing_type">Sail Type</label>
-              <textarea name="sailing_type" v-model="quoteFields.sailiing_type" />
-              <span>Enter sailing type information</span>
             </li>
           </ul>
         </div>
@@ -176,11 +174,26 @@
             </li>
           </ul>
         </div>
+        <div class="sail-type-div">
+          <ul>
+            <li>
+              <label for="sailing_type">Sail Type</label>
+              <textarea name="sailing_type" 
+                @keyup="adjustTextarea($event)"
+                ref="type_area"
+                v-model="quoteFields.sailing_type" />
+              <span>Enter sailing type information</span>
+            </li>
+          </ul>
+        </div>
         <div class="additional-notes-div">
           <ul>
             <li>
               <label for="additional_notes">Additional Notes</label>
-              <textarea name="additional_notes" v-model="quoteFields.notes" />
+              <textarea name="additional_notes"
+               @keyup="adjustTextarea($event)"
+               ref="notes_area"
+               v-model="quoteFields.notes" />
               <span>Enter additional notes</span>
             </li>
           </ul>
@@ -203,8 +216,6 @@
           @click="checkForChanges()">
           Change check
         </button>
-        <label v-if="isEditing" style="margin-left: 50px">Get File With Price:<input type="file" ref="fileInput" class="btn btn-primary"
-          @change="getPrice()" /></label>
              </div>
       </div>
     </section>
@@ -214,6 +225,7 @@
 <script>
 import AuthenticationService from '@/services/AuthenticationService'
 import Datepicker from 'vue3-datepicker'
+
 export default {
   name: 'createQuote',
   props: ['create_payload', 'edit_payload'],
@@ -272,18 +284,11 @@ export default {
     }
   },
   methods: {
-    async getPrice () {
-      var name = this.$refs.fileInput
-
-      const formData = new FormData()
-      formData.append('file', name.files[0])
-      try {
-        var response = await AuthenticationService.getPrice(formData)
-        this.quoteFields.quote_price = response.data.quote_price
-      } catch (err) {
-        console.log(err)
-      }
-    },
+    adjustTextarea (event) {
+      let target = event.target
+      target.style.height = "20px"
+      target.style.height = (target.scrollHeight) + "px"
+    }, 
     dateSelected () {
       this.$nextTick(() => console.log(`Quote Fields after nextTick ${this.quoteFields.due_date}`))
     },
@@ -387,9 +392,15 @@ export default {
 
       if (this.isEditing) {
         for (var key in this.quoteFields) {
-          this.quoteFields[key] = this.quote[key]
-          this.origQuoteFields[key] = this.quote[key]
+          let value = this.quote[key]
+          if (key == 'due_date') {
+            console.log(`Due Date value is: ${value}`)
+            value = new Date(value)
+          }
+          this.quoteFields[key] = value
+          this.origQuoteFields[key] = value
         }
+        this.initializeTextAreaView()
       } else {
         const boatFields = ['boat_name', 'boat_home', 'boat_model']
         for (var idx = 0; idx < boatFields.length; idx++) {
@@ -400,22 +411,26 @@ export default {
         this.original_customer_notes = this.customer.cnotes
       }
     },
+    async initializeTextAreaView () {
+      await this.$nextTick()
+      
+      Object.keys(this.$refs).forEach ( key => {
+        this.$refs[key].style.height = (this.$refs[key].scrollHeight) + "px"
+      })
+    },
     clearInputs () {
       for (var key in this.quoteFields.length) {
         this.quoteFields[key] = (key === 'quote_type') ? [] : ''
       }
     },
-    loadData () {
-      this.$nextTick(function () {
-        this.prepareInputs()
-      })
-    }
   },
   mounted () {
     if (this.create_payload) {
       this.customer = JSON.parse(this.$route.params.create_payload)
     } else if (this.edit_payload) {
       this.quote = JSON.parse(this.$route.params.edit_payload)
+      console.log("Editing the quote")
+      console.log(this.quote)
       this.customer = this.quote.customer
       this.isEditing = true
     }
@@ -602,8 +617,8 @@ button {
 
 .customer-dynamic-div {
   position: absolute;
-  width: 35%;
-  top: 40%;
+  width: 40%;
+  top: 35%;
   line-height: .5em;
 }
 
@@ -621,7 +636,7 @@ button {
 .customer-dynamic-div > div.center {
   float: left;
   width: 100%;
-  margin-bottom: 25px;
+  margin-bottom: 8%;
 }
 
 .status-input {
@@ -659,7 +674,7 @@ button {
 
 .sail-request-div {
     position: absolute;
-    width: 45%;
+    width: 50%;
     left: 45%;
     top: 50%;;
 }
@@ -667,8 +682,7 @@ button {
 .sail-type-div {
     position: absolute;
     width: 45%;
-    left: 45%;
-    top: 65%;
+    top: 95%;
 }
 
 .extras-div {
@@ -686,8 +700,9 @@ button {
 
 .additional-notes-div {
     position: absolute;
-    width: 39%;
+    width: 45%;
     top: 95%;
+    left: 50%;
 }
 
 .button-div {
