@@ -5,32 +5,33 @@
       <p>Loading . . .</p>
     </div>
     <div v-else class="card">
-      <div class="center-div">
-        <p class="hilite label-clr">{{ capitalizeFirst(quote.quote_type.join(', ')) }} Request for {{ customer.fname }} {{ customer.lname }}
+      <div class="col-md-12">
+        <div class="col-md-10 header-div label-clr">
+          <span>{{ capitalizeFirst(quote.quote_type.join(', ')) }} Request for </span> 
+          <span>{{ customer.fname }} {{ customer.lname }}</span>
           <span @click="toggleCustomerInfo()" :style="{'font-size': '8px'}">{{ toggleText }}</span>
-        </p>
-        <p v-if="!customerHidden" class="med-print"><i class="fa fa-home"></i>{{ customer.address }}</p>
-        <br />
-        <p v-if="!customerHidden" class="med-print"><i class="fa fa-phone"></i>{{ customer.phone }}</p>
-        <br />
-        <p v-if="!customerHidden" class="med-print"><i class="fa fa-envelope"></i>
-          <router-link :to="{ name: 'CreateMessage', params: { 'targets': [customer.email], 'caller': ['CustomerProfile', callerName], 'cbdata': JSON.stringify(customer) } }">
-            {{ customer.email }}
-          </router-link>
-        </p>
-        <br />
-        <p v-if="!customerHidden" class="med-print"><span class="label-clr">Club:</span> {{ customer.club }}</p>
+        </div>
+        <div v-if="!customerHidden" class="col-md-10 offset-md-3 customer-info-div">
+          <p class="med-print"><i class="fa fa-home"></i>{{ customer.address }}</p>
+          <p class="med-print"><i class="fa fa-phone"></i>{{ customer.phone }}</p>
+          <p class="med-print"><i class="fa fa-envelope"></i>
+            <router-link :to="{ name: 'CreateMessage', params: { 'targets': [customer.email], 'caller': ['CustomerProfile', callerName], 'cbdata': JSON.stringify(customer) } }">
+              {{ customer.email }}
+            </router-link>
+          </p>
+          <p class="med-print"><span class="label-clr">Club:</span> {{ customer.club }}</p>
+        </div>
       </div>
       <div class="row col-md-12">
-        <div class="col-md-6 offset-md-2">
+        <div class="col-md-3 offset-md-1">
           <p class="small-print"><span class="label-clr">Status:</span> {{ capitalizeFirst(quote.status) }}</p>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3 offset-md-5">
           <p class="small-print"><span class="label-clr">Created:</span> {{ formatDate(quote.createdAt) }}</p>
         </div>
       </div>
       <br />
-      <div class="row col-md-12 offset-md-2">
+      <div class="row col-md-12 offset-md-1">
           <p class="large-print"><span class="label-clr">Boat Home:</span> {{ quote.boat_home }}</p>
           <p class="large-print"><span class="label-clr">Boat Model:</span> {{ quote.boat_model }}</p>
           <p class="large-print"><span class="label-clr">Pick Up/Drop Off:</span> {{ quote.pick_drop }}</p>
@@ -63,29 +64,29 @@
            </div>
         </div>
       </div>
-      <div class="row col-md-9 offset-md-2" :style="{'margin': 35+'px auto'}">
-        <table class="extras-table">
-          <thead>
-            <tr>
-              <th>Battens</th>
-              <th>Reefing Pts.</th>
-              <th>Furling</th>
-              <th>Num/Logo</th>
-              <th>UV/Color</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>{{ quote.battens }}</td>
-              <td>{{ quote.reefing_pts }}</td>
-              <td>{{ quote.furl_sys }}</td>
-              <td>{{ quote.num_logo }}</td>
-              <td>{{ quote.uv_color }}</td>
-            </tr>
-          </tbody>
-        </table>
+      <div v-if="showExtras" class="row col-md-12 extras-div">
+        <div class="col-md-2 offset-md-1" :style="{'text-align': 'center'}">
+              <h4>Battens</h4>
+              <p>{{ quote.battens }}</p>
+        </div>
+        <div class="col-md-2" :style="{'text-align': 'center'}">
+              <h4>Reefing</h4>
+              <p>{{ quote.reefing_pts }}</p>
+        </div>
+        <div class="col-md-2" :style="{'text-align': 'center'}">
+              <h4>Furling</h4>
+              <p>{{ quote.furl_sys }}</p>
+        </div>
+        <div class="col-md-2" :style="{'text-align': 'center'}">
+              <h4>Num/Logo</h4>
+              <p>{{ quote.num_logo }}</p>
+        </div>
+        <div class="col-md-2" :style="{'text-align': 'center'}">
+              <h4>UV/Color</h4>
+              <p>{{ quote.uv_color }}</p>
+        </div>
       </div>
-      <div class="row col-md-12">
+      <div class="row col-md-12 finance-div">
         <div class="col-md-6 offset-md-2">
           <p class="med-print"><span class="label-clr">Price:</span> {{ quote.price }}</p>
         </div>
@@ -93,37 +94,28 @@
           <p class="med-print"><span class="label-clr">Balance Due:</span> {{ quote.quote_price - quote.amount_paid }}</p>
         </div>
       </div>
-      <div v-if="haveDocs" class="row col-md-10" :style="{'margin': 35 + 'px auto'}">
-        <div class="col med-print">
-          <tr>
-            <th>Document Name</th>
-            <th></th>
-            <th></th>
-          </tr>
-          <tr v-for= "(doc, index) in quote.doc_path"
-            :key="index">
-            <td style="width: 90%;">
-              <router-link :to="{ name: 'QuoteViewPDF' , params: {'payload': JSON.stringify(quote), 'caller': ['QuoteDisplay', callerName], 'filename': doc} }">
-                {{ doc }}
-              </router-link>
-            </td>
-            <td style="width: 5%;">
-              <a @click='emailDocument(doc)'>
+      <div v-if="haveDocs" class="row col-md-12" :style="{'margin': 35 + 'px auto'}">
+        <p class="label-clr">Document(s)</p>
+        <ul>
+          <li class="med-print" v-for= "(doc, index) in quote.doc_path" :key="index">
+              <span :style="{'margin-right': 35 + '%'}">
+                <router-link :to="{ name: 'QuoteViewPDF' , params: {'payload': JSON.stringify(quote), 'caller': ['QuoteDisplay', callerName], 'filename': doc} }">
+                  {{ doc }}
+                </router-link>
+              </span>
+              <span>
+              <a @click='emailDocument(doc)' :style="{'margin-right': 8+'px'}">
                 <i class="fa fa-envelope" aria-hidden="true"></i>
               </a>
-            </td>
-            <td style="width: 5%;">
-              <a @click="getFile(doc)">
+              <a @click="getFile(doc)" :style="{'margin-right': 8+'px'}">
                 <i class="fa fa-download" aria-hidden="true"></i>
               </a>
-            </td>
-            <td style="width: 5%;">
-              <a @click='deleteDocument(doc)'>
+              <a @click='deleteDocument(doc)' :style="{'margin-right': 2+'px'}">
                 <i class="fa fa-trash" aria-hidden="true"></i>
               </a>
-            </td>
-          </tr>
-        </div> 
+              </span>
+          </li>
+        </ul>
       </div>
       <div class="row col-md-10">
         <span class="error" v-if="errorMsg">{{ errorMsg }}</span>
@@ -181,6 +173,14 @@ export default {
     },
     haveDocs: function () {
       return this.quote.doc_path.length > 0
+    },
+    showExtras: function () {
+      let extras = [this.quote.battens, this.quote.reefing_pts, this.quote.furl_sys, this.quote.num_logo, this.quote.uv_color]
+      let answer = extras.some((item) => {
+          return item !== '' && item !== undefined && item !== null 
+        })
+
+      return answer
     }
   },
   methods: {
@@ -364,6 +364,14 @@ export default {
 }
 </script>
 <style scoped>
+h4 {
+  color: #0E6EFB;
+}
+
+ul {
+  list-style: none;
+}
+
 @media (min-width: 36em) {
   .card {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
@@ -415,11 +423,20 @@ export default {
   font-size: 1.5em;
 }
 
-.center-div {
+.header-div {
   margin: auto;
   text-align: center;
-  line-height: 0.3em;
+  line-height: 1.2em;
   padding: 10px;
+  font-weight: bold;
+  font-size: 30px; 
+  overflow: wrap;
+  overflow-wrap: break-word;
+}
+
+.customer-info-div {
+  text-align: start;
+  line-height: 0.2em;
 }
 
 .hilite {
@@ -459,31 +476,13 @@ span.error {
   color: #FF0000;
 }
 
-
-tr {
-  text-align: center;
+.extras-div {
+  margin-top: 5%;
 }
 
-td {
-  text-align: center;
+.finance-div {
+  margin-top: 5%;
 }
 
-.extras-table {
-  width: 100%;
-  margin-bottom: 1.5em;
-  border-spacing: 0;
-}
-
-.extras-table thead {
-  font-size: 0.8em;
-  color: #0E6EFB;
-}
-
-.extras-table tr {
-  border:1px solid #000000;
-}
-
-.extras-table td {
-  border:1px solid #000000;
-}
 </style>
+

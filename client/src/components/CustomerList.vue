@@ -287,50 +287,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-/**
-h1, h2 {
-  font-weight: normal;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-a {
-  color: #35495E;
-}
-
-.filter-div > * {
-    margin: 0 8px;
-    vertical-align: middle;
-}
-
-td, th {
-  padding: 5px;
-}
-
-tr:nth-child(even) {
-    background-color: #eeeeee;
-}
-
-tr:nth-child(odd) {
-    background-color: #cccccc;
-}
-*/
 @import "bourbon";
 
-/*  Breakpoints */
-$bp-maggie: 15em; 
-$bp-lisa: 30em;
-$bp-bart: 48em;
-$bp-marge: 62em;
-$bp-homer: 75em;
 
 /* Styles */
 html {
@@ -400,6 +358,38 @@ li.fancy > span{
 	color: #0000FF;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 11px;
+}
+
+/*  Breakpoints */
+$bp-maggie: 15em; 
+$bp-lisa: 30em;
+$bp-bart: 48em;
+$bp-marge: 62em;
+$bp-homer: 75em;
+
+/* Styles */
+html {
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: $font-stack-system;
+  color: rgba(0,0,0,.87);
+}
+
+a {
+  color: rgba(64,64,255,1);
+  
+  &:hover,
+  &:focus {
+    color: rgba(4,106,56,1); 
+  }
 }
 
 .container {
@@ -540,17 +530,18 @@ li.fancy > span{
       &:last-of-type {
         margin-bottom: 0; 
       }
-      
+/*      
       &:nth-of-type(even) {
         @media (min-width: $bp-bart) {
           background-color: rgba(0,0,0,.12);
         }
       }
+*/
     }
     
     th[scope="row"] {
       background-color: rgba(170,195,197,1);
-      color: white;
+      color: yellow;
       
       @media (min-width: $bp-lisa) {
         border-left: 1px solid rgba(134,188,37,1);
@@ -572,7 +563,7 @@ li.fancy > span{
         border-bottom: 1px solid rgba(134,188,37,1);
         text-align: center; 
       }
-      
+
       &:last-of-type {
         @media (min-width: $bp-bart) {
           border-right: 1px solid rgba(134,188,37,1);
