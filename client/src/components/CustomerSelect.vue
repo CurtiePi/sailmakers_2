@@ -1,18 +1,30 @@
 <template>
   <div class="container">
-    <div class="row filter-div">
-      <label>Name:<input type="text" v-model="f_name" @input="filterName()" /></label>
-      <label>Quote Type:
-        <select @change="filterQuoteType($event)">
+    <h1>Select Customer(s) to Message</h1>
+    <div class="row">
+      <ul class="fancy m-5">
+        <li class="fancy">
+          <label for="nameFilter">Name Filter</label>
+          <input type="text" v-model="f_name" @input="filterName()" />
+          <span>Filter on a name</span>
+        </li>
+      </ul>
+        <button class="btn btn-primary m-5" data-bs-toggle="collapse" href="#quoteFilter" role="button" aria-expanded="false" aria-controls="quoteFilter" :style="{width: '150px'}">Quote Filter</button>
+        <button class="btn btn-primary m-5" type="button" data-bs-toggle="collapse" data-bs-target="#statusFilter" aria-expanded="false" aria-controls="statusFilter" :style="{width: '150px'}">Status Filter</button>
+     <button class="btn btn-primary m-5" type="button" @click="createMessage()" :style="{width: '150px'}">Compose Message</button>
+    </div>
+    <div class="row">
+      <div class="collapse multi-collapse ms-5" id="quoteFilter" :style="{width: '250px'}">
+        <select class="form-select" multiple aria-label="multiple select example" @change="filterQuoteType($event)">
           <option value="all"></option>
           <option value="new sail">New Sail</option>
           <option value="sail repair">Sail Repair</option>
           <option value="winter service">Winter Service</option>
           <option value="sail cover">Sail Cover</option>
         </select>
-     </label>
-      <label>Quote Status:
-        <select @change="filterQuoteStatus($event)">
+      </div>
+      <div class="collapse multi-collapse" id="statusFilter" :style="{width: '250px'}">
+        <select class="form-select" multiple aria-label="multiple select example" @change="filterQuoteStatus($event)">
           <option value="all"></option>
           <option value="pending">Pending</option>
           <option value="deposit">Deposit</option>
@@ -22,8 +34,8 @@
           <option value="delivery">Delivery</option>
           <option value="paid">Paid</option>
         </select>
-     </label>
-     <label>Alphanumerical
+     </div>
+     <!-- label>Alphanumerical
        <input type="radio" name="sorter" value="alpha"
          @change="sortList()"
          v-model="sort_type" />
@@ -32,35 +44,39 @@
        <input type="radio" name="sorter" value="temporal"
          @change="sortList()"
          v-model="sort_type" />
-     </label>
-     <button @click="createMessage()">Write Message</button>
+     </label -->
     </div>
     <div class="container">
       <span v-if="errorMsg" class="errorMsg">{{ errorMsg }}</span>
-      <h1>Select Customer(s) to Message</h1>
       <div>
-          <tr>
-              <th>
+        <table class="responsive-table">
+          <thead>
+            <tr>
+              <th scope="col">
                 <label>
                   <input type="checkbox" name="select_all" 
-                    @input="selectAll()" />Select All
+                    @input="selectAll()" /> Select All
                 </label> 
               </th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Boat Name</th>
-              <th>Boat Home</th>
-          </tr>
-          <tr v-for= "customer in customer_display"
+              <th scope="col">Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">Boat Name</th>
+              <th scope="col">Boat Home</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for= "customer in customer_display"
               :key="customer._id">
-              <td><input type="checkbox" name="selectees" :value="customer.email" 
+              <th scope="row"><input type="checkbox" name="selectees" :value="customer.email" 
                 v-model="selectees" />
-              </td>
-              <td><router-link :to="{ name: 'CustomerProfile', params: { customer } }">{{ customer.fname }} {{ customer.lname }}</router-link></td>
-              <td>{{ customer.email }}</td>
-              <td>{{ customer.boat_name }}</td>
-              <td>{{ customer.boat_home }}</td>
-          </tr>
+              </th>
+              <td data-title="Name"><router-link :to="{ name: 'CustomerProfile', params: { customer } }">{{ customer.fname }} {{ customer.lname }}</router-link></td>
+              <td data-title="Email">{{ customer.email }}</td>
+              <td data-title="Boat Name">{{ customer.boat_name }}</td>
+              <td data-title="Boat Home">{{ customer.boat_home }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -244,7 +260,9 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style lang="scss" scoped>
+@import "bourbon";
+
 h1, h2 {
   font-weight: normal;
 }
@@ -263,26 +281,292 @@ a {
   color: #35495E;
 }
 
+ul.fancy {
+  list-style: none;
+  width: 20%;
+  padding: 0;
+  margin: 0;
+}
+
+li.fancy {
+  position:relative;
+  display: block;
+  padding: 9px;
+  border:1px solid #DDDDDD;
+  margin-bottom: 30px;
+  border-radius: 3px;
+}
+
+li.fancy:last-child{
+	margin-bottom: 0px;
+	text-align: center;
+}
+
+li.fancy > label{
+	display: block;
+	float: left;
+	margin-top: -30px;
+	background: #FFFFFF;
+	height: 19px;
+	padding: 2px 5px 2px 5px;
+	color: #0E6EFB;
+	font-size: 14px;
+	overflow: hidden;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+li.fancy > span{
+	background: #0EFEFB;
+	display: block;
+	padding: 3px;
+	margin: 0 -9px -9px -9px;
+	text-align: center;
+	color: #0000FF;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+}
+
 .filter-div > * {
     margin: 0 8px;
     vertical-align: middle;
-}
-
-td, th {
-  padding: 5px;
-}
-
-tr:nth-child(even) {
-    background-color: #eeeeee;
-}
-
-tr:nth-child(odd) {
-    background-color: #cccccc;
 }
 
 .errorMsg {
   font-weight: bold;
   color: #FF0000;
   font-size: 12px;
+}
+
+/*  Breakpoints */
+$bp-maggie: 15em; 
+$bp-lisa: 30em;
+$bp-bart: 48em;
+$bp-marge: 62em;
+$bp-homer: 75em;
+
+/* Styles */
+html {
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: $font-stack-system;
+  color: rgba(0,0,0,.87);
+}
+
+a {
+  color: rgba(64,64,255,1);
+  
+  &:hover,
+  &:focus {
+    color: rgba(4,106,56,1); 
+  }
+}
+
+.container {
+  margin: 5% 3%;
+  
+  @media (min-width: $bp-bart) {
+    margin: 2%; 
+  }
+  
+  @media (min-width: $bp-homer) {
+    margin: 2em auto;
+    max-width: $bp-homer;
+  }
+}
+
+.responsive-table {
+  width: 100%;
+  margin-bottom: 1.5em;
+  border-spacing: 0;
+  
+  @media (min-width: $bp-bart) {
+    font-size: .9em; 
+  }
+  
+  @media (min-width: $bp-marge) {
+    font-size: 1em; 
+  }
+  
+  thead {
+    /* Accessibly hide <thead> on narrow viewports */
+    position: absolute;
+    clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+    padding: 0;
+    border: 0;
+    height: 1px; 
+    width: 1px; 
+    overflow: hidden;
+    
+    @media (min-width: $bp-bart) {
+      /* Unhide <thead> on wide viewports */
+      position: relative;
+      clip: auto;
+      height: auto;
+      width: auto;
+      overflow: auto;
+    }
+    
+    th {
+      background-color: rgba(170,195,197,1);
+      border: 1px solid rgba(134,188,37,1);
+      font-weight: normal;
+      text-align: center;
+      color: brown;
+      
+      &:first-of-type {
+        text-align: left; 
+      }
+    }
+  }
+  
+  /* Set these items to display: block for narrow viewports */
+  tbody,
+  tr,
+  th,
+  td {
+    display: block;
+    padding: 0;
+    text-align: left;
+    white-space: normal;
+  }
+  
+  tr {   
+    @media (min-width: $bp-bart) {
+      /* Undo display: block */ 
+      display: table-row; 
+    }
+  }
+  
+  th,
+  td {
+    padding: .5em;
+    vertical-align: middle;
+    
+    @media (min-width: $bp-lisa) {
+      padding: .75em .5em; 
+    }
+    
+    @media (min-width: $bp-bart) {
+      /* Undo display: block */
+      display: table-cell;
+      padding: .5em;
+    }
+    
+    @media (min-width: $bp-marge) {
+      padding: .75em .5em; 
+    }
+    
+    @media (min-width: $bp-homer) {
+      padding: .75em; 
+    }
+  }
+  
+  caption {
+    margin-bottom: 1em;
+    font-size: 1em;
+    font-weight: bold;
+    text-align: center;
+    
+    @media (min-width: $bp-bart) {
+      font-size: 1.5em;
+    }
+  }
+  
+  tfoot {
+    font-size: .8em;
+    font-style: italic;
+    
+    @media (min-width: $bp-marge) {
+      font-size: .9em;
+    }
+  }
+  
+  tbody {
+    @media (min-width: $bp-bart) {
+      /* Undo display: block  */
+      display: table-row-group; 
+    }
+    
+    tr {
+      margin-bottom: 1em;
+      
+      @media (min-width: $bp-bart) {
+        /* Undo display: block  */
+        display: table-row;
+        border-width: 1px;
+      }
+      
+      &:last-of-type {
+        margin-bottom: 0; 
+      }
+/*      
+      &:nth-of-type(even) {
+        @media (min-width: $bp-bart) {
+          background-color: rgba(0,0,0,.12);
+        }
+      }
+*/
+    }
+    
+    th[scope="row"] {
+      background-color: rgba(170,195,197,1);
+      color: yellow;
+      
+      @media (min-width: $bp-lisa) {
+        border-left: 1px solid rgba(134,188,37,1);
+        border-bottom: 1px solid rgba(134,188,37,1);
+      }
+      
+      @media (min-width: $bp-bart) {
+        background-color: transparent;
+        color: rgba(0,0,0.87);
+        text-align: left;
+      }
+    }
+    
+    td {
+      text-align: right;
+      
+      @media (min-width: $bp-bart) {
+        border-left: 1px solid rgba(134,188,37,1);
+        border-bottom: 1px solid rgba(134,188,37,1);
+        text-align: center; 
+      }
+
+      &:last-of-type {
+        @media (min-width: $bp-bart) {
+          border-right: 1px solid rgba(134,188,37,1);
+        } 
+      }
+    }
+    
+    td[data-type=currency] {
+      text-align: right; 
+    }
+    
+    td[data-title]:before {
+      content: attr(data-title);
+      float: left;
+      font-size: .8em;
+      color: rgba(0,0,0,.54);
+      
+      @media (min-width: $bp-lisa) {
+        font-size: .9em; 
+      }
+      
+      @media (min-width: $bp-bart) {
+        /* Don’t show data-title labels */
+        content: none; 
+      }
+    } 
+  }
 }
 </style>
