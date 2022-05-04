@@ -285,4 +285,18 @@ module.exports = {
         }
     },
 
+    getDashboardRawData: async (req, res, next) => {
+        try {
+            var customers = await dataAccess.listCustomers();
+            var quotes = await dataAccess.listQuotes();
+            let rawData = {'quoteData': quotes, 'customerData': customers};
+            req.dashboardRawData = rawData;
+            next();
+        }
+        catch(err) {
+            return res.status(500).json({
+                message: `Error getting dashboard raw data ${err}` 
+            });
+        }
+    }
 }
