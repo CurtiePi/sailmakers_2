@@ -1,6 +1,10 @@
 <template>
   <div class="container">
-    <div class="card">
+    <div v-if="isFetching" className="col-12">
+      <span className="fa fa-spinner fa-pulse fa-3x fa-fw text-primary"></span>
+      <p>Loading . . .</p>
+    </div>
+    <div v-else class="card">
       <div class="flex-grid">
         <span class="col hilite">Profile for {{ salesperson.fname }} {{ salesperson.lname }}</span>
       </div>
@@ -32,25 +36,27 @@ export default {
   data () {
     return {
       salesperson: null,
-      callerName: 'StaffList'
+      callerName: 'StaffList',
+      isFetching: true
     }
   },
   methods: {
     timeToEdit () {
-      this.$router.push({ name: 'StaffEdit', params: { 'edit_payload': this.salesperson } })
+      this.$router.push({ name: 'StaffEdit', params: { 'edit_payload': JSON.stringify(this.salesperson) } })
     },
     goBack () {
       if (['Quotes', 'Customers', 'StaffList'].includes(this.callerName)) {
         this.$router.replace({name: this.callerName})
       } else {
-        this.$router.replace({ name: this.callerName, params: { 'payload': this.customer } })
+        this.$router.replace({ name: this.callerName, params: { 'payload': JSON.stringify(this.salesperson) } })
       }
     }
   },
   mounted () {
     if (this.payload) {
-      console.log(this.payload)
-      this.salesperson = this.payload
+      this.salesperson = JSON.parse(this.$route.params.payload)
+      console.log(this.salesperson)
+      this.isFetching = false
     }
     if (this.caller) {
       this.callerName = this.caller

@@ -624,24 +624,6 @@ button {
 	color:#fff;
 }
 
-.left-div {
-  float: left;
-  width: 25%;
-  height: 100%;
-  background: url('~@/assets/images/sailboat_three.jpg') top left/cover no-repeat;
-}
-
-.right-div {
-  float: right;
-  width: 80%;
-  height: 100%;
-}
-
-.form-div {
-  position :relative;
-  top: 10%;
-}
-
 .customer-info-div {
   text-align: left;
   line-height: .9em;

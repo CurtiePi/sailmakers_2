@@ -3,19 +3,25 @@
     <div class="container">
       <h1>Salesperson List</h1>
       <div>
-          <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Get Mail</th>
-          </tr>
-          <tr v-for= "salesperson in salespeople"
+        <table class="responsive-table">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">Phone</th>
+              <th scope="col">Get Mail</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for= "salesperson in salespeople"
               :key="salesperson._id">
-              <td><router-link :to="{ name: 'StaffProfile', params: { 'payload': salesperson, 'caller': 'StaffList' } }">{{ salesperson.fname }} {{ salesperson.lname }}</router-link></td>
-              <td><router-link :to="{ name: 'CreateMessage', params: { 'targets': [salesperson.email], 'caller': 'StaffList' } }">{{ salesperson.email }}</router-link></td>
-              <td>{{ salesperson.phone }}</td>
-              <td>{{ (salesperson.get_mail) ? 'Y' : 'N' }}</td>
+              <th scope="row"><router-link :to="{ name: 'StaffProfile', params: { 'payload': JSON.stringify(salesperson), 'caller': 'StaffList' } }">{{ salesperson.fname }} {{ salesperson.lname }}</router-link></th>
+              <td data-title="Email"><router-link :to="{ name: 'CreateMessage', params: { 'targets': [salesperson.email], 'caller': 'StaffList' } }">{{ salesperson.email }}</router-link></td>
+              <td data-title="Phone">{{ salesperson.phone }}</td>
+              <td data-title="Get Mail">{{ (salesperson.get_mail) ? 'Y' : 'N' }}</td>
           </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -53,7 +59,9 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style lang="scss" scoped>
+@import "bourbon";
+
 h1, h2 {
   font-weight: normal;
 }
@@ -72,20 +80,237 @@ a {
   color: #35495E;
 }
 
-.filter-div > * {
-    margin: 0 8px;
+
+/*  Breakpoints */
+$bp-maggie: 15em; 
+$bp-lisa: 30em;
+$bp-bart: 48em;
+$bp-marge: 62em;
+$bp-homer: 75em;
+
+/* Styles */
+html {
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: $font-stack-system;
+  color: rgba(0,0,0,.87);
+}
+
+a {
+  color: rgba(64,64,255,1);
+  
+  &:hover,
+  &:focus {
+    color: rgba(4,106,56,1); 
+  }
+}
+
+.container {
+  margin: 5% 3%;
+  
+  @media (min-width: $bp-bart) {
+    margin: 2%; 
+  }
+  
+  @media (min-width: $bp-homer) {
+    margin: 2em auto;
+    max-width: $bp-homer;
+  }
+}
+
+.responsive-table {
+  width: 100%;
+  margin-bottom: 1.5em;
+  border-spacing: 0;
+  
+  @media (min-width: $bp-bart) {
+    font-size: .9em; 
+  }
+  
+  @media (min-width: $bp-marge) {
+    font-size: 1em; 
+  }
+  
+  thead {
+    /* Accessibly hide <thead> on narrow viewports */
+    position: absolute;
+    clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+    padding: 0;
+    border: 0;
+    height: 1px; 
+    width: 1px; 
+    overflow: hidden;
+    
+    @media (min-width: $bp-bart) {
+      /* Unhide <thead> on wide viewports */
+      position: relative;
+      clip: auto;
+      height: auto;
+      width: auto;
+      overflow: auto;
+    }
+    
+    th {
+      background-color: rgba(170,195,197,1);
+      border: 1px solid rgba(134,188,37,1);
+      font-weight: normal;
+      text-align: center;
+      color: brown;
+      
+      &:first-of-type {
+        text-align: left; 
+      }
+    }
+  }
+  
+  /* Set these items to display: block for narrow viewports */
+  tbody,
+  tr,
+  th,
+  td {
+    display: block;
+    padding: 0;
+    text-align: left;
+    white-space: normal;
+  }
+  
+  tr {   
+    @media (min-width: $bp-bart) {
+      /* Undo display: block */ 
+      display: table-row; 
+    }
+  }
+  
+  th,
+  td {
+    padding: .5em;
     vertical-align: middle;
-}
+    
+    @media (min-width: $bp-lisa) {
+      padding: .75em .5em; 
+    }
+    
+    @media (min-width: $bp-bart) {
+      /* Undo display: block */
+      display: table-cell;
+      padding: .5em;
+    }
+    
+    @media (min-width: $bp-marge) {
+      padding: .75em .5em; 
+    }
+    
+    @media (min-width: $bp-homer) {
+      padding: .75em; 
+    }
+  }
+  
+  caption {
+    margin-bottom: 1em;
+    font-size: 1em;
+    font-weight: bold;
+    text-align: center;
+    
+    @media (min-width: $bp-bart) {
+      font-size: 1.5em;
+    }
+  }
+  
+  tfoot {
+    font-size: .8em;
+    font-style: italic;
+    
+    @media (min-width: $bp-marge) {
+      font-size: .9em;
+    }
+  }
+  
+  tbody {
+    @media (min-width: $bp-bart) {
+      /* Undo display: block  */
+      display: table-row-group; 
+    }
+    
+    tr {
+      margin-bottom: 1em;
+      
+      @media (min-width: $bp-bart) {
+        /* Undo display: block  */
+        display: table-row;
+        border-width: 1px;
+      }
+      
+      &:last-of-type {
+        margin-bottom: 0; 
+      }
+/*      
+      &:nth-of-type(even) {
+        @media (min-width: $bp-bart) {
+          background-color: rgba(0,0,0,.12);
+        }
+      }
+*/
+    }
+    
+    th[scope="row"] {
+      background-color: rgba(170,195,197,1);
+      color: yellow;
+      
+      @media (min-width: $bp-lisa) {
+        border-left: 1px solid rgba(134,188,37,1);
+        border-bottom: 1px solid rgba(134,188,37,1);
+      }
+      
+      @media (min-width: $bp-bart) {
+        background-color: transparent;
+        color: rgba(0,0,0.87);
+        text-align: left;
+      }
+    }
+    
+    td {
+      text-align: right;
+      
+      @media (min-width: $bp-bart) {
+        border-left: 1px solid rgba(134,188,37,1);
+        border-bottom: 1px solid rgba(134,188,37,1);
+        text-align: center; 
+      }
 
-td, th {
-  padding: 5px;
-}
-
-tr:nth-child(even) {
-    background-color: #eeeeee;
-}
-
-tr:nth-child(odd) {
-    background-color: #cccccc;
+      &:last-of-type {
+        @media (min-width: $bp-bart) {
+          border-right: 1px solid rgba(134,188,37,1);
+        } 
+      }
+    }
+    
+    td[data-type=currency] {
+      text-align: right; 
+    }
+    
+    td[data-title]:before {
+      content: attr(data-title);
+      float: left;
+      font-size: .8em;
+      color: rgba(0,0,0,.54);
+      
+      @media (min-width: $bp-lisa) {
+        font-size: .9em; 
+      }
+      
+      @media (min-width: $bp-bart) {
+        /* Don’t show data-title labels */
+        content: none; 
+      }
+    } 
+  }
 }
 </style>
