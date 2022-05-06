@@ -114,80 +114,6 @@
             </div>
         </div>
     </div>
-    <br />
-      <!-- form>
-        <div class="flex-grid-halfs">
-          <label class="col">First Name
-            <input type="text" name="fname" v-model.trim="custFields.fname" />
-          </label>
-          <label class="col">Last Name
-            <input type="text" name="lname" v-model.trim="custFields.lname" />
-          </label>
-        </div>
-        <div class="flex-grid">
-          <label class="col">Address
-            <input type="text" size="60" name="address" v-model="custFields.address" />
-          </label>
-        </div>
-        <div class="flex-grid-halfs">
-          <label class="col">Email
-            <input type="text" size="15" name="email" v-model.trim="custFields.email" />
-          </label>
-          <label class="col">Phone
-            <input type="text" size="15" name="phone" v-model="custFields.phone" />
-          </label>
-        </div>
-        <div class="flex-grid-halfs">
-          <div class="col">
-            <label>Customer Club
-              <select name="club" @change="checkForOther($event)" v-model="custFields.club">
-                <option v-for="option in selectOptions" :key="option.id">
-                  {{ option.name }}
-                </option>
-                <option value='other'>Other</option>
-              </select>
-            </label>
-            <label v-if="needOtherClub">Specify Club 
-              <input type="text" size="20" v-model="otherClubValue" />
-            </label>
-            </div>
-            <div class="col">
-              <label>Boat Port
-                <select name="port" @change="checkForOther($event)" v-model="custFields.boat_home">
-                  <option v-for="option in selectOptions" :key="option.id">
-                    {{ option.name }}
-                  </option>
-                  <option value='other'>Other</option>
-                </select>
-              </label>
-              <label v-if="needOtherPort">Specify Port
-                <input type="text" size="20" v-model="otherPortValue" />
-              </label>
-            </div>
-          </div>
-        <div class="flex-grid-halfs">
-          <label class="col">Boat Model:
-            <input type="text" name="boat_model" v-model="custFields.boat_model"/>
-          </label>
-          <label class="col">Boat Name:
-            <input type="text" name="boat_name" v-model="custFields.boat_name" />
-          </label>
-        </div>
-        <div class="flex-grid">
-          <label>Customer Notes:</label>
-          <textarea cols="60" rows="5" name="notes" v-model="custFields.cnotes" />
-        </div>
-      </form>
-      <button type="button" class="btn btn-primary"
-        @click="isEditing ? updateCustomer() : createCustomer()"
-        :disabled="!allowSubmitForm">{{ headerText }}</button>
-      <button type="button" class="btn btn-primary"
-        @click="cancel()">Cancel</button>
-      <button type="button" class="btn btn-primary"
-        @click="checkoutput()"
-        :disabled="!allowSubmitForm">Check Sanity</button>
-      <button type="button" class="btn btn-primary"
-        @click="checkForChanges()">Check Changes</button -->
   </div>
 </template>
 <script>
@@ -312,7 +238,7 @@ export default {
         var response = await AuthenticationService.customerUpdate(payload)
         this.customer = response.data
         this.clearInputs()
-        this.$router.push({ name: 'CustomerProfile', params: {'payload': this.customer} })
+        this.$router.push({ name: 'CustomerProfile', params: {'payload': JSON.stringify(this.customer)} })
       } else {
         var message = 'No values have been changed!\nChange a value before updating or Cancel'
         let options = {
@@ -349,7 +275,7 @@ export default {
       if (this.singleOp) {
         this.$router.push({ name: 'Customers' })
       } else {
-        this.$router.push({ name: 'QuoteCreate', params: {'create_payload': customer} })
+        this.$router.push({ name: 'QuoteCreate', params: {'create_payload': JSON.stringify(customer)} })
       }
     },
     hasValue (value) {
