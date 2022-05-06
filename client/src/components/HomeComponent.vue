@@ -1,7 +1,9 @@
 <template>
   <div class="container">
-    <h1 v-if="!hasToken">{{ msg }}</h1>
-    <h1 v-else>Welcome {{ salesperson.fname }} </h1>
+    <div class="col-md-12 mt-5">
+      <h1 v-if="!hasToken">{{ msg }}</h1>
+      <h1 v-else>{{ customGreeting() }}</h1>
+    </div>
     <div v-if="hasToken" class="row col-md-12">
       <div class="col-md-6 mt-4">
         <DxChart
@@ -20,7 +22,7 @@
           :customize-point="customizePoint"
           :class="isFirstLevel ? 'pointer-on-bars' : ''"
           :data-source="monthlyTypeCount"
-          title="Request Type Count"
+          :title="requestTypeTitle"
           @point-click="onPointClick"
         >
           <DxSeries type="bar">
@@ -37,7 +39,29 @@
           @click="onButtonClick"
         />
       </div>
-     </div>
+      <div class="col-md-6 mt-4">
+        <DxChart
+          :data-source="dashboard.currentStatusCount"
+          title="Quote Status Count">
+          <DxArgumentAxis :tick-interval="10" />
+          <DxSeries type="bar" color="#003355">
+            <DxLabel :visible="true" />
+          </DxSeries>
+          <DxLegend :visible="false" />
+        </DxChart>
+      </div>
+      <div class="col-md-6 mt-4">
+        <DxChart
+          :data-source="dashboard.monthlyCustomerCount"
+          title="New Customers Count">
+          <DxArgumentAxis :tick-interval="10" />
+          <DxSeries type="bar" color="#2345F2">
+            <DxLabel :visible="true" />
+          </DxSeries>
+          <DxLegend :visible="false" />
+        </DxChart>
+      </div>
+    </div>
     <div v-else>
       <form>
         <label for="credentials" class="form-label">Enter Password
@@ -73,6 +97,7 @@ export default {
       monthlyTypeCount: null,
       isFirstLevel: true,
       colors: ['#6BABAC', '#E55253'],
+      requestTypeTitle: 'Request Type Count',
     }
   },
   computed: {
@@ -98,12 +123,14 @@ export default {
       console.log(`Looking for name: ${target.originalArgument}`)
         this.isFirstLevel = false
         this.monthlyTypeCount = this.filterData(target.originalArgument)
+        this.requestTypeTitle = `${target.originalArgument} Count` 
       }
     },
     onButtonClick() {
       if (!this.isFirstLevel) {
         this.isFirstLevel = true
         this.monthlyTypeCount = this.filterData('')
+        this.requestTypeTitle = 'Request Type Count' 
       }
     },
     async getSalespersonByName (name) {
@@ -138,7 +165,21 @@ export default {
       else {
         this.$router.push("/")
       }
-    }
+    },
+    customGreeting () {
+      var date = new Date()
+      var hour = date.getHours()
+      var timeGreeting = ''
+      if (hour >= 0 && hour < 12) {
+        timeGreeting ='Good Morning' 
+      } else if (hour >= 12 && hour < 6) {
+        timeGreeting ='Good Afternoon' 
+      } else {
+        timeGreeting ='Good Evening' 
+      }
+
+      return `${timeGreeting} ${this.salesperson.fname}`
+    },
   },
   created () {
     console.log('Get a salesperson')
