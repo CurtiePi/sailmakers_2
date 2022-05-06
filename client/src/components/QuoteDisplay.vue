@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div v-if="isFetching" className="col-12">
+    <div v-if="isFetching" class="col-md-12">
       <span className="fa fa-spinner fa-pulse fa-3x fa-fw text-primary"></span>
       <p>Loading . . .</p>
     </div>
