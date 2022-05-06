@@ -2,9 +2,29 @@
   <div class="container">
     <div class="col-md-12 mt-5">
       <h1 v-if="!hasToken">{{ msg }}</h1>
-      <h1 v-else>{{ customGreeting() }}</h1>
+      <h1 v-else>{{ greeting }}</h1>
     </div>
     <div v-if="hasToken" class="row col-md-12">
+      <div v-if="isFetching" class="col-md-12">
+        <span className="fa fa-spinner fa-pulse fa-3x fa-fw text-primary"></span>
+        <p>Loading . . .</p>
+      </div>
+      <div v-else class="col-md-12">
+        <div class="col">
+          <span
+            @click="showNewCustomers()">
+            <i class="fa fa-eye"></i> New Customers This Month
+          </span>
+          <br/>
+          <span
+            @click="showReadyQuotes()">
+            <i class="fa fa-eye"></i> Requests Status Ready
+          </span>
+        </div>
+        <div class="alert alert-warning fade hide" ref="alert_message" role="alert">
+          <strong>{{ errorMsg }}</strong> Check back at a later time.
+        </div>
+      </div>
       <div class="col-md-6 mt-4">
         <DxChart
           :data-source="dashboard.monthlyQuoteCount"
@@ -65,14 +85,14 @@
     <div v-else>
       <form>
         <label for="credentials" class="form-label">Enter Password
-            <input name="credentials"
-                 id="credentials"
-                 type="password"
-                 placeholder="Enter password"
-                 v-model.trim="credential" />
+          <input name="credentials"
+            id="credentials"
+            type="password"
+            placeholder="Enter password"
+            v-model.trim="credential" />
         </label>
         <button type="button" class="btn btn-primary"
-            @click="login()">Login</button>
+          @click="login()">Login</button>
       </form>
     </div>
   </div>
@@ -89,7 +109,11 @@ export default {
   components: { DxChart, DxArgumentAxis, DxLabel, DxSeries, DxValueAxis, DxLegend, DxButton},
   data () {
     return {
+      greeting: 'Welcome',
+      isFetching: false,
       hasToken: false,
+      hasError: false,
+      errorMsg: 'This is an error message',
       credential: '',
       msg: 'Sailmakers',
       salesperson: null,
@@ -120,7 +144,6 @@ export default {
     },
     onPointClick({ target }) {
       if (this.isFirstLevel) {
-      console.log(`Looking for name: ${target.originalArgument}`)
         this.isFirstLevel = false
         this.monthlyTypeCount = this.filterData(target.originalArgument)
         this.requestTypeTitle = `${target.originalArgument} Count` 
@@ -134,20 +157,19 @@ export default {
       }
     },
     async getSalespersonByName (name) {
-      console.log(`Getting ${name}`)
       let response = await AuthenticationService.salespersonByName(name)
-      console.log(response.data)
       this.salesperson = response.data[0]
+      this.createGreeting(this.salesperson.fname)
       localStorage.sp = JSON.stringify(this.salesperson)
     },
     async getDashboardData () {
       let response = await AuthenticationService.getDashboard()
-      console.log(response.data)
       const results = response.data.data
       Object.keys(results).map((key) =>  {
         this.dashboard[key] = results[key]
       });
       this.monthlyTypeCount = this.filterData('')
+      this.isFetching = false;
     },
     async login () {
       let payload = {
@@ -155,39 +177,77 @@ export default {
         password: this.credential
       }
 
-      console.log(payload)
       await this.userLogin(payload)
       if (this.getLoginApiStatus) {
         //this.$router.push("/customers")
         this.hasToken = true
-        this.$forceUpdate()
+        this.isFetching = true
+        this.getDashboardData()
       }
       else {
         this.$router.push("/")
       }
     },
-    customGreeting () {
+    createGreeting (name) {
       var date = new Date()
       var hour = date.getHours()
       var timeGreeting = ''
       if (hour >= 0 && hour < 12) {
         timeGreeting ='Good Morning' 
-      } else if (hour >= 12 && hour < 6) {
+      } else if (hour >= 12 && hour < 18) {
         timeGreeting ='Good Afternoon' 
       } else {
         timeGreeting ='Good Evening' 
       }
 
-      return `${timeGreeting} ${this.salesperson.fname}`
+      this.greeting = `${timeGreeting} ${name}`
     },
+    async showNewCustomers() {
+      var date = new Date()
+      date.setMonth(date.getMonth() - 1)
+
+      var payload = {'criteria' : {'createdAt': {'$gt' : date.toISOString()} }}
+      let response = await AuthenticationService.customerSearch(payload)
+      let customerList = response.data
+      if (customerList.length == 0) {
+        this.showErrorMessage('There are no new customers this month!')
+      } else {
+        this.$router.replace({ name: 'Customers', params: { 'payload': JSON.stringify(customerList), caller: 'Home' } })
+      }
+      
+    },
+    async showReadyQuotes() {
+      var payload = {'criteria' : {'status': 'ready'}}
+      let response = await AuthenticationService.quoteSearch(payload)
+      let quoteList = response.data
+      if (quoteList.length == 0) {
+        this.showErrorMessage('There are no quotes to show that have the ready status!')
+      } else {
+        this.$router.replace({ name: 'Quotes', params: { 'payload': JSON.stringify(quoteList), caller: 'Home' } })
+      }
+    },
+    showErrorMessage(message) {
+      this.errorMsg = message
+      var classList = this.$refs.alert_message.classList.value
+      classList = classList.replace('hide', 'show')
+      this.$refs.alert_message.classList.value = classList
+      setTimeout(this.hideErrorMessage, 5000)
+    },
+    hideErrorMessage() {
+      var classList = this.$refs.alert_message.classList.value
+      classList = classList.replace('show', 'hide')
+      this.$refs.alert_message.classList.value = classList
+    }
   },
   created () {
-    console.log('Get a salesperson')
     this.getSalespersonByName('David Martin')
   },
   mounted () {
       this.hasToken = this.getLoginApiStatus
-      this.getDashboardData()
+      if (this.hasToken) {
+        this.isFetching = true
+        this.getDashboardData()
+      }
   }
 }
 </script>
@@ -214,8 +274,8 @@ export default {
   .button-container {
     text-align: center;
     height: 40px;
-    position: absolute;
-    top: 18%;
-    left: 51%;
+    position: relative;
+    top: -91%;
+    left: -35%;
   }
 </style>
