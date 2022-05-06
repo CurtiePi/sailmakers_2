@@ -1,88 +1,84 @@
 <template>
-<div class="page-wrapper bg-red p-t-180 p-b-100 font-robo">                      
-        <div class="wrapper wrapper--w960">                                          
-            <div class="card card-2">                                                
-                <div class="card-heading">                                     
-    <h1>{{ headerText }}</h1>
-</div>
-                <div class="card-body">
-        <form class="form-style-7">
-            <div class="row col-md-12">
-                <div class="col-md-6">
+  <section>
+    <div class="left-panel">
+      <span class="header mx-4 mt-5"><h1>{{ headerText }}</h1></span>
+    </div>
+    <div class="right-panel">
+      <form class="form-style-7">
+        <div class="row col-md-12">
+          <div class="col-md-5 offset-md-1">
             <ul>
-                <li> 
-                    <label for="name">First Name</label>
-                    <input type="text" name="fname" maxlength="100"
-                        v-model.trim="custFields.fname" />
-                    <span>Enter first name here</span>
-                </li>
-                <li>
-                    <label for="phone">Phone</label>
-                    <input type="text" name="phone" maxlength="100"
-                        v-model="custFields.phone" />
-                    <span>Enter a phone number</span>
-                </li>
-                <li>
-                    <label for="address">Address</label>
-                    <input type="text" name="address" style={width:100%;} maxlength="100"
-                        v-model="custFields.address" />
-                    <span>Enter an address</span>
-                </li>
+              <li> 
+                <label for="name">First Name</label>
+                <input type="text" name="fname" maxlength="100"
+                  v-model.trim="custFields.fname" />
+                <span>Enter first name here</span>
+              </li>
             </ul>
-                </div>
-                <div class="col-md-6">
+          </div>
+          <div class="col-md-5 offset-md-1">
             <ul>
-                <li>
-                    <label for="name">Last Name</label>
-                    <input type="text" name="lname" maxlength="100"
-                        v-model.trim="custFields.lname" />
-                    <span>Enter last name here</span>
-                </li>
-                <li>
-                    <label for="email">Email</label>
-                    <input type="email" name="email" maxlength="100"
-                        v-model.trim="custFields.email" />
-                    <span>Enter a valid email address</span>
-                </li>
+              <li> 
+                <label for="name">Last Name</label>
+                <input type="text" name="lname" maxlength="100"
+                   v-model.trim="custFields.lname" />
+                <span>Enter last name here</span>
+              </li>
             </ul>
-                </div>
-                <div class="col-md-6">
+          </div>
+          <div class="col-md-10 offset-md-1 mt-2">
             <ul>
-                <li>
-                    <label for="club">Club</label>
-                    <select name="club" @change="checkForOther($event)" v-model="custFields.club">
-                <option v-for="option in selectOptions" :key="option.id">
-                  {{ option.name }}
-                </option>
-                <option value='other'>Other</option>
-              </select>
-                    <span>Select a club</span>
-                </li>
-                <li v-if="needOtherClub">
-                    <label for="otherClub">Other Club</label>
-                    <input type="text" size="20" v-model="otherClubValue" />
-                    <span>Specify club name</span>
-                </li>
-                <li>
-                    <label for="boat_name">Boat Name</label>
-                    <input type="text" name="boat_name" maxlength="100"
-                        v-model="custFields.boat_name" />
-                    <span>Enter a boat name</span>
-                </li>
-                <li>
-                    <label for="notes">Customer Notes</label>
-                    <textarea cols="60" name="notes"
-                         @keyup="adjustTextarea"
-                         ref="bio"
-                         v-model="custFields.cnotes" />
-                    <span>Enter notes about the customer</span>
-                </li>
+              <li> 
+                <label for="address">Address</label>
+                <input type="text" name="address" style={width:100%;} maxlength="100"
+                   v-model="custFields.address" />
+                <span>Enter an address</span>
+              </li>
             </ul>
-                </div>
-                <div class="col-md-6">
+          </div>
+          <div class="col-md-5 offset-md-1 mt-2">
             <ul>
-                <li>
-                    <label for="port">Boat Port</label>
+              <li> 
+                <label for="phone">Phone</label>
+                <input type="text" name="phone" maxlength="100"
+                   v-model="custFields.phone" />
+                <span>Enter a phone number</span>
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-5 offset-md-1 mt-2">
+            <ul>
+              <li> 
+                <label for="email">Email</label>
+                <input type="email" name="email" maxlength="100"
+                   v-model.trim="custFields.email" />
+                <span>Enter a valid email address</span>
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-5 offset-md-1 mt-2">
+            <ul>
+              <li> 
+                <label for="club">Club</label>
+                <select name="club" @change="checkForOther($event)" v-model="custFields.club">
+                  <option v-for="option in selectOptions" :key="option.id">
+                    {{ option.name }}
+                  </option>
+                  <option value='other'>Other</option>
+                </select>
+                <span>Select a club</span>
+             </li>  
+             <li v-if="needOtherClub">
+               <label for="otherClub">Other Club</label>
+               <input type="text" size="20" v-model="otherClubValue" />
+               <span>Specify club name</span>
+             </li>
+            </ul>
+          </div>
+          <div class="col-md-5 offset-md-1 mt-2">
+            <ul>
+              <li> 
+                <label for="port">Boat Port</label>
                 <select name="port" @change="checkForOther($event)" v-model="custFields.boat_home">
                   <option v-for="option in selectOptions" :key="option.id">
                     {{ option.name }}
@@ -90,31 +86,57 @@
                   <option value='other'>Other</option>
                 </select>
                     <span>Select a port</span>
-                </li>
-                <li v-if="needOtherPort">
-                    <label for="otherClub">Other Port</label>
-                    <input type="text" size="20" v-model="otherPortValue" />
-                    <span>Specify port name</span>
-                </li>
-                <li>
-                    <label for="boat_model">Boat Model</label>
-                    <input type="text" name="boat_model" maxlength="100"
-                        v-model="custFields.boat_model"/>
-                    <span>Enter a boat model</span>
-                </li>
+              </li>
+              <li v-if="needOtherPort">
+                <label for="otherClub">Other Port</label>
+                <input type="text" size="20" v-model="otherPortValue" />
+                <span>Specify port name</span>
+              </li>
             </ul>
-                </div>
-            </div>
-        </form>
-<button type="button" class="btn btn-primary"
-        @click="isEditing ? updateCustomer() : createCustomer()"
-        :disabled="!allowSubmitForm">{{ headerText }}</button>
-      <button type="button" class="btn btn-primary"
-        @click="cancel()">Cancel</button>
-            </div>
+          </div>
+          <div class="col-md-5 offset-md-1 mt-2">
+            <ul>
+              <li> 
+                <label for="boat_name">Boat Name</label>
+                <input type="text" name="boat_name" maxlength="100"
+                   v-model="custFields.boat_name" />
+                <span>Enter a boat name</span>
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-5 offset-md-1 mt-2">
+            <ul>
+              <li> 
+                <label for="boat_model">Boat Model</label>
+                <input type="text" name="boat_model" maxlength="100"
+                   v-model="custFields.boat_model"/>
+                <span>Enter a boat model</span>
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-10 offset-md-1 mt-2">
+            <ul>
+              <li> 
+                <label for="notes">Customer Notes</label>
+                <textarea cols="60" name="notes"
+                   @keyup="adjustTextarea"
+                   ref="bio"
+                   v-model="custFields.cnotes" />
+                <span>Enter notes about the customer</span>
+              </li>
+            </ul>
+          </div>
+          <div class="d-inline mt-2">
+            <button type="button" class="btn btn-primary"
+              @click="isEditing ? updateCustomer() : createCustomer()"
+              :disabled="!allowSubmitForm">{{ headerText }}</button>
+            <button type="button" class="btn btn-primary"
+              @click="cancel()">Cancel</button>
+          </div>
         </div>
+      </form>
     </div>
-  </div>
+  </section>
 </template>
 <script>
 import AuthenticationService from '@/services/AuthenticationService'
@@ -152,7 +174,7 @@ export default {
       return Object.values(this.custFields).some(this.hasValue)
     },
     headerText: function () {
-      return this.isEditing ? 'Edit Customer' : 'Add New Customer'
+      return this.isEditing ? 'Edit Customer' : 'Add Customer'
     }
   },
   methods: {
@@ -343,7 +365,7 @@ button {
 }
 
 .form-style-7{
-	max-width:600px;
+	max-width:800px;
 	margin:5px;
 	background:#fff;
 	border-radius:2px;
@@ -456,54 +478,28 @@ button {
 	background: #6B9FFF;
 	color:#fff;
 }
-/* ==========================================================================
-   #CARD
-   ========================================================================== */
-.card {
-  overflow: hidden;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  background: #fff;
+
+
+.left-panel{
+  position: fixed;
+  float: left;
+  height: 100vh;
+  overflow:hidden;
+  background: linear-gradient(to right, transparent 50%, #fff 50%), url('~@/assets/images/sailboat_one.jpg') no-repeat center;
+ background-size: cover;
+ width: 60%;
 }
 
-.card-2 {
-  -webkit-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
-  -moz-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
-  box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
-  width: 100%;
-  display: table;
+.right-panel {
+  position: absolute;
+  left: 25%;
+  height: 100vh;
+  max-width:100vw;
+  width:75%;
+  overflow-x: hidden;
 }
 
-.card-2 .card-heading {
-  background: url('~@/assets/images/sailboat_one.jpg') top left/cover no-repeat;
-  width: 29.1%;
-  display: table-cell;
+.header {
+  float: left;  
 }
-
-.card-2 .card-body {
-  display: table-cell;
-  padding: 80px 90px;
-  padding-bottom: 88px;
-}
-
-@media (max-width: 767px) {
-  .card-2 {
-    display: block;
-  }
-  .card-2 .card-heading {
-    width: 100%;
-    display: block;
-    padding-top: 300px;
-    background-position: left center;
-  }
-  .card-2 .card-body {
-    display: block;
-    padding: 60px 50px;
-  }
-}
-
 </style>
