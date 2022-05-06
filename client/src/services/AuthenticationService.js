@@ -75,6 +75,9 @@ export default {
   addAttachment (payload) {
     return Api().insecure.post('api/utils/attach', payload)
   },
+  getDashboard () {
+    return Api().insecure.get('api/utils/dashboard')
+  },
   downloadFile (filename) {
     return Api().insecure.get(`/api/utils/download/${filename}`, {
       responseType: 'blob'

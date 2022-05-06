@@ -3,7 +3,7 @@ Vue.config.ignoredElements = [/^ion-/]
 <template>
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
     <div class="container-fluid">
-      <a class="navbar-brand mr-auto" href="#"><img src="img/icons/sailing_logo.png" height="40" width="41" alt="Sailmakers"/></a>
+      <router-link class="navbar-brand mr-auto" :to="{ name: 'Home' }"><img src="img/icons/sailing_logo.png" height="40" width="41" alt="Sailmakers"/></router-link>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
                 <span class="navbar-toggler-icon"></span>
       </button>

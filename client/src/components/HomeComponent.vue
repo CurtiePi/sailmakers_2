@@ -1,11 +1,45 @@
 <template>
   <div class="container">
-    <h1>{{ msg }}</h1>
-    <div v-if="hasToken">
-        <span :sp="salesperson">Welcome {{ salesperson.fname }} </span>
+    <h1 v-if="!hasToken">{{ msg }}</h1>
+    <h1 v-else>Welcome {{ salesperson.fname }} </h1>
+    <div v-if="hasToken" class="row col-md-12">
+      <div class="col-md-6 mt-4">
+        <DxChart
+          :data-source="dashboard.monthlyQuoteCount"
+          title="Monthly Quote Count">
+          <DxArgumentAxis :tick-interval="10" />
+          <DxSeries type="bar">
+            <DxLabel :visible="true" />
+          </DxSeries>
+          <DxLegend :visible="false" />
+        </DxChart>
+      </div>
+      <div class="col-md-6 mt-4">
+        <DxChart
+          id="chart"
+          :customize-point="customizePoint"
+          :class="isFirstLevel ? 'pointer-on-bars' : ''"
+          :data-source="monthlyTypeCount"
+          title="Request Type Count"
+          @point-click="onPointClick"
+        >
+          <DxSeries type="bar">
+            <DxLabel :visible="true" />
+          </DxSeries>
+          <DxValueAxis :show-zero="false"/>
+          <DxLegend :visible="false"/>
+        </DxChart>
+        <DxButton
+          :visible="!isFirstLevel"
+          class="button-container"
+          text="Back"
+          icon="chevronleft"
+          @click="onButtonClick"
+        />
+      </div>
      </div>
     <div v-else>
-    <form>
+      <form>
         <label for="credentials" class="form-label">Enter Password
             <input name="credentials"
                  id="credentials"
@@ -15,7 +49,7 @@
         </label>
         <button type="button" class="btn btn-primary"
             @click="login()">Login</button>
-    </form>
+      </form>
     </div>
   </div>
 </template>
@@ -23,15 +57,22 @@
 <script>
 import AuthenticationService from '@/services/AuthenticationService'
 import { mapActions, mapGetters } from 'vuex'
+import DxChart, { DxArgumentAxis, DxLabel, DxSeries, DxValueAxis, DxLegend } from 'devextreme-vue/chart'
+import { DxButton } from 'devextreme-vue/button'
 
 export default {
   name: 'homeComponent',
+  components: { DxChart, DxArgumentAxis, DxLabel, DxSeries, DxValueAxis, DxLegend, DxButton},
   data () {
     return {
       hasToken: false,
       credential: '',
       msg: 'Sailmakers',
-      salesperson: null
+      salesperson: null,
+      dashboard: {},
+      monthlyTypeCount: null,
+      isFirstLevel: true,
+      colors: ['#6BABAC', '#E55253'],
     }
   },
   computed: {
@@ -43,7 +84,28 @@ export default {
     ...mapActions('auth', {
       userLogin: "userLogin"
     }),
-
+    filterData(name) {
+      return this.dashboard.monthlyTypeCount.filter((item) => item.parentID === name)
+    },
+    customizePoint() {
+      return {
+        color: this.colors[Number(this.isFirstLevel)],
+        hoverStyle: !this.isFirstLevel ? { hatching: 'none', } : {},
+      }
+    },
+    onPointClick({ target }) {
+      if (this.isFirstLevel) {
+      console.log(`Looking for name: ${target.originalArgument}`)
+        this.isFirstLevel = false
+        this.monthlyTypeCount = this.filterData(target.originalArgument)
+      }
+    },
+    onButtonClick() {
+      if (!this.isFirstLevel) {
+        this.isFirstLevel = true
+        this.monthlyTypeCount = this.filterData('')
+      }
+    },
     async getSalespersonByName (name) {
       console.log(`Getting ${name}`)
       let response = await AuthenticationService.salespersonByName(name)
@@ -51,7 +113,15 @@ export default {
       this.salesperson = response.data[0]
       localStorage.sp = JSON.stringify(this.salesperson)
     },
-
+    async getDashboardData () {
+      let response = await AuthenticationService.getDashboard()
+      console.log(response.data)
+      const results = response.data.data
+      Object.keys(results).map((key) =>  {
+        this.dashboard[key] = results[key]
+      });
+      this.monthlyTypeCount = this.filterData('')
+    },
     async login () {
       let payload = {
         username: 'captainDave',
@@ -61,7 +131,9 @@ export default {
       console.log(payload)
       await this.userLogin(payload)
       if (this.getLoginApiStatus) {
-        this.$router.push("/customers")
+        //this.$router.push("/customers")
+        this.hasToken = true
+        this.$forceUpdate()
       }
       else {
         this.$router.push("/")
@@ -71,6 +143,10 @@ export default {
   created () {
     console.log('Get a salesperson')
     this.getSalespersonByName('David Martin')
+  },
+  mounted () {
+      this.hasToken = this.getLoginApiStatus
+      this.getDashboardData()
   }
 }
 </script>
@@ -83,5 +159,22 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  #chart {
+    height: 440px;
+    width: 100%;
+  }
+
+  #chart.pointer-on-bars .dxc-series rect {
+    cursor: pointer;
+  }
+
+  .button-container {
+    text-align: center;
+    height: 40px;
+    position: absolute;
+    top: 18%;
+    left: 51%;
   }
 </style>
