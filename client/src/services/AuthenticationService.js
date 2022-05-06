@@ -10,6 +10,9 @@ export default {
   customerCreate (payload) {
     return Api().insecure.post('/api/customer/create', payload)
   },
+  customerSearch (payload) {
+    return Api().insecure.post('/api/customer/search', payload)
+  },
   customerUpdate (payload) {
     return Api().insecure.post('/api/customer/update', payload)
   },
@@ -21,6 +24,9 @@ export default {
   },
   quoteCreate (payload) {
     return Api().insecure.post('/api/quote/create', payload)
+  },
+  quoteSearch (payload) {
+    return Api().insecure.post('/api/quote/search', payload)
   },
   quoteUpdate (payload) {
     return Api().insecure.post('/api/quote/update', payload)
@@ -42,7 +48,6 @@ export default {
   },
   salespersonByName (nameParam) {
     let url = `/api/staff/name/${nameParam}`
-    console.log(url)
     return Api().insecure.get(url)
   },
   createPort (payload) {
