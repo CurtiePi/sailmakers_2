@@ -22,12 +22,15 @@
           <p class="med-print"><span class="label-clr">Club:</span> {{ customer.club }}</p>
         </div>
       </div>
-      <div class="row col-md-12">
-        <div class="col-md-3 offset-md-1">
+      <div class="row align-items-start">
+        <div class="col offset-md-1">
           <p class="small-print"><span class="label-clr">Status:</span> {{ capitalizeFirst(quote.status) }}</p>
         </div>
-        <div class="col-md-3 offset-md-5">
+        <div class="col">
           <p class="small-print"><span class="label-clr">Created:</span> {{ formatDate(quote.createdAt) }}</p>
+        </div>
+        <div class="col">
+          <p class="small-print"><span class="label-clr">Due:</span> {{ formatDate(quote.due_date) }}</p>
         </div>
       </div>
       <br />
