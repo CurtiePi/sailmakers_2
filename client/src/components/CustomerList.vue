@@ -177,8 +177,12 @@ export default {
   methods: {
     getCustomers: async function () {
       let response = await AuthenticationService.customerList()
-      this.customers = response.data
-      this.customer_display = response.data
+      
+      this.loadCustomerData(response.data)
+    },
+    loadCustomerData: function (data) {
+      this.customers = data
+      this.customer_display = data
       this.sortList()
     },
     viewQuotes: function (customer) {
@@ -280,7 +284,11 @@ export default {
     }
   },
   mounted () {
-    this.getCustomers()
+    if (this.$route.params.payload) {
+      this.loadCustomerData(JSON.parse(this.$route.params.payload))
+    } else {
+      this.getCustomers()
+    }
   }
 }
 </script>

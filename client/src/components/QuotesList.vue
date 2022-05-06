@@ -188,11 +188,18 @@ export default {
     },
     async getQuotes () {
       let response = await AuthenticationService.quoteList()
-      this.quotes = response.data
-      this.quotes_display = response.data
+      this.loadQuoteData(response.data)
+      //this.quotes = response.data
+      //this.quotes_display = response.data
+      //this.sortList()
+      //this.filterStatusType()
+      // this.populateDropDown()
+    },
+    loadQuoteData (data) {
+      this.quotes = data
+      this.quotes_display = data
       this.sortList()
       this.filterStatusType()
-      // this.populateDropDown()
     },
     viewQuote (quoteObj) {
       console.log(quoteObj)
@@ -337,7 +344,13 @@ export default {
     }
   },
   mounted () {
-    this.getQuotes()
+    if (this.$route.params.payload) {
+      console.log('We have a payload')
+      this.loadQuoteData(JSON.parse(this.$route.params.payload))
+    } else {
+      console.log('We have NO payload')
+      this.getQuotes()
+    }
   }
 }
 </script>
