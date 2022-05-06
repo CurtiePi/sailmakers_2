@@ -36,6 +36,10 @@ const getMonthlyQuoteCount = (quotes) => {
     return retVal;
 }
 
+const capitalizeFirst = (inputText) => {
+      return inputText.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
+}
+
 const getTypeBreakdown = (quotes) => {
     const types = ['new sail', 'sail repair', 'winter service', 'sail cover', 'other'];
 
@@ -45,7 +49,7 @@ const getTypeBreakdown = (quotes) => {
       if (typeQuotes.length > 0) {
         // retVal[types[x]] = getMonthlyQuoteCount(typeQuotes);
         var monthQCount = getMonthlyQuoteCount(typeQuotes)};
-        retVal.push({'arg': types[x],
+        retVal.push({'arg': capitalizeFirst(types[x]),
                     'val': typeQuotes.length,
                     'parentID': ''});
 
@@ -54,7 +58,7 @@ const getTypeBreakdown = (quotes) => {
           var data = monthQCount[y]
           var item = {'arg': data.arg,
                       'val': data.val,
-                      'parentID': types[x]};
+                      'parentID': capitalizeFirst(types[x])};
 
           retVal.push(item);
         }
@@ -70,7 +74,7 @@ const getCurrentStatusBreakdown = (quotes) => {
     for (var x = 0; x < statii.length; x++) {
       var statusQuotes = quotes.filter((quote) => quote.status == statii[x]);
       // retVal[statii[x]] = statusQuotes.length;
-      var item = {'arg': statii[x],
+      var item = {'arg': capitalizeFirst(statii[x]),
                   'val': statusQuotes.length};
       retVal.push(item);
     }
