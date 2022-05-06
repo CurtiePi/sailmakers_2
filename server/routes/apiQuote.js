@@ -23,6 +23,7 @@ apiQuoteRouter.get('/', routeController.getQuoteList);
 apiQuoteRouter.get('/:id', routeController.getQuoteById);
 apiQuoteRouter.get('/customer/:cid', routeController.getQuotesByCustomer);
 
+apiQuoteRouter.post('/search', routeController.findQuotes);
 apiQuoteRouter.post('/create', routeController.createQuote);
 apiQuoteRouter.post('/update', routeController.updateQuote);
 apiQuoteRouter.post('/delete', routeController.deleteQuote, printpress.removeQuoteDoc, (req, res, next) => {

@@ -58,6 +58,23 @@ module.exports = {
     },
 
     /**
+     * Find specific customers based on criteria
+     *
+     */
+    findCustomers: async (criteria) => {
+        if (criteria._id) {
+            criteria._id = mongoose.Types.ObjectId(criteria._id);
+        }
+
+        try {
+            let customers = await Customer.find(criteria);
+            return customers;
+        }
+        catch (err) {
+            console.log('Received an error finding customer');
+        }
+    },
+    /**
      * Update specific customer
      *
      */
@@ -190,6 +207,25 @@ module.exports = {
         }
         catch(err) {
             console.log('Received an error deleting quote');
+        }
+    },
+    /**
+     * Find specific quotes by crtiteria
+     *
+     */
+    findQuotes: async (criteria, update ) => {
+        if (criteria._id) {
+            criteria._id = mongoose.Types.ObjectId(criteria._id);
+        }
+
+        try {
+            let quotes = await Quote.find(criteria)
+                                    .sort({createAt: -1})
+                                    .populate('customer')
+            return quotes;
+        }
+        catch (err) {
+            console.log(`Received an error searching quotes ${err}`);
         }
     },
     /**

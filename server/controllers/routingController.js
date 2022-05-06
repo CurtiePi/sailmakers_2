@@ -27,6 +27,17 @@ module.exports = {
             });
         }
     },
+    findCustomers: async (req, res, next) => {
+        try {
+            var customers = await dataAccess.findCustomers(req.body.criteria);
+            res.status(200).json(customers);
+        }
+        catch(err) {
+            return res.status(500).json({
+                message: `Error searching for customers ${err}` 
+            });
+        }
+    },
     createCustomer: async (req, res, next) => {
         try{
             var customer = await dataAccess.createCustomer(req.body);
@@ -112,6 +123,17 @@ module.exports = {
         catch(err) {
             return res.status(500).json({
                 message: `Error creating quote ${err}`
+            });
+        }
+    },
+    findQuotes: async (req, res, next) => {
+        try{
+            var quotes = await dataAccess.findQuotes(req.body.criteria);
+            res.status(200).json(quotes);
+        }
+        catch(err) {
+            return res.status(500).json({
+                message: `Error searching quotes ${err}`
             });
         }
     },
