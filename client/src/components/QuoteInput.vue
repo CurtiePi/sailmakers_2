@@ -426,7 +426,6 @@ export default {
         for (var key in this.quoteFields) {
           let value = this.quote[key]
           if (key == 'due_date') {
-            console.log(`Due Date value is: ${value}`)
             value = new Date(value)
           }
           this.quoteFields[key] = value
@@ -447,7 +446,13 @@ export default {
       await this.$nextTick()
       
       Object.keys(this.$refs).forEach ( key => {
-        this.$refs[key].style.height = (this.$refs[key].scrollHeight) + "px"
+        var scrollHeight = this.$refs[key].scrollHeight
+        if (scrollHeight == 0) {
+          var factor = 25 * Math.max(1, Math.ceil(this.$refs[key].value.length / 85))
+          this.$refs[key].style.height =  `${factor}px`
+        } else {
+          this.$refs[key].style.height = (this.$refs[key].scrollHeight) + "px"
+        }
       })
     },
     clearInputs () {
@@ -461,8 +466,6 @@ export default {
       this.customer = JSON.parse(this.$route.params.create_payload)
     } else if (this.edit_payload) {
       this.quote = JSON.parse(this.$route.params.edit_payload)
-      console.log("Editing the quote")
-      console.log(this.quote)
       this.customer = this.quote.customer
       this.isEditing = true
     }
