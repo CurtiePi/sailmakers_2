@@ -338,9 +338,9 @@ export default {
     cancel () {
       if (this.isEditing) {
         let payload = JSON.stringify(this.quote)
-        this.$router.push({name: 'QuoteDisplay', params: { 'payload': payload }})
+        this.$router.replace({name: 'QuoteDisplay', params: { 'payload': payload }})
       } else {
-        this.$router.push({name: 'Customers'})
+        this.$router.replace({name: 'Customers'})
       }
     },
     checkoutput () {
@@ -384,7 +384,7 @@ export default {
         this.clearInputs()
         
         let quote_payload = JSON.stringify(this.quote)
-        this.$router.push({ name: 'QuoteDisplay', params: { 'payload': quote_payload } })
+        this.$router.replace({ name: 'QuoteDisplay', params: { 'payload': quote_payload } })
       } else {
         var message = 'No values have been changed!\nChange a value before updating or Cancel'
         let options = {
@@ -406,7 +406,7 @@ export default {
 
       await AuthenticationService.quoteCreate(payload)
       this.clearInputs()
-      this.$router.push({ name: 'Quotes' })
+      this.$router.replace({ name: 'Quotes' })
     },
     hasValue (value) {
       return value != null &&

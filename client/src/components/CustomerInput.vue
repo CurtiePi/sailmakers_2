@@ -208,9 +208,9 @@ export default {
     },
     cancel () {
       if (this.isEditing) {
-        this.$router.push({name: 'CustomerProfile', params: {'payload': JSON.stringify(this.customer)}})
+        this.$router.replace({name: 'CustomerProfile', params: {'payload': JSON.stringify(this.customer)}})
       } else {
-        this.$router.push({name: 'Customers'})
+        this.$router.replace({name: 'Customers'})
       }
     },
     checkoutput () {
@@ -260,7 +260,7 @@ export default {
         var response = await AuthenticationService.customerUpdate(payload)
         this.customer = response.data
         this.clearInputs()
-        this.$router.push({ name: 'CustomerProfile', params: {'payload': JSON.stringify(this.customer)} })
+        this.$router.replace({ name: 'CustomerProfile', params: {'payload': JSON.stringify(this.customer)} })
       } else {
         var message = 'No values have been changed!\nChange a value before updating or Cancel'
         let options = {
@@ -295,9 +295,9 @@ export default {
       var response = await AuthenticationService.customerCreate(payload)
       var customer = response.data
       if (this.singleOp) {
-        this.$router.push({ name: 'Customers' })
+        this.$router.replace({ name: 'Customers' })
       } else {
-        this.$router.push({ name: 'QuoteCreate', params: {'create_payload': JSON.stringify(customer)} })
+        this.$router.replace({ name: 'QuoteCreate', params: {'create_payload': JSON.stringify(customer)} })
       }
     },
     hasValue (value) {

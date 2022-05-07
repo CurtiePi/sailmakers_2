@@ -189,7 +189,7 @@ export default {
   methods: {
     timeToEdit () {
       let payload = JSON.stringify(this.quote)
-      this.$router.push({ name: 'QuoteEdit', params: { 'edit_payload': payload } })
+      this.$router.replace({ name: 'QuoteEdit', params: { 'edit_payload': payload } })
     },
     toggleCustomerInfo () {
       this.customerHidden = !this.customerHidden
@@ -255,9 +255,9 @@ export default {
       let regex = new RegExp(`${this.customer.lname}_${this.customer.fname}.+\\d{4}-\\d{1,2}-\\d{1,2}.pdf`)
 
       if (regex.test(filename)) {
-        this.$router.push({ name: 'CreateMessage', params: { 'attachment': filename, 'targets': this.salesRecipients } })
+        this.$router.replace({ name: 'CreateMessage', params: { 'attachment': filename, 'targets': this.salesRecipients } })
       } else {
-        this.$router.push({ name: 'CreateMessage', params: { 'attachment': filename, 'targets': [this.quote.customer.email] } })
+        this.$router.replace({ name: 'CreateMessage', params: { 'attachment': filename, 'targets': [this.quote.customer.email] } })
       }
     },
     async deleteDocument (filename) {
@@ -345,10 +345,10 @@ export default {
     },
     goBack () {
       if (['Quotes', 'Customers', 'StaffList'].includes(this.callerName)) {
-        this.$router.push({name: this.callerName})
+        this.$router.replace({name: this.callerName})
       } else {
         let payload = JSON.stringify(this.customer)
-        this.$router.push({ name: this.callerName[0], params: { 'payload': payload, 'caller': this.callerName.splice(1) } })
+        this.$router.replace({ name: this.callerName[0], params: { 'payload': payload, 'caller': this.callerName.splice(1) } })
       }
     }
   },

@@ -187,9 +187,9 @@ export default {
     },
     viewQuotes: function (customer) {
       if (customer.quotes.length === 1) {
-        this.$router.push({ name: 'QuoteDisplay', params: { 'payload': JSON.stringify(customer.quotes[0]), caller: 'Customers' } })
+        this.$router.replace({ name: 'QuoteDisplay', params: { 'payload': JSON.stringify(customer.quotes[0]), caller: 'Customers' } })
       } else {
-        this.$router.push({ name: 'CustomerQuotes', params: { 'payload': JSON.stringify(customer) } })
+        this.$router.replace({ name: 'CustomerQuotes', params: { 'payload': JSON.stringify(customer) } })
       }
     },
     temporalSort: function (a, b) {

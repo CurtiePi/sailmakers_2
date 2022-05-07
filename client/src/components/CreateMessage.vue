@@ -116,7 +116,7 @@ export default {
 
         let response = await AuthenticationService.sendEmail(payload)
         if (response.status === 200) {
-          this.$router.push({ name: 'Customers' })
+          this.$router.replace({ name: 'Customers' })
         }
       } else {
         this.errorMsg = 'Please write your message and subject before trying to email your message!'
@@ -126,7 +126,7 @@ export default {
       if (this.message.body === null || this.message.subject === null) {
         this.errorMsg = 'You must have a subject and a message to send to proceed!'
       } else {
-        this.$router.push({ name: 'SelectCustomers', params: { 'payload': this.message } })
+        this.$router.replace({ name: 'SelectCustomers', params: { 'payload': this.message } })
       }
     },
     getAttachment: function () {
@@ -151,9 +151,9 @@ export default {
     },
     cancelEmail: function () {
       if (['Quotes', 'Customers', 'StaffList'].includes(this.callerName)) {
-        this.$router.push({ name: this.callerName })
+        this.$router.replace({ name: this.callerName })
       } else {
-        this.$router.push({ name: this.callerName[0], params: { 'payload': JSON.stringify(this.callback_data), 'caller': this.callerName.splice(1) } })
+        this.$router.replace({ name: this.callerName[0], params: { 'payload': JSON.stringify(this.callback_data), 'caller': this.callerName.splice(1) } })
       }
     }
   },

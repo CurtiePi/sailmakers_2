@@ -3,7 +3,7 @@ Vue.config.ignoredElements = [/^ion-/]
 <template>
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
     <div class="container-fluid">
-      <router-link class="navbar-brand mr-auto" :to="{ name: 'Home' }"><img src="img/icons/sailing_logo.png" height="40" width="41" alt="Sailmakers"/></router-link>
+      <router-link class="navbar-brand mr-auto" :to="{ name: 'Home' }" replace><img src="img/icons/sailing_logo.png" height="40" width="41" alt="Sailmakers"/></router-link>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
                 <span class="navbar-toggler-icon"></span>
       </button>
@@ -27,6 +27,7 @@ Vue.config.ignoredElements = [/^ion-/]
                 <router-link class="text-decoration-none" v-if="subNavLink.param"
                     :to="{name: subNavLink.name, params: {'atomic': subNavLink.param.value } }"
                     :style="{color: '#FFF'}"
+                    replace
                 >
                   <i :class="subNavLink.icon" />
                     {{ subNavLink.text }}
@@ -34,6 +35,7 @@ Vue.config.ignoredElements = [/^ion-/]
                 <router-link class="text-decoration-none" v-else
                     :to="{ name: subNavLink.name }"
                     :style="{color: '#FFF'}"
+                    replace
                 >
                   <i :class="subNavLink.icon" />
                     {{ subNavLink.text }}
