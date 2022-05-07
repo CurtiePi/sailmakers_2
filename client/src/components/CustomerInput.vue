@@ -208,7 +208,7 @@ export default {
     },
     cancel () {
       if (this.isEditing) {
-        this.$router.push({name: 'CustomerProfile', params: {'payload': this.customer}})
+        this.$router.push({name: 'CustomerProfile', params: {'payload': JSON.stringify(this.customer)}})
       } else {
         this.$router.push({name: 'Customers'})
       }

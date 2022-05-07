@@ -172,7 +172,7 @@ export default {
         this.$router.replace({name: this.callerName})
       } else {
         let payload = JSON.stringify(this.customer)
-        this.$router.replace({ name: this.callerName[0], params: { 'payload': payload, 'caller': this.callerName.splice(1) } })
+        this.$router.replace({ name: this.callerName[0], params: { 'payload': JSON.stringify(payload), 'caller': this.callerName.splice(1) } })
       }
     }
   },

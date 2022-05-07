@@ -203,7 +203,7 @@ export default {
     },
     viewQuote (quoteObj) {
       console.log(quoteObj)
-      this.$router.replace({ name: 'QuoteDisplay', params: { 'payload': JSON.stringify(quoteObj), 'caller': 'Quotes' } })
+      this.$router.push({ name: 'QuoteDisplay', params: { 'payload': JSON.stringify(quoteObj), 'caller': 'Quotes' } })
     },
     temporalSort (a, b) {
       return (a.createdAt < b.createdAt) ? 1 : (a.createdAt > b.createdAt) ? -1 : 0

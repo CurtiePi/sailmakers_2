@@ -116,7 +116,7 @@ export default {
 
         let response = await AuthenticationService.sendEmail(payload)
         if (response.status === 200) {
-          this.$router.replace({ name: 'Customers' })
+          this.$router.push({ name: 'Customers' })
         }
       } else {
         this.errorMsg = 'Please write your message and subject before trying to email your message!'
@@ -151,9 +151,9 @@ export default {
     },
     cancelEmail: function () {
       if (['Quotes', 'Customers', 'StaffList'].includes(this.callerName)) {
-        this.$router.replace({ name: this.callerName })
+        this.$router.push({ name: this.callerName })
       } else {
-        this.$router.replace({ name: this.callerName[0], params: { 'payload': this.callback_data, 'caller': this.callerName.splice(1) } })
+        this.$router.push({ name: this.callerName[0], params: { 'payload': JSON.stringify(this.callback_data), 'caller': this.callerName.splice(1) } })
       }
     }
   },

@@ -212,7 +212,7 @@ export default {
       if (customerList.length == 0) {
         this.showErrorMessage('There are no new customers this month!')
       } else {
-        this.$router.replace({ name: 'Customers', params: { 'payload': JSON.stringify(customerList), caller: 'Home' } })
+        this.$router.push({ name: 'Customers', params: { 'payload': JSON.stringify(customerList), caller: 'Home' } })
       }
       
     },
@@ -223,7 +223,7 @@ export default {
       if (quoteList.length == 0) {
         this.showErrorMessage('There are no quotes to show that have the ready status!')
       } else {
-        this.$router.replace({ name: 'Quotes', params: { 'payload': JSON.stringify(quoteList), caller: 'Home' } })
+        this.$router.push({ name: 'Quotes', params: { 'payload': JSON.stringify(quoteList), caller: 'Home' } })
       }
     },
     showErrorMessage(message) {
