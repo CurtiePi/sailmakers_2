@@ -53,7 +53,6 @@ const getTypeBreakdown = (quotes) => {
                     'val': typeQuotes.length,
                     'parentID': ''});
 
-        console.log(monthQCount);
         for (var y=0; y < monthQCount.length; y++) {
           var data = monthQCount[y]
           var item = {'arg': data.arg,
