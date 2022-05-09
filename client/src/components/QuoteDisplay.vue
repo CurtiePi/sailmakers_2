@@ -101,10 +101,8 @@
         <p class="label-clr">Document(s)</p>
         <ul>
           <li class="med-print" v-for= "(doc, index) in quote.doc_path" :key="index">
-              <span :style="{'margin-right': 35 + '%'}">
-                <router-link :to="{ name: 'QuoteViewPDF' , params: {'payload': JSON.stringify(quote), 'caller': ['QuoteDisplay', callerName], 'filename': doc} }">
-                  {{ doc }}
-                </router-link>
+              <span @click="showPdf(doc)" :style="{'margin-right': 35 + '%'}">
+                {{ doc }}
               </span>
               <span>
               <a @click='emailDocument(doc)' :style="{'margin-right': 8+'px'}">
@@ -194,6 +192,11 @@ export default {
     toggleCustomerInfo () {
       this.customerHidden = !this.customerHidden
       this.toggleText = (this.customerHidden) ? 'show' : 'hide'
+    },
+    async showPdf (doc) {
+        var pdfUrl = await AuthenticationService.pdfView(doc)
+        this.$router.replace({ name: 'QuoteViewPDF', params: {'payload': JSON.stringify(this.quote), 'caller': ['QuoteDisplay', this.callerName], 'fileUrl': pdfUrl} })
+
     },
     async getFile (filename) {
       console.log(`Getting ${filename}`)

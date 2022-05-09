@@ -121,7 +121,7 @@ const routes = [
     {
       path: '/quote_display_pdf',
       name: 'QuoteViewPDF',
-      component: () => import('../components/ViewPDF.vue'),
+      component: () => import('../components/QuotePdf.vue'),
       props: true
     }
   ]

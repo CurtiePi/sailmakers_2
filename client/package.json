@@ -17,11 +17,12 @@
     "devextreme-vue": "^21.2.7",
     "fs": "^0.0.1-security",
     "lodash": "^4.17.21",
+    "pdfjs-dist": "^2.13.216",
+    "pdfvuer": "^2.0.1",
     "vue": "^3.2.33",
     "vue-router": "^4.0.14",
     "vue-select-3": "^1.0.1",
     "vue3-datepicker": "^0.3.2",
-    "vue3-pdfjs": "^0.1.6",
     "vuejs-dialog": "^1.4.2",
     "vuex": "^4.0.2"
   },
