@@ -67,7 +67,8 @@ module.exports = {
         }
 
         try {
-            let customers = await Customer.find(criteria);
+            let customers = await Customer.find(criteria)
+                                          .populate('quotes')
             return customers;
         }
         catch (err) {
@@ -213,7 +214,7 @@ module.exports = {
      * Find specific quotes by crtiteria
      *
      */
-    findQuotes: async (criteria, update ) => {
+    findQuotes: async (criteria) => {
         if (criteria._id) {
             criteria._id = mongoose.Types.ObjectId(criteria._id);
         }
