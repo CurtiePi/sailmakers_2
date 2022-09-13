@@ -1,15 +1,26 @@
 import axios from 'axios'
 
+let devIps = ["http://localhost:8080", "http://127.0.0.1:8080", "http://192.168.1.4:8080"];
+let baseurl = "http://127.0.0.1";
+
+if (devIps.includes(window.location.origin)) {
+    console.log("Use http://192.168.1.4:8860");
+    baseurl = "http://192.168.1.4";
+} else {
+    console.log(`Using : ${window.location.origin}`);
+    baseurl = `${window.location.origin}:8860`;
+}
+
 export default () => {
   return { insecure: axios.create({
-    baseURL: 'http://192.168.1.4:8860'
+      baseURL: `${baseurl}:8860`
   }),
 
   secure: axios.create({
-    baseURL: 'https://192.168.1.4:8993',
+    baseURL: `${baseurl}:8993`,
     withCredentials: true
   }),
 
-  pdfUrl: 'http://192.168.1.4:8860/pdf/'
+  pdfUrl: `${baseurl}:8860/pdf/`
   }
 }
