@@ -15,6 +15,7 @@
     "core-js": "^3.8.3",
     "devextreme": "^21.2.7",
     "devextreme-vue": "^21.2.7",
+    "dotenv": "^16.0.2",
     "fs": "^0.0.1-security",
     "lodash": "^4.17.21",
     "pdfjs-dist": "^2.13.216",
