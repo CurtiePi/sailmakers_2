@@ -57,14 +57,16 @@ amqpConnection.connect('amqp://localhost')
 console.log(`Database: ${conn_str}`)
 
 var smapp = express();
-smapp.use(cors({credentials: true, origin: 'http://192.168.1.4:8080'}));
+//smapp.use(cors({credentials: true, origin: 'http://192.168.1.4:8080'}));
+smapp.use(cors({credentials: true, origin: `${config.app.host}:8080`}));
 smapp.use(cookieParser());
 
 smapp.use(bodyParser.json());
 smapp.use(bodyParser.urlencoded({ extended: true }));
 smapp.use(passport.initialize());
-// **** UNCOMMENT NEXT LINE **** //
-// smapp.use(express.static(path.join(__dirname, './client/dist')));
+if (config.environment === 'production') {
+    smapp.use(express.static(path.join(__dirname, './client/dist')));
+}
 smapp.use('images', express.static(path.join(__dirname, 'public/images')));
 smapp.use('/pdf', express.static('public/files/pdf'))
 smapp.disable('x-powered-by');
@@ -102,17 +104,10 @@ task_1 = cron.schedule('0 1 */14 * *', async () =>  {
 
 task_1.stop();
 task_1.start();
-/*
- * Include the RabbitMQ channel in requests to send an email
- *
 
-smapp.use('/api/email',(req, res, next) => {
-    req.channel = channel;
-    next();
-    }, emailRouter);
-*/
-// **** UNCOMMENT NEXT LINE **** //
-// smapp.use('/', express.static(path.join(__dirname, './client/index.html')));
+if (config.environment === 'production') {
+    smapp.use('/', express.static(path.join(__dirname, './client/index.html')));
+}
 
 smapp.use(function(req, res, next) {
     var err = new Error('Not Found');
