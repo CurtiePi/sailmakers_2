@@ -161,7 +161,7 @@ module.exports = {
         }
     },
     addQuoteDoc: async (req, res, next) => {
-        var filename = req.attachment;
+        var filename = req.pdf_filename;
         var quote = req.body.payload;
 
         try{

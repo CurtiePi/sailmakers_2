@@ -235,46 +235,17 @@ const writeQuoteDoc = async (req, res, next) => {
     // Insert the final page number
     page.drawText(`${pageNum}`, {x: page.getWidth() / 2, y: 10, size: 12, font: boldObliqueFont, color: rgb(0, 0, 0)});
 
-    // Create the file.
+    // Create the filename.
     var filedate = currDate(quote.createdAt);
     var quoteStr = (quote.quote_type.length > 1) ? 'customer_request' : `${quote.quote_type[0].replace(' ', '_')}_request`;
 
-    const s3 = new AWS.S3({
-        accessKeyId: config.aws.id,
-        secretAccessKey: config.aws.key
-    });
 
     let filename = `${quote.customer.lname}_${quote.customer.fname}_${quoteStr}_${filedate}.pdf`;
     filename = filename.replace(/[\(\)\&\']+/g,'_').replace(/__+/g, '_').replace(' ', '_');
-    var filepath = `./public/files/pdf/${filename}`;
-    fs.writeFileSync(filepath, await doc.save());
 
-    let filecontent = fs.readFileSync(filepath);
+    req.pdf_filename = filename;
+    req.pdf_bytes = await doc.saveAsBase64();
 
-    const params = {
-        Bucket: config.aws.bucket,
-        Key: `pdfs/${filename}`,
-        Body: filecontent
-    };
-
-    console.log(params);
-
-    s3.upload(params, (err, data) => {
-        if (err) {
-            console.log(`Error: ${err}`);
-        }
-        console.log(`File uploaded successfully. ${data.Location}`);
-    });
-
-    fs.unlink(filepath, function(err) {
-        if(err) {
-            console.log(err);
-        } else {
-            console.log(`${filepath} successfully deleted`);
-        }
-    });
-    
-    req.attachment = filename;
     next();
 }
 

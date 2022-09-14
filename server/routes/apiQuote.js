@@ -3,6 +3,7 @@ const routeController   = require('../controllers/routingController');
 const multer            = require('multer');
 const printpress        = require('../middleware/guttenburg.js');
 const lycanthrope       = require('../middleware/modifier.js');
+const bucketmaster      = require('../middleware/s3Interface.js');
 const apiQuoteRouter    = express.Router();
 
 const upload = multer({
@@ -29,7 +30,7 @@ apiQuoteRouter.post('/update', routeController.updateQuote);
 apiQuoteRouter.post('/delete', routeController.deleteQuote, printpress.removeQuoteDoc, (req, res, next) => {
     res.status(200).json({message: 'ok'});
 });
-apiQuoteRouter.post('/print', printpress.writeQuoteDoc, routeController.addQuoteDoc);
+apiQuoteRouter.post('/print', printpress.writeQuoteDoc, bucketmaster.saveToS3, routeController.addQuoteDoc);
 apiQuoteRouter.post('/modify', lycanthrope.modifyQuote, (req, res, next) => {
     var totalPrice = req.totalprice;
     res.status(200).json({message: 'Quote has been modified.', quote_price: totalPrice});
