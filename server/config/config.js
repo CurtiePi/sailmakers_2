@@ -42,38 +42,48 @@ const prod = {
     environment: 'production',
     app: {
         host: host_ip,
-        port: parseInt(process.env.DEV_APP_PORT) || 3000,
-        sec_port: parseInt(process.env.DEV_APP_SEC_PORT) || 3443
+        port: parseInt(process.env.APP_PORT) || 3000,
+        sec_port: parseInt(process.env.APP_SEC_PORT) || 3443
     },
     db: {
-        host: process.env.DEV_DB_HOST || 'localhost',
-        port: parseInt(process.env.DEV_DB_PORT) || 27017,
-        name: process.env.DEV_DB_NAME || 'sailmakers_dev'
+        host: process.env.DB_HOST || 'localhost',
+        port: parseInt(process.env.DB_PORT) || 27017,
+        name: process.env.DB_NAME || 'sailmakers_dev'
     },
     mail: {
         office: 'dave@uksailmakers-ne.com',
         access: 'uksail88DM$'
     },
-    secretKey: 'star-trek-deep-space-nine-dsn'
+    aws: {
+        id: process.env.AWS_ID,
+        key: process.env.AWS_KEY,
+        bucket: 'sailmakerspdf'
+    },
+    secretKey: 'star-trek-deep-space-nine-dsn',
 };
 
 const dev = {
     environment: 'development',
     app: {
         host: host_ip,
-        port: parseInt(process.env.DEV_APP_PORT) || 3000,
-        sec_port: parseInt(process.env.DEV_APP_SEC_PORT) || 3443
+        port: parseInt(process.env.APP_PORT) || 3000,
+        sec_port: parseInt(process.env.APP_SEC_PORT) || 3443
     },
     db: {
-        host: process.env.DEV_DB_HOST || 'localhost',
-        port: parseInt(process.env.DEV_DB_PORT) || 27017,
-        name: process.env.DEV_DB_NAME || 'sailmakers_dev'
+        host: process.env.DB_HOST || 'localhost',
+        port: parseInt(process.env.DB_PORT) || 27017,
+        name: process.env.DB_NAME || 'sailmakers_dev'
     },
     mail: {
         office: 'dave@uksailmakers-ne.com',
         access: 'uksail88DM$'
     },
-    secretKey: 'star-trek-deep-space-nine-dsn'
+    aws: {
+        id: process.env.AWS_ID,
+        key: process.env.AWS_KEY,
+        bucket: 'sailmakerspdfdev'
+    },
+    secretKey: 'star-trek-deep-space-nine-dsn',
 };
 
 const config = {
