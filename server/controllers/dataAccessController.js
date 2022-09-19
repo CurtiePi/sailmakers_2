@@ -133,7 +133,8 @@ module.exports = {
         try {
             let quotes = await Quote.find()
                                     .sort({createAt: -1})
-                                    .populate('customer')
+                                    .populate({path: 'salesperson', model: 'Salesperson'})
+                                    .populate({path: 'customer', model: 'Customer'});
             return quotes;
         }
         catch(err) {
@@ -143,7 +144,8 @@ module.exports = {
     getQuoteById: async (id) => {
         try {
             var quote_id = mongoose.Types.ObjectId(id);
-            let quote = await Quote.findById({_id: quote_id});
+            let quote = await Quote.findById({_id: quote_id})
+                                   .populate('salesperson');
             return quote;
         }
         catch(err) {
@@ -223,6 +225,7 @@ module.exports = {
             let quotes = await Quote.find(criteria)
                                     .sort({createAt: -1})
                                     .populate('customer')
+                                    .populate('salesperson');
             return quotes;
         }
         catch (err) {

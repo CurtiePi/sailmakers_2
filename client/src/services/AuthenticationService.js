@@ -53,9 +53,6 @@ export default {
   createPort (payload) {
     return Api().insecure.post('/api/port/create', payload)
   },
-  getPrice (payload) {
-    return Api().insecure.post('/api/quote/price', payload)
-  },
   getSalespeople () {
     return Api().insecure.get('/api/staff')
   },
@@ -71,8 +68,12 @@ export default {
   portList () {
     return Api().insecure.get('/api/port')
   },
+  //pdfView (filename) {
+  //  return `${Api().pdfUrl}${filename}`
+  //},
   pdfView (filename) {
-    return `${Api().pdfUrl}${filename}`
+    let url = `/api/quote/viewPdf/${filename}`
+    return Api().insecure.get(url)
   },
   uploadFile (payload) {
     return Api().insecure.post('api/utils/upload', payload)

@@ -202,7 +202,6 @@ export default {
       this.filterStatusType()
     },
     viewQuote (quoteObj) {
-      console.log(quoteObj)
       this.$router.replace({ name: 'QuoteDisplay', params: { 'payload': JSON.stringify(quoteObj), 'caller': 'Quotes' } })
     },
     temporalSort (a, b) {

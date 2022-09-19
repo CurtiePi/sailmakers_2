@@ -194,8 +194,7 @@ export default {
       this.toggleText = (this.customerHidden) ? 'show' : 'hide'
     },
     async showPdf (doc) {
-        var pdfUrl = await AuthenticationService.pdfView(doc)
-        this.$router.replace({ name: 'QuoteViewPDF', params: {'payload': JSON.stringify(this.quote), 'caller': ['QuoteDisplay', this.callerName], 'fileUrl': pdfUrl} })
+        this.$router.replace({ name: 'QuoteViewPDF', params: {'payload': JSON.stringify(this.quote), 'caller': ['QuoteDisplay', this.callerName], 'filename': doc } })
 
     },
     async getFile (filename) {
@@ -210,6 +209,7 @@ export default {
       link.remove()
     },
     async printQuote () {
+      
       let payload = {
         'payload': this.quote
       }
@@ -217,6 +217,7 @@ export default {
       if (response.status === 200) {
         this.quote = response.data
       }
+     
     },
     async deleteQuote () {
       let quote = this.quote

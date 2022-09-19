@@ -1,5 +1,7 @@
 const AWS                                       = require('aws-sdk');
 const config                                    = require('../config/config');
+const fs                                        = require('fs');
+const path                                      = require('path');
 const s3 = new AWS.S3({
     accessKeyId: config.aws.id,
     secretAccessKey: config.aws.key
@@ -13,7 +15,8 @@ saveToS3 = (req, res, next) => {
     const params = {
         Bucket: config.aws.bucket,
         Key: `pdfs/${filename}`,
-        Body: filecontent
+        Body: filecontent,
+        contentType: 'application/pdf'
     };
 
     s3.upload(params, (err, data) => {
@@ -26,7 +29,32 @@ saveToS3 = (req, res, next) => {
     next();
 }
 
+getFromS3 = async (req, res, next) => {
+
+    let filename = req.params.filename;
+
+    const params = {
+        Bucket: config.aws.bucket,
+        Key: `pdfs/${filename}`
+    }
+    try {
+        const data = await s3
+            .getObject(params)
+            .promise();
+
+        const byte_string = Buffer.from(data.Body).toString('base64');
+        res.attachment(filename);
+        res.type(data.ContentType);
+        res.send(byte_string);
+
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+
 
 module.exports = {
-    saveToS3
+    saveToS3,
+    getFromS3,
 }
