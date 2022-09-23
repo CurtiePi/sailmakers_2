@@ -199,10 +199,12 @@ export default {
     },
     async getFile (filename) {
       console.log(`Getting ${filename}`)
-      var response = await AuthenticationService.downloadFile(filename)
-      const downloadUrl = window.URL.createObjectURL(new Blob([response.data]))
+      let response = await AuthenticationService.downloadFile(filename)
+      
+      const uriContent = window.URL.createObjectURL(new Blob([response.data]))
+
       const link = document.createElement('a')
-      link.href = downloadUrl
+      link.setAttribute('href', uriContent)
       link.setAttribute('download', filename) // any other extension
       document.body.appendChild(link)
       link.click()

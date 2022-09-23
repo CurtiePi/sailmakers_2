@@ -42,9 +42,10 @@ getFromS3 = async (req, res, next) => {
             .getObject(params)
             .promise();
 
-        const byte_string = Buffer.from(data.Body).toString('base64');
-        res.attachment(filename);
-        res.type(data.ContentType);
+        // const byte_string = Buffer.from(data.Body).toString('base64');
+        const byte_string = data.Body.toString('base64');
+
+        //res.attachment(filename);
         res.send(byte_string);
 
     } catch (err) {
@@ -52,9 +53,29 @@ getFromS3 = async (req, res, next) => {
     }
 }
 
+downloadFromS3 = async (req, res, next) => {
 
+    let filename = req.params.filename;
+
+    const params = {
+        Bucket: config.aws.bucket,
+        Key: `pdfs/${filename}`
+    }
+    try {
+            const data = await s3
+            .getObject(params)
+            .promise();
+
+        res.send(data.Body);
+        res.end();
+
+    } catch (err) {
+        console.log(err);
+    }
+}
 
 module.exports = {
     saveToS3,
     getFromS3,
+    downloadFromS3,
 }

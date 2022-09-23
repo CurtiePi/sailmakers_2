@@ -57,7 +57,7 @@ const prod = {
     aws: {
         id: process.env.AWS_ID,
         key: process.env.AWS_KEY,
-        bucket: 'sailmakerspdf'
+        bucket: 'sailmakers'
     },
     secretKey: 'star-trek-deep-space-nine-dsn',
 };
@@ -81,7 +81,7 @@ const dev = {
     aws: {
         id: process.env.AWS_ID,
         key: process.env.AWS_KEY,
-        bucket: 'sailmakerspdfdev'
+        bucket: 'sailmakersdev'
     },
     secretKey: 'star-trek-deep-space-nine-dsn',
 };

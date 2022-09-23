@@ -47,7 +47,6 @@ export default {
   },
   methods: {
     getPdfContent: async function (filename) {
-      console.log(filename)
       var response = await AuthenticationService.pdfView(filename)
       // let blob = new Blob([response.data], {type: 'application/pdf'})
       // this.pdfBytes = `data:application/pdf;base64,${btoa(blob)}`

@@ -1,6 +1,7 @@
 const express               = require('express');
 const uploadFilter          = require('../middleware/uploadfilter.js');
 const marshaller            = require('../middleware/dashboard.js');
+const s3                    = require('../middleware/s3Interface.js');
 const routeController       = require('../controllers/routingController');
 const multer                = require('multer');
 const apiUtilsRouter        = express.Router();
@@ -39,11 +40,14 @@ apiUtilsRouter.post('/attach', attachment.single('attachment'), uploadFilter.ren
       res.status(200).json({ 'attachment': req.file.originalName });
 });
 
-apiUtilsRouter.get('/download/:name', (req, res, next) => {
-    var filepath = `./public/files/pdf/${req.params.name}`;
-    res.download(filepath);
-});
+//apiUtilsRouter.get('/download/:name', (req, res, next) => {
+//    var filepath = `./public/files/pdf/${req.params.name}`;
+//    res.download(filepath);
+//});
 
+//apiUtilsRouter.get('/download/:filename', s3.getFromS3);
+apiUtilsRouter.get('/download/:filename', s3.downloadFromS3);
+    
 apiUtilsRouter.get('/dashboard', routeController.getDashboardRawData, marshaller.marshalDashboardData, (req, res, next) => {
     res.status(200).json({ 'msg': 'You have the power', 'data': req.marshalledData });
 });
