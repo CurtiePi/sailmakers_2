@@ -40,12 +40,6 @@ apiUtilsRouter.post('/attach', attachment.single('attachment'), uploadFilter.ren
       res.status(200).json({ 'attachment': req.file.originalName });
 });
 
-//apiUtilsRouter.get('/download/:name', (req, res, next) => {
-//    var filepath = `./public/files/pdf/${req.params.name}`;
-//    res.download(filepath);
-//});
-
-//apiUtilsRouter.get('/download/:filename', s3.getFromS3);
 apiUtilsRouter.get('/download/:filename', s3.downloadFromS3);
     
 apiUtilsRouter.get('/dashboard', routeController.getDashboardRawData, marshaller.marshalDashboardData, (req, res, next) => {

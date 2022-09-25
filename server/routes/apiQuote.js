@@ -33,7 +33,7 @@ apiQuoteRouter.post('/delete', routeController.deleteQuote, printpress.removeQuo
 apiQuoteRouter.post('/print', printpress.writeQuoteDoc, bucketmaster.saveToS3, routeController.addQuoteDoc);
 
 apiQuoteRouter.get('/viewPdf/:filename', bucketmaster.getFromS3, (req, res, next) => {
-    res.send(req.pdf_bytes);
+    res.send(req.pdf_base64);
 });
 
 apiQuoteRouter.post('/removePdf', printpress.removeQuoteDoc, routeController.updateQuote);

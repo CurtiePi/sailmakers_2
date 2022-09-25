@@ -42,15 +42,15 @@ getFromS3 = async (req, res, next) => {
             .getObject(params)
             .promise();
 
-        // const byte_string = Buffer.from(data.Body).toString('base64');
         const byte_string = data.Body.toString('base64');
 
-        //res.attachment(filename);
-        res.send(byte_string);
+        req.pdf_base64 = (byte_string);
 
     } catch (err) {
         console.log(err);
     }
+
+    next();
 }
 
 downloadFromS3 = async (req, res, next) => {
