@@ -1,8 +1,10 @@
 <template>
 <div id="container">
-  <form class="form-style-7 mt-5">
+<div class="row col-md-12">
+<div class="col-md-7 mt-2">
+  <form class="form-style-7 mt-2">
     <div class="row col-md-12">
-      <div class="col-md-5 mt-5">
+      <div class="col-md-5 mt-2">
         <ul>
           <li>
             <label>Subject</label>
@@ -12,8 +14,8 @@
         </ul>
       </div>
       <div class="col-md-5 offset-md-2 d-inline mt-5">
-        <input type="file" id="myFileInput" @change="addAttachment()" />
-        <button type="button" class="btn btn-primary ms-3 me-2"
+        <input v-if="canAttach"  type="file" id="myFileInput" @change="addAttachment($event)" />
+        <button v-if="canAttach" type="button" class="btn btn-primary ms-3 me-2"
           @click="getAttachment()">
           Attach File
         </button>
@@ -22,7 +24,7 @@
           Send Mail
         </button>
         <button type="button" class="btn btn-danger"
-          @click="cancelEmail()">
+          @click="leavePage()">
           Cancel
         </button>
       </div>
@@ -38,11 +40,22 @@
             </li>
           </ul>
       </div>
-        <div class="col-md-3 mt-4">
-          <span v-if="message.file_attachment">Attachment: {{ message.file_attachment }} </span>
-      </div>
     </div>
   </form>
+</div>
+<div class="col-md-5 mt-5">
+      <div class="col-md-3 mt-4">
+        <span>Attachment:
+          <ul>
+            <li v-for="(attachment, index) in attachments_list" :key="index">
+              {{ attachment }}
+              <span @click="removeAttachment(attachment)" :style="{'font-size': '8px'}">remove</span>
+            </li>
+          </ul>
+        </span>
+      </div>
+</div>
+</div>
      <span class="errorMsg" v-if="errorMsg">{{ errorMsg }}</span>
      <editor
        :api-key="mce_key"
@@ -78,15 +91,19 @@ export default {
       message: {
         subject: null,
         body: null,
-        file_attachment: null
+        attachments: {}
       },
       mce_key: process.env.VUE_APP_MCE_KEY,
       errorMsg: null,
       recipients: null,
       callback_data: null,
       callerName: 'Customers',
-      isBulkEmail: false
+      isBulkEmail: false,
+      canAttach: false,
+      attachments_list: []
     }
+  },
+  computed: {
   },
   methods: {
     adjustTextarea (event) {
@@ -94,13 +111,6 @@ export default {
       target.style.height = "20px"
       target.style.height = (target.scrollHeight) + "px"
     }, 
-    async initializeTextAreaView () {
-      await this.$nextTick()
-      
-      Object.keys(this.$refs).forEach ( key => {
-        this.$refs[key].style.height = (this.$refs[key].scrollHeight) + "px"
-      })
-    },
     sendMessage: async function () {
       if (this.message.subject !== null && this.message.body !== null) {
         var payload = {
@@ -110,13 +120,17 @@ export default {
           'isBulk': this.isBulkEmail
         }
 
-        if (this.message.file_attachment) {
-          payload['attachment'] = this.message.file_attachment
+        if (JSON.stringify(this.message.attachments) !== '{}') {
+          payload['attachments'] = this.message.attachments
         }
 
         let response = await AuthenticationService.sendEmail(payload)
+        console.log(response)
         if (response.status === 200) {
-          this.$router.replace({ name: 'Customers' })
+          this.leavePage()
+        } else {
+          console.log(response.status)
+          console.log(response.message)
         }
       } else {
         this.errorMsg = 'Please write your message and subject before trying to email your message!'
@@ -132,24 +146,37 @@ export default {
     getAttachment: function () {
       document.getElementById('myFileInput').click()
     },
-    addAttachment: async function () {
-      var attachEl = document.getElementById('myFileInput')
-      var filename = attachEl.value.split(/(\\|\/)/g).pop()
+    addAttachment: function (evt) {
+        let self = this;
+        const file = evt.target.files[0]
+        const filename = evt.target.value.split(/(\\|\/)/g).pop()
 
-      var uploadedFile = attachEl.files[0]
-      let formData = new FormData()
-      formData.append('attachment', uploadedFile)
+        // Encode the file using the fileReader API
+        const reader = new FileReader()
+        reader.onloadend = () => {
+          const base64String = reader.result
+                .replace('data:', '')
+                .replace(/^.+,/, '');
 
-      try {
-        var response = await AuthenticationService.addAttachment(formData)
-        if (response.status === 200) {
-          this.message.file_attachment = filename
+          self.message.attachments[filename] = base64String
+          self.attachments_list.push(filename)
+          self.canAttach = self.attachments_list.length === 0
         }
-      } catch (err) {
-        this.errorMsg = 'Error adding attachment!'
-      }
+
+        reader.readAsDataURL(file)
     },
-    cancelEmail: function () {
+    removeAttachment: function (filename) {
+      this.attachments_list = this.attachments_list.filter((elem) => elem !== filename)
+      delete this.message.attachments[filename]
+      this.canAttach = this.attachments_list.length === 0
+    },
+    loadSentAttachment: async function (filename) {
+      var response = await AuthenticationService.pdfView(filename)
+      this.message.attachments[filename] = response.data
+      this.attachments_list = Object.keys(this.message.attachments)
+      this.canAttach = this.attachments_list.length === 0
+    },
+    leavePage: function () {
       if (['Quotes', 'Customers', 'StaffList'].includes(this.callerName)) {
         this.$router.replace({ name: this.callerName })
       } else {
@@ -160,10 +187,11 @@ export default {
   mounted () {
     if (this.targets) {
       this.recipients = this.targets.join(',')
-      // this.initializeTextAreaView()
     }
     if (this.attachment) {
-      this.message.file_attachment = this.attachment
+      this.loadSentAttachment(this.attachment)
+    } else {
+      this.canAttach = true
     }
     if (this.isBulk) {
       this.isBulkEmail = true
