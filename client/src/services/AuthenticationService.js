@@ -68,9 +68,6 @@ export default {
   portList () {
     return Api().insecure.get('/api/port')
   },
-  //pdfView (filename) {
-  //  return `${Api().pdfUrl}${filename}`
-  //},
   pdfView (filename) {
     let url = `/api/quote/viewPdf/${filename}`
     return Api().insecure.get(url)
