@@ -57,12 +57,12 @@ amqpConnection.connect('amqp://localhost')
 console.log(`Database: ${conn_str}`)
 
 var smapp = express();
-//smapp.use(cors({credentials: true, origin: 'http://192.168.1.4:8080'}));
 smapp.use(cors({credentials: true, origin: `${config.app.host}:8080`}));
 smapp.use(cookieParser());
 
-smapp.use(bodyParser.json());
-smapp.use(bodyParser.urlencoded({ extended: true }));
+smapp.use(bodyParser.json({limit: '50mb'}));
+smapp.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+smapp.use(express.json({limit: '50mb'}));
 smapp.use(passport.initialize());
 if (config.environment === 'production') {
     smapp.use(express.static(path.join(__dirname, './client/dist')));
