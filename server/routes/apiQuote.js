@@ -1,13 +1,8 @@
 const express           = require('express');
 const routeController   = require('../controllers/routingController');
-const multer            = require('multer');
 const printpress        = require('../middleware/guttenburg.js');
 const bucketmaster      = require('../middleware/s3Interface.js');
 const apiQuoteRouter    = express.Router();
-
-const upload = multer({
-    dest: './public/files/uploads',
-});
 
 module.exports  = apiQuoteRouter;
 
