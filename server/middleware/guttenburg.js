@@ -228,6 +228,7 @@ const writeQuoteDoc = async (req, res, next) => {
     var filedate = currDate(quote.createdAt);
     var quoteStr = (quote.quote_type.length > 1) ? 'customer_request' : `${quote.quote_type[0].replace(' ', '_')}_request`;
     let filename = `${quote.customer.lname}_${quote.customer.fname}_${quoteStr}_${filedate}.pdf`;
+
     req.pdf_filename = filename.replace(/[\(\)\&\']+/g,'_').replace(/__+/g, '_').replace(' ', '_');
     req.pdf_bytes = doc;
 
