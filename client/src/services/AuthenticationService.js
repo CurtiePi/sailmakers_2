@@ -75,9 +75,6 @@ export default {
   uploadFile (payload) {
     return Api().insecure.post('api/utils/upload', payload)
   },
-  addAttachment (payload) {
-    return Api().insecure.post('api/utils/attach', payload)
-  },
   getDashboard () {
     return Api().insecure.get('api/utils/dashboard')
   },
