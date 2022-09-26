@@ -17,7 +17,7 @@ const renameUpload = (req, res, next) => {
     var new_filename = `${file_path}/${req.file.originalname}`;
 
     fs.rename(filename, new_filename, () => {
-      console.log("\nFile Renamed!\n");
+      console.log(`File Renamed from ${filename} to ${new_filename}!`);
       next();
     })
 }
