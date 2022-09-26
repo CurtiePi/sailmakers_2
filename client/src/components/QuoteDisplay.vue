@@ -127,17 +127,14 @@
           <button v-if="!haveDocs" title="Create PDF" @click="printQuote()">
             <i class="fa fa-file" aria-hidden="true"></i>
           </button>
-          <button v-if="haveFile" title="Upload File" @click="uploadFile">
+          <button title="Upload File" @click="selectFileForUpload()">
             <i class="fa fa-upload" aria-hidden="true"></i>
-          </button>
-          <button v-if="!haveFile" title="Select File For Upload" @click="selectFileForUpload()">
-            <i class="fa fa-folder-open" aria-hidden="true"></i>
           </button>
           <input
             style="display:none;"
             type="file"
             ref="file"
-            @change="onSelect" />
+            @change="uploadFile($event)" />
           <button title="Delete Quote" @click="deleteQuote()">
             <i class="fa fa-trash" aria-hidden="true"></i>
           </button>
@@ -155,7 +152,6 @@ export default {
   props: ['payload', 'caller'],
   data () {
     return {
-      haveFile: false,
       quote: null,
       customer: null,
       salesperson: null,
@@ -291,15 +287,6 @@ export default {
         console.log(err)
       }
     },
-    selectFileForUpload () {
-        console.log("selecting file")
-        this.$refs.file.click()
-    },
-    onSelect () {
-      const file = this.$refs.file.files[0]
-      this.file = file
-      this.haveFile = true;
-    },
     async getSalespeopleToEmail () {
       var response = await AuthenticationService.getEmailSalespeople()
       if (response.status === 200) {
@@ -310,25 +297,48 @@ export default {
         }
       }
     },
-    async uploadFile () {
-      if (this.file.type === 'application/pdf') {
-        const formData = new FormData()
-        formData.append('file', this.file)
-        formData.append('quote_id', this.quote._id)
-        try {
-          var response = await AuthenticationService.uploadFile(formData)
-          if (response.status === 200) {
-            this.quote = response.data
-            this.customer = this.quote.customer
-            this.salesperson = this.quote.salesperson
+    selectFileForUpload () {
+        console.log("selecting file")
+        this.$refs.file.click()
+    },
+    uploadFile (evt) {
+      console.log("Uploading files")
+      const file = evt.target.files[0]
+
+      if (file.type === 'application/pdf') {
+        let self = this;
+        console.log(`File type: ${file.type}`)
+        const filename = evt.target.value.split(/(\\|\/)/g).pop()
+
+        // Encode the file using the fileReader API
+        const reader = new FileReader()
+        reader.onloadend = async () => {
+          const base64String = reader.result
+                .replace('data:', '')
+                .replace(/^.+,/, '');
+
+          const params = {
+            quote_id: self.quote._id,
+            pdf_filename: filename,
+            pdf_bytes: base64String
           }
-        } catch (err) {
-          this.errorMsg = 'Only .pdf files can be uploaded!'
+
+          try {
+            var response = await AuthenticationService.uploadFile(params)
+            if (response.status === 200) {
+              self.quote = response.data
+              self.customer = self.quote.customer
+              self.salesperson = self.quote.salesperson
+            }
+          } catch (err) {
+            self.errorMsg = 'Server has trouble uploading your file!'
+          }
         }
+
+        reader.readAsDataURL(file)
       } else {
-        this.errorMsg = 'Only .pdf files can be uploaded!'
+        self.errorMsg = 'Only .pdf files can be uploaded!'
       }
-      this.haveFile = false
     },
     hasValue (inputField) {
       return inputField.value != null &&

@@ -8,7 +8,7 @@ const s3 = new AWS.S3({
 });
 
 
-saveToS3 = (req, res, next) => {
+saveToS3 = async (req, res, next) => {
 
     let filename = req.pdf_filename;
     let filecontent = req.pdf_bytes;
@@ -16,15 +16,19 @@ saveToS3 = (req, res, next) => {
         Bucket: config.aws.bucket,
         Key: `pdfs/${filename}`,
         Body: filecontent,
-        contentType: 'application/pdf'
+        ContentType: 'application/pdf',
     };
 
-    s3.upload(params, (err, data) => {
-        if (err) {
-            console.log(`Error: ${err}`);
-        }
+    console.log(params);
+
+    try {
+        const data = await s3.upload(params).promise();
+
         console.log(`File uploaded successfully. ${data.Location}`);
-    });
+
+    } catch (error) {
+        console.log(`Error: ${error}`);
+    }
 
     next();
 }
@@ -74,8 +78,35 @@ downloadFromS3 = async (req, res, next) => {
     }
 }
 
+uploadToS3 = async (req, res, next) => {
+
+    let filename = req.body.pdf_filename;
+    const filecontent = Buffer.from(req.body.pdf_bytes, 'base64');
+
+    const params = {
+        Bucket: config.aws.bucket,
+        Key: `pdfs/${filename}`,
+        Body: filecontent,
+        ContentType: 'application/pdf',
+        ContentEncoding: 'base64',
+    };
+
+
+    try {
+        const data = await s3.upload(params).promise();
+
+        console.log(`File uploaded successfully. ${data.Location}`);
+
+    } catch (error) {
+        console.log(`Error: ${error}`);
+    }
+
+    next();
+}
+
 module.exports = {
     saveToS3,
     getFromS3,
     downloadFromS3,
+    uploadToS3,
 }

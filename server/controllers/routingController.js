@@ -176,7 +176,7 @@ module.exports = {
     },
     uploadFile: async (req, res, next) => {
         var quote_id = req.body.quote_id;
-        var filename = req.file.originalname;
+        var filename = req.body.pdf_filename;
 
         try{
             var quote = await dataAccess.addQuoteDoc(quote_id, filename);
