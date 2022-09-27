@@ -18,7 +18,7 @@ export default [
               name: 'CustomerAdd',
               icon: 'fa-solid fa-person-circle-plus',
               param: {
-                name: 'atomic',
+                name: 'singleOp',
                 value: true
               }
             },
@@ -27,7 +27,7 @@ export default [
               name: 'CustomerAdd',
               icon: 'fa-solid fa-file-circle-plus',
               param: {
-                name: 'atomic',
+                name: 'singleOp',
                 value: false
               }
             }
@@ -47,7 +47,7 @@ export default [
               name: 'CustomerAdd',
               icon: 'fa-solid fa-file-circle-plus',
               param: {
-                name: 'atomic',
+                name: 'singleOp',
                 value: false
               }
             }
