@@ -138,6 +138,7 @@
           <button title="Delete Quote" @click="deleteQuote()">
             <i class="fa fa-trash" aria-hidden="true"></i>
           </button>
+          <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
           <button @click="goBack()">Back</button>
         </div>
       </div>
@@ -146,9 +147,11 @@
 </template>
 <script>
 import AuthenticationService from '@/services/AuthenticationService'
+import ConfirmDialogue from '@/components/ConfirmDialogue.vue'
 
 export default {
   name: 'quoteDisplay',
+  components: { ConfirmDialogue },
   props: ['payload', 'caller'],
   data () {
     return {
@@ -194,7 +197,6 @@ export default {
 
     },
     async getFile (filename) {
-      console.log(`Getting ${filename}`)
       let response = await AuthenticationService.downloadFile(filename)
       
       const uriContent = window.URL.createObjectURL(new Blob([response.data]))
@@ -218,40 +220,32 @@ export default {
      
     },
     async deleteQuote () {
-      let quote = this.quote
-      let leavePage = this.goBack
 
-      let message = {
-        title: 'Delete Request',
-        body: `Deleting request will also delete all associated PDFs!<p><strong>This action cannot be undone!Are you sure?</strong></p>`
-      }
+      let name = `${this.quote.customer.fname} ${this.quote.customer.lname}`
 
       let options = {
-        html: true,
-        okText: 'I\'m Sure! Delete!',
-        cancelText: 'Cancel',
-        animation: 'fade',
-        type: 'hard',
+        title: `Delete ${name}'s Request`,
+        okButton: 'I\'m Sure! Delete!',
+        cancelButton: 'Cancel',
+        message: `Deleting ${name}'s request will also delete all of their  associated PDFs!<p><strong>This action cannot be undone!&nbsp;Are you sure?</strong></p>`,
         verification: 'delete'
       }
 
-      this.$dialog
-        .confirm(message, options)
-        .then(async function () {
-          let payload = {
-            'quote': quote
-          }
-          let response = await AuthenticationService.deleteQuote(payload)
+      const ok = await this.$refs.confirmDialogue.show(options)
+      if (ok) {
+        let payload = {
+          'quote': this.quote
+        }
+        let response = await AuthenticationService.deleteQuote(payload)
 
-          if (response.status === 200) {
-            leavePage()
-          } else {
-            console.log(`Response: ${response.message}`)
-          }
-        })
-        .catch(function () {
-          console.log('Clicked on cancel')
-        })
+        if (response.status === 200) {
+          this.goBack()
+        } else {
+          console.log(`Response: ${response.message}`)
+        }
+      } else {
+        console.log('You have chosen not to delete this quote!!')
+      }
     },
     emailDocument (filename) {
       let regex = new RegExp(`${this.customer.lname}_${this.customer.fname}.+\\d{4}-\\d{1,2}-\\d{1,2}.pdf`)
@@ -298,16 +292,13 @@ export default {
       }
     },
     selectFileForUpload () {
-        console.log("selecting file")
         this.$refs.file.click()
     },
     uploadFile (evt) {
-      console.log("Uploading files")
       const file = evt.target.files[0]
 
       if (file.type === 'application/pdf') {
         let self = this;
-        console.log(`File type: ${file.type}`)
         const filename = evt.target.value.split(/(\\|\/)/g).pop()
 
         // Encode the file using the fileReader API
