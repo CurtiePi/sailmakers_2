@@ -143,7 +143,7 @@ import AuthenticationService from '@/services/AuthenticationService'
 
 export default {
   name: 'customerForm',
-  props: [ 'atomic', 'payload' ],
+  props: [ 'singleOp', 'payload' ],
   data () {
     return {
       selectOptions: null,
