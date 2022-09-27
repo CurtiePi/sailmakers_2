@@ -21,15 +21,14 @@ apiQuoteRouter.get('/customer/:cid', routeController.getQuotesByCustomer);
 apiQuoteRouter.post('/search', routeController.findQuotes);
 apiQuoteRouter.post('/create', routeController.createQuote);
 apiQuoteRouter.post('/update', routeController.updateQuote);
-apiQuoteRouter.post('/delete', routeController.deleteQuote, printpress.removeQuoteDoc, (req, res, next) => {
+apiQuoteRouter.post('/delete', routeController.deleteQuote, bucketmaster.removeFromS3, (req, res, next) => {
     res.status(200).json({message: 'ok'});
 });
-
 apiQuoteRouter.post('/print', printpress.writeQuoteDoc, bucketmaster.saveToS3, routeController.addQuoteDoc);
 
 apiQuoteRouter.get('/viewPdf/:filename', bucketmaster.getFromS3, (req, res, next) => {
     res.send(req.pdf_base64);
 });
 
-apiQuoteRouter.post('/removePdf', printpress.removeQuoteDoc, routeController.updateQuote);
+apiQuoteRouter.post('/removePdf', bucketmaster.removeFromS3, routeController.updateQuote);
 
