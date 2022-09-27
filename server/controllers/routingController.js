@@ -62,8 +62,7 @@ module.exports = {
     },
     deleteCustomer: async (req, res, next) => {
         try{
-            var pdf_list = await dataAccess.deleteCustomer(req.body.customer);
-            req.pdf_list = pdf_list;
+            req.pdf_list = await dataAccess.deleteCustomer(req.body.customer);
             next();
         }
         catch(err) {
