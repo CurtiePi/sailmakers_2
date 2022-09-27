@@ -150,8 +150,8 @@ module.exports = {
     },
     deleteQuote: async (req, res, next) => {
         try{
-            var pdf_list = await dataAccess.deleteQuote(req.body.quote);
-            req.pdf_list = pdf_list;
+            req.pdf_list = await dataAccess.deleteQuote(req.body.quote);
+
             next();
         }
         catch(err) {
