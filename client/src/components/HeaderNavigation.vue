@@ -1,5 +1,3 @@
-Vue.config.ignoredElements = [/^ion-/]
-
 <template>
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
     <div class="container-fluid">
@@ -25,7 +23,7 @@ Vue.config.ignoredElements = [/^ion-/]
                 :key="subindex"
               >
                 <router-link class="text-decoration-none" v-if="subNavLink.param"
-                    :to="{name: subNavLink.name, params: {'atomic': subNavLink.param.value } }"
+                    :to="{name: subNavLink.name, params: {'singleOp': subNavLink.param.value } }"
                     :style="{color: '#FFF'}"
                     replace
                 >
