@@ -19,8 +19,6 @@ saveToS3 = async (req, res, next) => {
         ContentType: 'application/pdf',
     };
 
-    console.log(params);
-
     try {
         const data = await s3.upload(params).promise();
 
@@ -104,9 +102,39 @@ uploadToS3 = async (req, res, next) => {
     next();
 }
 
+removeFromS3 = async (req, res, next) => {
+
+    var pdf_list = (req.pdf_list) ? req.pdf_list : req.body.pdf_list;
+
+    let s3_keys = [];
+    for (let idx = 0; idx < pdf_list.length; idx++) {
+        s3_keys.push({ Key: `pdfs/${pdf_list[idx]}`});
+    }
+ 
+    const params = {
+        Bucket: config.aws.bucket,
+        Delete: {
+            Objects: s3_keys,
+            Quiet: false
+        }
+    };
+
+    try {
+        const data = await s3.deleteObjects(params).promise();
+
+        console.log(`File(s) deleted successfully. ${data}`);
+
+    } catch (error) {
+        console.log(`Error: ${error}`);
+    }
+
+    next();
+}
+
 module.exports = {
     saveToS3,
     getFromS3,
     downloadFromS3,
     uploadToS3,
+    removeFromS3,
 }

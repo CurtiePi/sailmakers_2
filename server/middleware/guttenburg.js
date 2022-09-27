@@ -235,44 +235,6 @@ const writeQuoteDoc = async (req, res, next) => {
     next();
 }
 
-
-removeQuoteDoc = (req, res, next) => {
-
-    var pdf_list = (req.pdf_list) ? req.pdf_list : req.body.pdf_list;
-
-    const removeFtn = function removeFile(fileList, callback) {
-        var size = fileList.length;
-        const file = fileList.pop();
-        if (file == undefined) {
-            callback();
-        } else {
-            const pathToFile = `./public/files/pdf/${file}`;
-            fs.unlink(pathToFile, function(err) {
-                if(err) {
-                    console.log(err);
-                } else {
-                    console.log(`${pathToFile} successfully deleted`);
-                }
-            });
-            removeFile(fileList, callback);
-        }
-    }
-
-    const callback = function printMessage() {
-        console.log('All Done');
-    }
-
-    if (pdf_list.length > 0 ) {
-        removeFtn(pdf_list, callback);
-    } else {
-        console.log('No files to delete');
-    }
-
-    next();
-}
-
-
 module.exports = {
     writeQuoteDoc,
-    removeQuoteDoc
 }
