@@ -149,7 +149,7 @@ export default {
       selectOptions: null,
       isEditing: false,
       form: {},
-      singleOp: false,
+      onlyStep: false,
       needOtherClub: false,
       otherClubValue: null,
       needOtherPort: false,
@@ -294,9 +294,11 @@ export default {
 
       var response = await AuthenticationService.customerCreate(payload)
       var customer = response.data
-      if (this.singleOp) {
+      if (this.onlyStep) {
+        console.log("Going to customer list.")
         this.$router.replace({ name: 'Customers' })
       } else {
+        console.log("Going to create a request")
         this.$router.replace({ name: 'QuoteCreate', params: {'create_payload': JSON.stringify(customer)} })
       }
     },
@@ -346,8 +348,8 @@ export default {
     }
   },
   mounted () {
-    if (this.atomic) {
-      this.singleOp = this.atomic
+    if (this.singleOp) {
+      this.onlyStep = this.singleOp === 'true'
     }
     if (this.payload) {
       console.log("Mounting the Customer Input!")
