@@ -34,59 +34,19 @@
         <button class="create_btn" @click="createQuote()">Create Request</button>
         <button class="request_btn" @click="seeQuotes()">Requests</button>
         <button class="delete_btn" @click="deleteCustomer()">Delete</button>
+        <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
         <button @click="goBack()">Back</button>
       </div>
     </div>     
   </div>     
-  <!-- div class="container">
-    <div class="card">
-      <div class="flex-grid">
-        <span class="col hilite">Profile for {{ customer_data.fname }} {{ customer_data.lname }}</span>
-      </div>
-      <hr />
-      <div class="flex-grid">
-        <span class="col">Address: {{ customer_data.address }}</span>
-      </div>
-      <div class="flex-grid-halfs">
-        <span class="col">
-          Email:
-          <router-link :to="{ name: 'CreateMessage', params: { 'targets': [customer_data.email], 'caller': ['CustomerProfile', callerName], 'cbdata': customer_data} }">
-            {{ customer_data.email }}
-          </router-link>
-        </span>
-        <span class="col">Phone: {{ customer_data.phone }}</span>
-      </div>
-      <hr />
-      <div class="flex-grid">
-        <span class="col">Club: {{ customer_data.club }}</span>
-      </div>
-      <div class="flex-grid">
-        <span class="col">Home Port: {{ customer_data.boat_home }}</span>
-      </div>
-      <div class="flex-grid-halfs">
-        <span class="col">Boat Name: {{ customer_data.boat_name }}</span>
-        <span class="col">Boat Type: {{ customer_data.boat_model }}</span>
-      </div>
-      <hr />
-      <div class="flex-grid">
-        <span class="col" style="white-space: pre-wrap;">Customer Notes:<br/>  {{ customer_data.cnotes }}</span>
-      </div>
-      <hr />
-      <p>
-        <button class="edit_btn" @click="timeToEdit()">Edit</button>
-        <button class="create_btn" @click="createQuote()">Create Request</button>
-        <button class="request_btn" @click="seeQuotes()">Requests</button>
-        <button class="delete_btn" @click="deleteCustomer()">Delete</button>
-        <button @click="goBack()">Back</button>
-      </p>
-    </div>     
-  </div -->
 </template>
 <script>
 import AuthenticationService from '@/services/AuthenticationService'
+import ConfirmDialogue from '@/components/ConfirmDialogue.vue'
 
 export default {
   name: 'customerProfile',
+  components: { ConfirmDialogue },
   props: ['payload', 'caller'],
   data () {
     return {
@@ -132,40 +92,32 @@ export default {
       this.$router.replace({ name: 'CustomerQuotes', params: { 'payload': payload_data } })
     },
     async deleteCustomer () {
-      let message = {
-        title: 'Delete Customer',
-        body: `Deleting this customer will also delete their ${this.customer_data.quotes.length} request(s)!<p><strong>This action cannot be undone! Are you sure?</strong></p>`
-      }
+      let name = `${this.customer_data.fname} ${this.customer_data.lname}`
 
       let options = {
-        html: true,
-        okText: 'I\'m Sure! Delete!',
-        cancelText: 'Cancel',
-        animation: 'fade',
-        type: 'hard',
+        title: `Delete Customer ${name}`,
+        okButton: 'I\'m Sure! Delete!',
+        cancelButton: 'Cancel',
+        message: `Deleting customer ${name} will also delete their ${this.customer_data.quotes.length} request(s)!<p><strong>This action cannot be undone! Are you sure?</strong></p>`,
         verification: 'delete'
       }
 
-      let customer = this.customer_data
-      let leavePage = this.goBack
+      const ok = await this.$refs.confirmDialogue.show(options)
 
-      this.$dialog
-        .confirm(message, options)
-        .then(async function () {
-          let payload = {
-            'customer': customer
-          }
-          let response = await AuthenticationService.customerDelete(payload)
+      if (ok) {
+        let payload = {
+          'customer': this.customer_data
+        }
+        let response = await AuthenticationService.customerDelete(payload)
 
-          if (response.status === 200) {
-            leavePage()
-          } else {
-            console.log(response.message)
-          }
-        })
-        .catch(function () {
-          console.log('Clicked on cancel')
-        })
+        if (response.status === 200) {
+          this.goBack()
+        } else {
+          console.log(`Response: ${response.message}`)
+        }
+      } else {
+        console.log('You have chosen not to delete this customer!!')
+      }
     },
     goBack () {
       if (['Quotes', 'Customers', 'StaffList'].includes(this.callerName)) {
