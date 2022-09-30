@@ -1,6 +1,6 @@
-var mongoose        = require('mongoose');
+import mongoose from 'mongoose';
 
-var QuoteSchema = new mongoose.Schema({
+const QuoteSchema = new mongoose.Schema({
     salesperson: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Salesperson',
@@ -74,4 +74,6 @@ var QuoteSchema = new mongoose.Schema({
 
 
 
-module.exports = mongoose.model('Quote', QuoteSchema);
+const Quote = mongoose.model('Quote', QuoteSchema);
+
+export default Quote;

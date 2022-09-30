@@ -1,26 +1,22 @@
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-var User = require('./models/user');
-var JwtStrategy = require('passport-jwt').Strategy;
-var ExtractJwt = require('passport-jwt').ExtractJwt;
-var jwt = require('jsonwebtoken');
+import passport from 'passport';
+import { Strategy as LocalStrategy } from 'passport-local';
+import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
+import User from './models/user.js';
+import jwt from 'jsonwebtoken';
+import config from './config/config.js';
 
-var config = require('./config/config');
 
-exports.local = passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
-
-exports.getToken = function(user) {
-    return jwt.sign(user, config.secretKey, { expiresIn: 3600 } );
+const jwtOptions = {
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: config.secretKey,
+    ignoreExpiration: false,
+    jsaonWebTokenOptions: {
+        maxAge: '1w'
+    }
 }
 
-var opts = {};
-
-opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-opts.secretOrKey = config.secretKey;
-
-exports.jwtPassport = passport.use(new JwtStrategy(opts,
+const localStrategy = new LocalStrategy(User.authenticate());
+const jwtStrategy = new JwtStrategy(jwtOptions,
     (jwt_payload, done) => {
 
         User.findOne({_id: jwt_payload._id}, (err, user) => {
@@ -34,11 +30,21 @@ exports.jwtPassport = passport.use(new JwtStrategy(opts,
                 return done(null, false);
             }
         });
-    }));
+    });
 
-exports.verifyUser = passport.authenticate('jwt', {session: false});
+passport.use(localStrategy);
+passport.use(jwtStrategy);
 
-exports.verifyAdmin = (req, res, next) => {
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+const verifyUser = passport.authenticate('jwt', { session: false });
+
+const getToken = (user) => {
+    return jwt.sign(user, config.secretKey, { expiresIn: 3600 });
+};
+
+const verifyAdmin = (req, res, next) => {
     if (req.user.admin) {
         next();
     }
@@ -47,4 +53,6 @@ exports.verifyAdmin = (req, res, next) => {
         err.status = 403;
         return next(err);
     }
-}
+};
+
+export { verifyUser, verifyAdmin, getToken };

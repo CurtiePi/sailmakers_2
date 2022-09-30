@@ -1,8 +1,7 @@
-const config        = require('../config/config');
-const nodemail      = require('nodemailer');
-const sendmail      = require('sendmail')();
-const smtpTransport = require('nodemailer-smtp-transport');
-const signature     = require('../config/signature');
+import config from '../config/config.js';
+import nodemail from 'nodemailer';
+import smtpTransport from 'nodemailer-smtp-transport';
+import signature from '../config/signature.js';
 
 const transporter = nodemail.createTransport(smtpTransport({
     host: "smtp-mail.outlook.com",
@@ -20,7 +19,7 @@ const transporter = nodemail.createTransport(smtpTransport({
 const deliverEmail = (req, res, next) => {
     var data = req.body
 
-    var messageBody = `${data.body}<p>${signature}</p>`;
+    var messageBody = `${data.body}<p>` + signature + '</p>';
     var recipients = data.recipients.join(', ');
 
     var mailOptions = {
@@ -56,6 +55,7 @@ const deliverEmail = (req, res, next) => {
         mailOptions['attachments'].push(attachmentData);
     }
 
+    
     transporter.sendMail(mailOptions, function (error, info) {
            if (error){
                console.log('Error: ' + error);
@@ -68,6 +68,4 @@ const deliverEmail = (req, res, next) => {
     })
 }
 
-module.exports = {
-    deliverEmail
-}
+export default deliverEmail; 

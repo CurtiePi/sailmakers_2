@@ -45,23 +45,24 @@ const getTypeBreakdown = (quotes) => {
 
     var retVal = [];
     for (var x = 0; x < types.length; x++) {
-      var typeQuotes = quotes.filter((quote) => quote.quote_type.includes(types[x]));
-      if (typeQuotes.length > 0) {
-        // retVal[types[x]] = getMonthlyQuoteCount(typeQuotes);
-        var monthQCount = getMonthlyQuoteCount(typeQuotes)};
+        var typeQuotes = quotes.filter((quote) => quote.quote_type.includes(types[x]));
+        if (typeQuotes.length > 0) {
+            // retVal[types[x]] = getMonthlyQuoteCount(typeQuotes);
+            var monthQCount = getMonthlyQuoteCount(typeQuotes);
+        }
         retVal.push({'arg': capitalizeFirst(types[x]),
-                    'val': typeQuotes.length,
-                    'parentID': ''});
+                      'val': typeQuotes.length,
+                      'parentID': ''});
 
         for (var y=0; y < monthQCount.length; y++) {
-          var data = monthQCount[y]
-          var item = {'arg': data.arg,
-                      'val': data.val,
-                      'parentID': capitalizeFirst(types[x])};
+            var data = monthQCount[y]
+            var item = {'arg': data.arg,
+                        'val': data.val,
+                        'parentID': capitalizeFirst(types[x])};
 
-          retVal.push(item);
+            retVal.push(item);
         }
-      }
+    }
 
     return retVal;
 }
@@ -117,25 +118,16 @@ const getMonthlyNewCustomers = (customers) => {
 const marshalDashboardData = (req, res, next) => {
 
     var monthlyCount = getMonthlyQuoteCount(req.dashboardRawData.quoteData);
-    //    console.log(monthlyCount);
     var typesMonthlyCount = getTypeBreakdown(req.dashboardRawData.quoteData);
-    //    console.log(typesMonthlyCount);
     var statusCount = getCurrentStatusBreakdown(req.dashboardRawData.quoteData);
-    //    console.log(statusCount);
     var monthlyCustomerCount = getMonthlyNewCustomers(req.dashboardRawData.customerData);
-    //    console.log(monthlyCustomerCount);
 
-    marshalledData = { 'monthlyQuoteCount': monthlyCount,
+    req.marshalledData = { 'monthlyQuoteCount': monthlyCount,
                   'monthlyTypeCount': typesMonthlyCount,
                   'currentStatusCount': statusCount,
                   'monthlyCustomerCount': monthlyCustomerCount};
 
-    req.marshalledData = marshalledData;
-
     next();
 }
 
-
-module.exports = {
-    marshalDashboardData
-}
+export { marshalDashboardData }

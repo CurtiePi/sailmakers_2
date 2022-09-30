@@ -1,6 +1,6 @@
-var mongoose        = require('mongoose');
+import mongoose from 'mongoose';
 
-var SailSchema = new mongoose.Schema({
+const SailSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true
@@ -12,5 +12,6 @@ var SailSchema = new mongoose.Schema({
 
 }
 
+const Sail = mongoose.model('Sail', SailSchema)
 
-module.exports = mongoose.model('Sail', SailSchema)
+export default Sail;

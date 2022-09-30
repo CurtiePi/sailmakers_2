@@ -1,16 +1,15 @@
-const mongoose          = require('mongoose');
-const Customer          = require('../models/customers');
-const Salesperson       = require('../models/salespeople');
-const Quote             = require('../models/quotes');
-const Port              = require('../models/ports');
+import mongoose from 'mongoose';
+import Customer from '../models/customers.js';
+import Salesperson from '../models/salespeople.js';
+import Quote from '../models/quotes.js';
+import Port from '../models/ports.js';
 
-
-module.exports = {
+const dataAccess = class DataAccessController {
     /**
      * List all customers in the database
      *
      */
-    listCustomers: async () => {
+    async listCustomers () {
         try {
             let customers = await Customer.find()
                                           .populate({
@@ -27,25 +26,26 @@ module.exports = {
             return customers;
         }
         catch (err) {
-            console.log('Received an error getting customer listing');
+            console.log(`Received an error getting customer listing:\n${err}`);
         }
-    },
+    }
 
     /**
      * Get specific customers by id
      *
      */
-    getCustomerById: async (id) => {
+    async getCustomerById (id) {
         try {
             var user_id = mongoose.Types.ObjectId(id);
             let customer = await Customer.findById({_id: user_id});
             return customer;
         }
         catch (err) {
-            console.log('Received an error getting customer');
+            console.log(`Received an error getting customer:\n${err}`);
         }
-    },
-    createCustomer: async (customer_data) => {
+    }
+
+    async createCustomer (customer_data) {
         try {
             var customer = new Customer(customer_data);
             await customer.save();
@@ -53,15 +53,15 @@ module.exports = {
             return customer;
         }
         catch(err) {
-            console.log('Received an error creating customer');
+            console.log(`Received an error creating customer:\n${err}`);
         }
-    },
+    }
 
     /**
      * Find specific customers based on criteria
      *
      */
-    findCustomers: async (criteria) => {
+    async findCustomers (criteria) {
         if (criteria._id) {
             criteria._id = mongoose.Types.ObjectId(criteria._id);
         }
@@ -72,14 +72,15 @@ module.exports = {
             return customers;
         }
         catch (err) {
-            console.log('Received an error finding customer');
+            console.log(`Received an error finding customer:\n${err}`);
         }
-    },
+    }
+
     /**
      * Update specific customer
      *
      */
-    updateCustomer: async (criteria, update ) => {
+    async updateCustomer (criteria, update ) {
         if (criteria._id) {
             criteria._id = mongoose.Types.ObjectId(criteria._id);
         }
@@ -89,14 +90,15 @@ module.exports = {
             return customer;
         }
         catch (err) {
-            console.log('Received an error updating customer');
+            console.log(`Received an error updating customer:\n${err}`);
         }
-    },
+    }
+
     /**
      * Delete Customer
      *
      */
-    deleteCustomer: async (customer) => {
+    async deleteCustomer (customer) {
         var c_id = mongoose.Types.ObjectId(customer._id);
         var c_quotes = customer.quotes;
         var quote_ids = [];
@@ -125,11 +127,11 @@ module.exports = {
             return pdf_list;
         }
         catch(err) {
-            console.log('Received an error deleting customer');
+            console.log(`Received an error deleting customer:\n${err}`);
         }
-    },
+    }
 
-    listQuotes: async () => {
+    async listQuotes () {
         try {
             let quotes = await Quote.find()
                                     .sort({createAt: -1})
@@ -138,10 +140,11 @@ module.exports = {
             return quotes;
         }
         catch(err) {
-            console.log('Received an error getting quote listing');
+            console.log(`Received an error getting quote listing:\n${err}`);
         }
-    },
-    getQuoteById: async (id) => {
+    }
+
+    async getQuoteById (id) {
         try {
             var quote_id = mongoose.Types.ObjectId(id);
             let quote = await Quote.findById({_id: quote_id})
@@ -149,10 +152,11 @@ module.exports = {
             return quote;
         }
         catch(err) {
-            console.log('Received an error getting quote');
+            console.log(`Received an error getting quote:\n${err}`);
         }
-    },
-    getCustomerQuotes: async (cid) => {
+    }
+
+    async getCustomerQuotes (cid) {
         try {
             var customer_id = mongoose.Types.ObjectId(cid);
             let quotes = await Quote.find({customer: customer_id})
@@ -162,14 +166,15 @@ module.exports = {
             return quotes;
         }
         catch(err) {
-            console.log('Received an error getting quote');
+            console.log(`Received an error getting customer quotes:\n${err}`);
         }
-    },
-    createQuote: async (quote_data) => {
+    }
+
+    async createQuote (quote_data) {
         try {
             // Make sure customer id and salesperson id are Object ids
-            customer_id = mongoose.Types.ObjectId(quote_data.customer_id);
-            salesper_id = mongoose.Types.ObjectId(quote_data.salesperson_id);
+            var customer_id = mongoose.Types.ObjectId(quote_data.customer_id);
+            var salesper_id = mongoose.Types.ObjectId(quote_data.salesperson_id);
 
             quote_data.customer = customer_id;
             quote_data.salesperson = salesper_id;
@@ -190,10 +195,11 @@ module.exports = {
             return quote;
         }
         catch(err) {
-            console.log('Received an error creating quote');
+            console.log(`Received an error creating a quote:\n${err}`);
         }
-    },
-    deleteQuote: async (quote) => {
+    }
+
+    async deleteQuote (quote) {
         var q_id = mongoose.Types.ObjectId(quote._id);
         var c_id = mongoose.Types.ObjectId(quote.customer._id);
         var s_id = mongoose.Types.ObjectId(quote.salesperson._id);
@@ -209,14 +215,15 @@ module.exports = {
             return pdf_list
         }
         catch(err) {
-            console.log('Received an error deleting quote');
+            console.log(`Received an error deleting quote:\n${err}`);
         }
-    },
+    }
+
     /**
      * Find specific quotes by crtiteria
      *
      */
-    findQuotes: async (criteria) => {
+    async findQuotes (criteria) {
         if (criteria._id) {
             criteria._id = mongoose.Types.ObjectId(criteria._id);
         }
@@ -231,12 +238,13 @@ module.exports = {
         catch (err) {
             console.log(`Received an error searching quotes ${err}`);
         }
-    },
+    }
+
     /**
      * Update specific quote
      *
      */
-    updateQuote: async (criteria, update ) => {
+    async updateQuote (criteria, update ) {
         if (criteria._id) {
             criteria._id = mongoose.Types.ObjectId(criteria._id);
         }
@@ -248,10 +256,11 @@ module.exports = {
             return quote;
         }
         catch (err) {
-            console.log('Received an error updating quote');
+            console.log(`Received an error updating quote:\n${err}`);
         }
-    },
-    addQuoteDoc: async (quoteId, filePath ) => {
+    }
+
+    async addQuoteDoc (quoteId, filePath ) {
         const criteria = { '_id': mongoose.Types.ObjectId(quoteId) };
 
         try {
@@ -261,40 +270,43 @@ module.exports = {
             return quote;
         }
         catch (err) {
-            console.log('Received an error updating quote');
+            console.log(`Received an error adding document to quote:\n${err}`);
         }
-    },
+    }
 
-    getSalespeople: async () => {
+    async getSalespeople () {
         try {
             let salespeople = await Salesperson.find();
             return salespeople;
         }
         catch(err) {
-            console.log('Received an error getting listing of salespeople');
+            console.log(`Received an error getting listing of salespeople:\n${err}`);
         }
-    },
-    getSalespersonById: async (id) => {
+    }
+
+    async getSalespersonById (id) {
         try {
             var salesperson_id = mongoose.Types.ObjectId(id);
             let salesperson = await Salesperson.findById({_id: salesperson_id});
             return salesperson;
         }
         catch(err) {
-            console.log('Received an error getting salesperson');
+            console.log(`Received an error getting salesperson:\n${err}`);
         }
-    },
-    getSalespersonByName: async (name_param) => {
+    }
+
+    async getSalespersonByName (name_param) {
         try {
             var nameArr= name_param.split(' ');
             let salesperson = await Salesperson.find({lname: nameArr[1], fname: nameArr[0]});
             return salesperson;
         }
         catch(err) {
-            console.log('Received an error getting salesperson');
+            console.log(`Received an error getting salesperson by name:\n${err}`);
         }
-    },
-    createSalesperson: async (salesperson_data) => {
+    }
+
+    async createSalesperson (salesperson_data) {
         try {
             var salesperson = new Salesperson(salesperson_data);
             await salesperson.save();
@@ -303,17 +315,19 @@ module.exports = {
         catch(err) {
             console.log(`Received an error creating salesperson: ${err}`);
         }
-    },
-    getSalespeopleToEmail: async () => {
+    }
+
+    async getSalespeopleToEmail () {
         try {
             let salespeople = await Salesperson.find({'get_mail': true});
             return salespeople;
         }
         catch(err) {
-            console.log('Received an error getting salespeople to email');
+            console.log(`Received an error getting salespeople to email:\n${err}`);
         }
-    },
-    updateSalesperson: async (criteria, update ) => {
+    }
+
+    async updateSalesperson (criteria, update ) {
         if (criteria._id) {
             criteria._id = mongoose.Types.ObjectId(criteria._id);
         }
@@ -323,57 +337,57 @@ module.exports = {
             return salesperson;
         }
         catch (err) {
-            console.log('Received an error updating salesperson');
+            console.log(`Received an error updating salesperson:\n${err}`);
         }
-    },
+    }
 
     /**
      * List all ports in the database
      *
      */
-    listPorts: async () => {
+    async listPorts () {
         try {
             let ports = await Port.find();
             return ports;
         }
         catch (err) {
-            console.log('Received an error getting ports listing');
+            console.log(`Received an error getting ports listing:\n${err}`);
         }
-    },
+    }
 
     /**
      * Get specific port by id
      *
      */
-    getPortById: async (id) => {
+    async getPortById (id) {
         try {
             var port_id = mongoose.Types.ObjectId(id);
             let port = await Port.findById({_id: port_id});
             return port;
         }
         catch (err) {
-            console.log('Received an error getting port');
+            console.log(`Received an error getting port:\n${err}`);
         }
-    },
+    }
     /**
      * Create port
      *
      */
-    createPort: async (port_data) => {
+    async createPort (port_data) {
         try {
             var new_port = new Port(port_data);
             await new_port.save();
             return new_port;
         }
         catch(err) {
-            console.log('Received an error creating a port');
+            console.log(`Received an error creating a port:\n${err}`);
         }
-    },
+    }
     /**
      * Update specific port
      *
      */
-    updatePort: async (criteria, update ) => {
+    async updatePort (criteria, update ) {
         if (criteria._id) {
             criteria._id = mongoose.Types.ObjectId(criteria._id);
         }
@@ -383,7 +397,9 @@ module.exports = {
             return port;
         }
         catch (err) {
-            console.log('Received an error updating port');
+            console.log(`Received an error updating port:\n${err}`);
         }
     }
-}
+};
+
+export default new dataAccess();

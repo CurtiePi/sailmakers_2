@@ -1,14 +1,12 @@
-const AWS                                       = require('aws-sdk');
-const config                                    = require('../config/config');
-const fs                                        = require('fs');
-const path                                      = require('path');
+import AWS from 'aws-sdk';
+import config from '../config/config.js';
+
 const s3 = new AWS.S3({
     accessKeyId: config.aws.id,
     secretAccessKey: config.aws.key
 });
 
-
-saveToS3 = async (req, res, next) => {
+const saveToS3 = async (req, res, next) => {
 
     let filename = req.pdf_filename;
     let filecontent = req.pdf_bytes;
@@ -31,7 +29,7 @@ saveToS3 = async (req, res, next) => {
     next();
 }
 
-getFromS3 = async (req, res, next) => {
+const getFromS3 = async (req, res, next) => {
 
     let filename = req.params.filename;
 
@@ -55,7 +53,7 @@ getFromS3 = async (req, res, next) => {
     next();
 }
 
-downloadFromS3 = async (req, res, next) => {
+const downloadFromS3 = async (req, res, next) => {
 
     let filename = req.params.filename;
 
@@ -76,7 +74,7 @@ downloadFromS3 = async (req, res, next) => {
     }
 }
 
-uploadToS3 = async (req, res, next) => {
+const uploadToS3 = async (req, res, next) => {
 
     let filename = req.body.pdf_filename;
     const filecontent = Buffer.from(req.body.pdf_bytes, 'base64');
@@ -102,7 +100,7 @@ uploadToS3 = async (req, res, next) => {
     next();
 }
 
-removeFromS3 = async (req, res, next) => {
+const removeFromS3 = async (req, res, next) => {
 
     var pdf_list = (req.pdf_list) ? req.pdf_list : req.body.pdf_list;
 
@@ -131,10 +129,4 @@ removeFromS3 = async (req, res, next) => {
     next();
 }
 
-module.exports = {
-    saveToS3,
-    getFromS3,
-    downloadFromS3,
-    uploadToS3,
-    removeFromS3,
-}
+export { saveToS3, getFromS3, downloadFromS3, uploadToS3, removeFromS3 };

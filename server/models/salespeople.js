@@ -1,6 +1,6 @@
-var mongoose        = require('mongoose');
+import mongoose from 'mongoose';
 
-var SalespersonSchema = new mongoose.Schema({
+const SalespersonSchema = new mongoose.Schema({
     fname: {
         type: String,
         required: true,
@@ -33,4 +33,6 @@ SalespersonSchema.methods.getFullName = function() {
 
 }
 
-module.exports = mongoose.model('Salesperson', SalespersonSchema);
+const Salesperson = mongoose.model('Salesperson', SalespersonSchema);
+
+export default Salesperson;

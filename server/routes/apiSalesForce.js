@@ -1,19 +1,24 @@
-const express           = require('express');
-const routeController   = require('../controllers/routingController');
-const apiStaffRouter    = express.Router();
+import express from 'express';
+import { createSalesperson, updateSalesperson, getSalespeople, getSalespeopleToEmail, getSalespersonById, getSalespersonByName } from '../controllers/routingController.js';
 
-module.exports = apiStaffRouter;
+const staffRouter = express.Router();
 
 /*
  * Salespeople routes
  */
-apiStaffRouter.get('/', routeController.getSalespeople);
-apiStaffRouter.get('/emaillist', routeController.getSalespeopleToEmail);
-apiStaffRouter.get('/:id', routeController.getSalespersonById);
-apiStaffRouter.get('/name/:name', routeController.getSalespersonByName);
 
+/**
+ * @api {get} salespeople
+ */
+staffRouter.get('/', getSalespeople);                   // Get a list of salespeople
+staffRouter.get('/emaillist', getSalespeopleToEmail);   // Get lisst of salespeople to email
+staffRouter.get('/:id', getSalespersonById);            // Get a salesperson by id
+staffRouter.get('/name/:name', getSalespersonByName);   // Get a salesperson by name
 
-apiStaffRouter.post('/create', routeController.createSalesperson);
-apiStaffRouter.post('/update', routeController.updateSalesperson);
+/**
+ * @api {post} salespeople 
+ */
+staffRouter.post('/create', createSalesperson);         // Create a salesperson
+staffRouter.post('/update', updateSalesperson);         // Update a salesperson
 
-
+export default staffRouter;

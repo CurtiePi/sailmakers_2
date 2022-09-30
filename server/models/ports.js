@@ -1,6 +1,6 @@
-var mongoose        = require('mongoose');
+import mongoose from 'mongoose';
 
-var PortSchema = new mongoose.Schema({
+const PortSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -13,4 +13,6 @@ var PortSchema = new mongoose.Schema({
 });
 
 
-module.exports = mongoose.model('Port', PortSchema);
+const Port = mongoose.model('Port', PortSchema);
+
+export default Port;

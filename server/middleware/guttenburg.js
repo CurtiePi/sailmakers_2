@@ -1,11 +1,5 @@
-const PDFDocument       = require('pdfkit');
-const AWS               = require('aws-sdk');
-const fs                = require('fs');
-const config            = require('../config/config');
-const s3 = new AWS.S3({
-    accessKeyId: config.aws.id,
-    secretAccessKey: config.aws.key
-});
+import PDFDocument from 'pdfkit';
+import config from '../config/config.js';
 
 const writeQuoteDoc = async (req, res, next) => {
     const currDate = function formatDate(date) {
@@ -86,10 +80,8 @@ const writeQuoteDoc = async (req, res, next) => {
     const notesTitle =  `Additional Notes - `;
     const notesText =  `${txtVals["notes"]}`;
 
-    let filepath = './public/files/pdf/test_build.pdf';
     const doc = new PDFDocument;
     doc.registerFont('FreeSerif', './public/files/fonts/freefont/FreeSerif.ttf')
-    doc.pipe(fs.createWriteStream(filepath));
 
     let origXPos = doc.x;
 
@@ -235,6 +227,4 @@ const writeQuoteDoc = async (req, res, next) => {
     next();
 }
 
-module.exports = {
-    writeQuoteDoc,
-}
+export { writeQuoteDoc }

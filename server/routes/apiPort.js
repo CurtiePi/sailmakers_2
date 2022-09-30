@@ -1,10 +1,10 @@
-const express           = require('express');
-const routeController   = require('../controllers/routingController');
-const apiPortRouter     = express.Router();
+import express from 'express';
+import { getPortsList, getPortById, createPort, updatePort } from '../controllers/routingController.js';
+const portRouter = express.Router();
 
-module.exports = apiPortRouter;
+portRouter.get('/', getPortsList);
+portRouter.get('/:pid', getPortById);
+portRouter.post('/create', createPort);
+portRouter.post('/update/:pid', updatePort);
 
-apiPortRouter.get('/', routeController.getPortsList);
-apiPortRouter.get('/:pid', routeController.getPortById);
-apiPortRouter.post('/create', routeController.createPort);
-apiPortRouter.post('/update/:pid', routeController.updatePort);
+export default portRouter;

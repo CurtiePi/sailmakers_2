@@ -1,25 +1,27 @@
-const express               = require('express');
-const routeController       = require('../controllers/routingController');
-const apiCustomerRouter     = express.Router();
-const bucketmaster          = require('../middleware/s3Interface.js');
+import express from 'express';
+import { findCustomers, createCustomer, deleteCustomer, updateCustomer, getCustomerList, getCustomerById } from '../controllers/routingController.js';
+import { removeFromS3 } from '../middleware/s3Interface.js';
 
-module.exports  = apiCustomerRouter;
+const customerRouter = express.Router();
 
 /*
  * Customer routes
  */
 
 /**
- * @api {get} /list customers
- *
+ * @api {get} customers
  */
-apiCustomerRouter.get('/', routeController.getCustomerList);
-apiCustomerRouter.get('/:id', routeController.getCustomerById);
+customerRouter.get('/', getCustomerList);           // Get list of all customers
+customerRouter.get('/:id', getCustomerById);        // Get a customer by Id
 
-apiCustomerRouter.post('/search', routeController.findCustomers);
-apiCustomerRouter.post('/update', routeController.updateCustomer);
-apiCustomerRouter.post('/create', routeController.createCustomer);
-apiCustomerRouter.post('/delete', routeController.deleteCustomer, bucketmaster.removeFromS3, (req, res, next) => {
+/**
+ * @api {post} customers
+ */
+customerRouter.post('/search', findCustomers);      // Find customers based on criteria
+customerRouter.post('/update', updateCustomer);     // Update customer information
+customerRouter.post('/create', createCustomer);     // Create a customer
+customerRouter.post('/delete', deleteCustomer, removeFromS3, (req, res, next) => {
     res.status(200).json({message: 'ok'});
-});
+});                                                 // Remove a customer
 
+export default customerRouter;
