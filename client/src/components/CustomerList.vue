@@ -2,6 +2,7 @@
   <div class="container-xl">
     <h1>Customer List</h1>
       <div class="row">
+        <div class="col-md-4 col-sm-12 col-xs-12">
         <ul class="fancy m-5">
           <li class="fancy">
             <label for="nameFilter">Name Filter</label>
@@ -9,8 +10,11 @@
             <span>Filter on a name</span>
           </li>
         </ul>
+        </div>
+        <div class="col-md-8 col-sm-12 col-xs-12">
         <button class="btn btn-primary m-5" data-bs-toggle="collapse" href="#requestFilter" role="button" aria-expanded="false" aria-controls="requestFilter" :style="{width: '150px'}">Request Filter</button>
         <button class="btn btn-primary m-5" type="button" data-bs-toggle="collapse" data-bs-target="#statusFilter" aria-expanded="false" aria-controls="statusFilter" :style="{width: '150px'}" >Status Filter</button>
+        </div>
     </div>
     <div class="row mb-5">
       <div class="collapse multi-collapse" id="requestFilter" :style="{width: '250px'}">
@@ -257,7 +261,7 @@ a {
 
 ul.fancy {
   list-style: none;
-  width: 20%;
+  width: min-content;
   padding: 0;
   margin: 0;
 }
