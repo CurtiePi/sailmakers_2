@@ -47,11 +47,6 @@
         <th scope="col">Requests</th>
       </tr>
     </thead>
-    <!-- tfoot>
-      <tr>
-        <td colspan="7">Sources: <a href="http://en.wikipedia.org/wiki/List_of_highest-grossing_animated_films" rel="external">Wikipedia</a> &amp; <a href="http://www.boxofficemojo.com/genres/chart/?id=animation.htm" rel="external">Box Office Mojo</a>. Data is current as of March 31, 2021.</td>
-      </tr>
-    </tfoot -->
     <tbody>
       <tr v-for= "customer in customer_display"
              :key="customer._id">
@@ -74,72 +69,6 @@
       </tr>
     </tbody>
   </table>
-    <!-- div class="row filter-div">
-      <label>Name:<input type="text" v-model="f_name" @input="filterName()" /></label>
-      <label>Quote Type:
-        <select @change="filterQuoteType($event)">
-          <option value="all"></option>
-          <option value="new sail">New Sail</option>
-          <option value="sail repair">Sail Repair</option>
-          <option value="winter service">Winter Service</option>
-          <option value="sail cover">Sail Cover</option>
-        </select>
-     </label>
-      <label>Quote Status:
-        <select @change="filterQuoteStatus($event)">
-          <option value="all"></option>
-          <option value="quote request">Quote Request</option>
-          <option value="pending">Pending</option>
-          <option value="production">In Production</option>
-          <option value="ready">Ready</option>
-          <option value="delivered">Delivered</option>
-          <option value="no sale">No Sale</option>
-        </select>
-     </label>
-     <label>Alphanumerical
-       <input type="radio" name="sorter" value="alpha"
-         @change="sortList()"
-         v-model="sort_type" />
-     </label>
-     <label>Date
-       <input type="radio" name="sorter" value="temporal"
-         @change="sortList()"
-         v-model="sort_type" />
-     </label>
-    </div>
-    <div class="container">
-      <h1>Customer List</h1>
-      <div>
-          <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Club</th>
-              <th>Boat Name</th>
-              <th>Boat Home</th>
-              <th></th>
-          </tr>
-          <tr v-for= "customer in customer_display"
-              :key="customer._id">
-              <td>
-                <router-link :to="{ name: 'CustomerProfile', params: { 'payload': customer, 'caller': 'Customers' } }">
-                  {{ customer.fname }}  {{ customer.lname }}
-                </router-link>
-              </td>
-              <td><router-link :to="{ name: 'CreateMessage', params: { 'targets': [customer.email], 'caller': 'Customers' } }">{{ customer.email }}</router-link></td>
-              <td>{{ customer.phone }}</td>
-              <td>{{ customer.club }}</td>
-              <td>{{ customer.boat_name }}</td>
-              <td>{{ customer.boat_home }}</td>
-              <td>
-                <button v-if="customer.quotes.length > 0"
-                  @click="viewQuotes(customer)">
-                  View Requests({{ customer.quotes.length }})
-                </button>
-              </td>
-          </tr>
-      </div>
-    </div -->
   </div>
 </template>
 
@@ -235,6 +164,7 @@ export default {
       this.applyFilters()
     },
     filterRequestType: function (evt) {
+      evt.stopPropagation()
       if (evt.target.value !== 'all') {
         this.f_registry.typeFilter.filter = this.customers.filter((cus) => { return cus.quotes.reduce((acc, val) => { return acc || val.quote_type.indexOf(evt.target.value) !== -1 }, false) })
         this.f_registry.typeFilter.status = true
@@ -244,6 +174,7 @@ export default {
       this.applyFilters()
     },
     filterStatusType: function (evt) {
+      evt.stopPropagation()
       if (evt.target.value !== 'all') {
         this.f_registry.statusFilter.filter = this.customers.filter((cust) => { return cust.quotes.reduce((acc, val) => { return acc || val.status.indexOf(evt.target.value) !== -1 }, false) })
         this.f_registry.statusFilter.status = true
@@ -270,7 +201,8 @@ export default {
 
       if (hasActiveFilters) {
         if (haveEmptyFilter) {
-          this.customer_display = []
+          //this.customer_display = []
+          this.customer_display = this.customers
         } else {
           var result = Object
             .values(filterObj)
