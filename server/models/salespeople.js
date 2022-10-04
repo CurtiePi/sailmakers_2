@@ -20,6 +20,11 @@ const SalespersonSchema = new mongoose.Schema({
     get_mail: {
         type: Boolean,
     },
+    isActive: {
+        type: Boolean,
+        required: true,
+        default: true
+    },
     quotes: [{type: mongoose.Schema.ObjectId, ref: 'Quote'}],
 }, {
     timestamps: true

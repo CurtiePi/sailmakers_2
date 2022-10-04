@@ -62,6 +62,9 @@ export default {
   updateSalesperson (payload) {
     return Api().insecure.post('/api/staff/update', payload)
   },
+  deleteSalesperson (payload) {
+    return Api().insecure.post('/api/staff/update', payload)
+  },
   getEmailSalespeople () {
     return Api().insecure.get('/api/staff/emaillist')
   },

@@ -22,16 +22,21 @@
         <span class="col">Receive Quote Email: {{ (salesperson.get_mail) ? 'Yes' : 'No' }}</span>
       </div>
       <p>
-        <button @click="timeToEdit()">Edit</button>
+        <button v-if="salesperson.isActive" @click="editSalesperson()">Edit</button>
+        <button v-if="salesperson.isActive" @click="deleteSalesperson()">Delete</button>
+        <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
         <button @click="goBack()">Back</button>
       </p>
     </div>     
   </div>
 </template>
 <script>
+import AuthenticationService from '@/services/AuthenticationService'
+import ConfirmDialogue from '@/components/ConfirmDialogue.vue'
 
 export default {
   name: 'staffProfile',
+  components: { ConfirmDialogue },
   props: ['payload', 'caller'],
   data () {
     return {
@@ -41,8 +46,45 @@ export default {
     }
   },
   methods: {
-    timeToEdit () {
+    editSalesperson () {
       this.$router.push({ name: 'StaffEdit', params: { 'edit_payload': JSON.stringify(this.salesperson) } })
+    },
+    async deleteSalesperson () {
+
+      let name = `${this.salesperson.fname} ${this.salesperson.lname}`
+
+      let options = {
+        title: `Delete ${name}`,
+        okButton: 'I\'m Sure! Delete!',
+        cancelButton: 'Cancel',
+        message: `Deleting ${name} is an action that<strong> cannot be undone!&nbsp;Are you sure?</strong>`,
+        verification: 'delete'
+      }
+
+
+      const ok = await this.$refs.confirmDialogue.show(options)
+      if (ok) {
+        var payload = {
+         'criteria': {
+            '_id': this.salesperson._id
+         },
+         'update': {
+            'isActive': false,
+            'get_mail': false
+         }
+        }
+        let response = await AuthenticationService.deleteSalesperson(payload)
+        this.goBack()
+
+        if (response.status === 200) {
+          this.goBack()
+        } else {
+          console.log(`Response: ${response.message}`)
+        }
+      } else {
+        console.log('You have chosen not to delete this salesperson!!')
+      }
+
     },
     goBack () {
       if (['Quotes', 'Customers', 'StaffList'].includes(this.callerName)) {

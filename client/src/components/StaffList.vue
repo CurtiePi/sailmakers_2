@@ -2,6 +2,10 @@
   <div class="container">
     <div class="container">
       <h1>Salesperson List</h1>
+      <div class="form-check form-switch" :style="{'display': 'inline-block'}">
+        <input class="form-check-input" type="checkbox" role="switch" id="inactiveSwitch" @change="toggleView()">
+        <label class="form-check-label" for="inactiveSwitch">Show Inactive Salespeople</label>
+      </div>
       <div>
         <table class="responsive-table">
           <thead>
@@ -10,15 +14,17 @@
               <th scope="col">Email</th>
               <th scope="col">Phone</th>
               <th scope="col">Get Mail</th>
+              <th scope="col">Active</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for= "salesperson in salespeople"
+            <tr v-for= "salesperson in staff_display"
               :key="salesperson._id">
               <th scope="row"><router-link :to="{ name: 'StaffProfile', params: { 'payload': JSON.stringify(salesperson), 'caller': 'StaffList' } }">{{ salesperson.fname }} {{ salesperson.lname }}</router-link></th>
               <td data-title="Email"><router-link :to="{ name: 'CreateMessage', params: { 'targets': [salesperson.email], 'caller': 'StaffList' } }">{{ salesperson.email }}</router-link></td>
               <td data-title="Phone">{{ salesperson.phone }}</td>
               <td data-title="Get Mail">{{ (salesperson.get_mail) ? 'Y' : 'N' }}</td>
+              <td data-title="Active">{{ (salesperson.isActive) ? 'Y' : 'N' }}</td>
           </tr>
           </tbody>
         </table>
@@ -34,15 +40,17 @@ export default {
   name: 'StaffList',
   data () {
     return {
-      salespeople: []
+      salespeople: [],
+      staff_display: [],
+      showInactive: false
     }
   },
   methods: {
     getSalespeople: async function () {
       let response = await AuthenticationService.getSalespeople()
       this.salespeople = response.data
-      console.log(this.salespeople)
       this.sortList()
+      this.filterList()
     },
     alphanumericSort: function (a, b) {
       return (a.lname < b.lname) ? -1 : (a.name > b.name) ? 1 : 0
@@ -50,7 +58,18 @@ export default {
     sortList () {
       var ftn = this.alphanumericSort
       this.salespeople.sort(ftn)
-    }
+    },
+    filterList () {
+        if (this.showInactive) {
+            this.staff_display = this.salespeople
+        } else {
+            this.staff_display = this.salespeople.filter((elem) => elem.isActive)
+        }
+    },
+    toggleView () {
+        this.showInactive = !this.showInactive
+        this.filterList()
+    },
   },
   mounted () {
     this.getSalespeople()
