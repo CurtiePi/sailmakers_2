@@ -24,6 +24,7 @@
       <p>
         <button v-if="salesperson.isActive" @click="editSalesperson()">Edit</button>
         <button v-if="salesperson.isActive" @click="deleteSalesperson()">Delete</button>
+        <button v-if="!salesperson.isActive" @click="reactivateSalesperson()">Reactivate</button>
         <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
         <button @click="goBack()">Back</button>
       </p>
@@ -74,7 +75,6 @@ export default {
          }
         }
         let response = await AuthenticationService.deleteSalesperson(payload)
-        this.goBack()
 
         if (response.status === 200) {
           this.goBack()
@@ -85,6 +85,23 @@ export default {
         console.log('You have chosen not to delete this salesperson!!')
       }
 
+    },
+    async reactivateSalesperson () {
+        var payload = {
+         'criteria': {
+            '_id': this.salesperson._id
+         },
+         'update': {
+            'isActive': true,
+         }
+        }
+        let response = await AuthenticationService.updateSalesperson(payload)
+
+        if (response.status === 200) {
+          this.goBack()
+        } else {
+          console.log(`Response: ${response.message}`)
+        }
     },
     goBack () {
       if (['Quotes', 'Customers', 'StaffList'].includes(this.callerName)) {
@@ -97,7 +114,6 @@ export default {
   mounted () {
     if (this.payload) {
       this.salesperson = JSON.parse(this.$route.params.payload)
-      console.log(this.salesperson)
       this.isFetching = false
     }
     if (this.caller) {
