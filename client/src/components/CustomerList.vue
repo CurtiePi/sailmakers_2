@@ -52,7 +52,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for= "customer in customer_display"
+      <tr v-for="customer in customer_display"
              :key="customer._id">
         <th scope="row">
           <router-link :to="{ name: 'CustomerProfile', params: { 'payload': JSON.stringify(customer), 'caller': 'Customers' } }">
