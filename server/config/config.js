@@ -1,43 +1,15 @@
 import dotenv from 'dotenv'
 dotenv.config();
-import AWS from 'aws-sdk';
+import { DescribeAddressesCommand } from '@aws-sdk/client-ec2';
+import { ec2Client, s3Client } from '../lib/clients.js';
+import os from 'os';
 
-const env = process.env.NODE_ENV; // 'dev' or 'test'
+const env = process.env.NODE_ENV; // 'dev' or 'prod'
 
 let host_ip = "http://127.0.0.1";
 
-if (env === "prod") {
-    // Set the AWS region
-    AWS.config.update({region: 'us-east-2'});
-    var credentials = new AWS.SharedIniFileCredentials({profile: 'BrooklynBrown'});
-    AWS.config.credentials = credentials;
-
-
-    // Create EC2 service object
-    var ec2 = new AWS.EC2({apiVersion: '2016-11-15'});
-
-    var params = {
-        Filters: [
-            {Name: 'domain', Values: ['vpc']}
-        ]
-    };
-
-    // Retrieve Elastic IP address descriptions
-    ec2.describeAddresses(params, function(err, data) {
-        if (err) {
-            console.log("Error", err);
-        } else {
-            let rData = data.Addresses;
-            host_ip = rData[0]['PublicIp'];
-        }
-    });
-}
-else {
-    host_ip = "http://192.168.1.4"
-}
-
 const config = {
-    environment: ((env === "prod") ? 'production' : 'development'),
+    environment: ((env == 'prod') ? 'production' : 'development'),
     app: {
         host: host_ip,
         port: parseInt(process.env.APP_PORT) || 3000,
@@ -53,12 +25,41 @@ const config = {
         access: 'uksail88DM$'
     },
     aws: {
-        id: process.env.AWS_ID,
-        key: process.env.AWS_KEY,
         bucket: ((env === "prod") ? 'sailmakers' : 'sailmakersdev')
     },
     secretKey: 'star-trek-deep-space-nine-dsn',
 };
+
+if (env === "prod") {
+
+    var params = {
+        Filters: [
+            {Name: 'domain', Values: ['vpc']}
+        ]
+    };
+
+    const command = new DescribeAddressesCommand(params);
+    const response = await ec2Client.send(command);
+    config['app']['host'] = response.Addresses[0].PublicIp;
+}
+else {
+    const nets = os.networkInterfaces();
+    const results = {};
+    for (const name of Object.keys(nets)) {
+       for (const net of nets[name]) {
+            // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
+            // 'IPv4' is in Node <= 17, from 18 it's a number 4 or 6
+            const familyV4Value = typeof net.family === 'string' ? 'IPv4' : 4
+            if (net.family === familyV4Value && !net.internal) {
+                if (!results[name]) {
+                    results[name] = [];
+                }
+                results[name].push(net.address);
+            }
+        }
+    }
+    config['app']['host'] = results['en0'];
+}
 
 export default config;
 
