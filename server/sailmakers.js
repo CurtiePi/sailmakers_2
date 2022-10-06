@@ -45,7 +45,7 @@ db.on('error', console.error.bind(console, 'connection error'));
 console.log(`Database: ${conn_str}`)
 
 var smapp = express();
-smapp.use(cors({credentials: true, origin: `${config.app.host}:8080`}));
+smapp.use(cors({credentials: true, origin: `http://${config.app.host}:8080`}));
 smapp.use(cookieParser());
 
 smapp.use(bodyParser.json({limit: '50mb'}));
