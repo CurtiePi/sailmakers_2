@@ -58,7 +58,7 @@ else {
             }
         }
     }
-    config['app']['host'] = results['en0'];
+    config['app']['host'] = results['en0'][0];
 }
 
 export default config;

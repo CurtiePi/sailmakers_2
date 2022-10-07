@@ -1,15 +1,12 @@
-import AWS from 'aws-sdk';
+import { s3Client } from '../lib/clients.js';
+import { DeleteObjectsCommand, GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
+import { Upload } from '@aws-sdk/lib-storage';
 import config from '../config/config.js';
 
-const s3 = new AWS.S3({
-    accessKeyId: config.aws.id,
-    secretAccessKey: config.aws.key
-});
-
 const saveToS3 = async (req, res, next) => {
-
     let filename = req.pdf_filename;
     let filecontent = req.pdf_bytes;
+ 
     const params = {
         Bucket: config.aws.bucket,
         Key: `pdfs/${filename}`,
@@ -18,64 +15,85 @@ const saveToS3 = async (req, res, next) => {
     };
 
     try {
-        const data = await s3.upload(params).promise();
+        const upload = new Upload({ 
+            client: s3Client, 
+            params: params });
+        await upload.done();
+       console.log('File uploaded successfully.');
 
-        console.log(`File uploaded successfully. ${data.Location}`);
-
-    } catch (error) {
-        console.log(`Error: ${error}`);
+    } catch (err) {
+        console.log(`Error: ${err}`);
     }
 
     next();
 }
 
 const getFromS3 = async (req, res, next) => {
-
     let filename = req.params.filename;
 
     const params = {
         Bucket: config.aws.bucket,
         Key: `pdfs/${filename}`
-    }
+    };
+
     try {
-        const data = await s3
-            .getObject(params)
-            .promise();
+        // Create a helper function to convert a ReadableStream to a string.
+        const streamToString = (stream) =>
+            new Promise((resolve, reject) => {
+                const chunks = [];
+                stream.on("data", (chunk) => chunks.push(chunk));
+                stream.on("error", reject);
+                stream.on("end", () => resolve(Buffer.concat(chunks).toString("base64")));
+        });
 
-        const byte_string = data.Body.toString('base64');
 
+        const command = new GetObjectCommand(params);
+        const data = await s3Client.send(command);
+
+        // Convert the ReadableStream to a string.
+        const byte_string = await streamToString(data.Body);
         req.pdf_base64 = (byte_string);
 
     } catch (err) {
-        console.log(err);
+        console.log(`Error: ${err}`);
     }
 
     next();
 }
 
 const downloadFromS3 = async (req, res, next) => {
-
     let filename = req.params.filename;
 
     const params = {
         Bucket: config.aws.bucket,
         Key: `pdfs/${filename}`
-    }
+    };
+
     try {
-            const data = await s3
-            .getObject(params)
-            .promise();
+        // Create a helper function to convert a ReadableStream to a Buffer.
+        
+        const streamToString = (stream) =>
+            new Promise((resolve, reject) => {
+                const chunks = [];
+                stream.on("data", (chunk) => chunks.push(chunk));
+                stream.on("error", reject);
+                stream.on("end", () => resolve(Buffer.concat(chunks)));
+        });
+        
+        const command = new GetObjectCommand(params);
+        const data = await s3Client.send(command);
 
-        res.send(data.Body);
+        // Convert the ReadableStream to a Buffer.
+        const byte_buffer = await streamToString(data.Body);
+        res.send(byte_buffer);
+
         res.end();
-
     } catch (err) {
-        console.log(err);
+        console.log(`Error: ${err}`);
     }
 }
 
 const uploadToS3 = async (req, res, next) => {
-
     let filename = req.body.pdf_filename;
     const filecontent = Buffer.from(req.body.pdf_bytes, 'base64');
 
@@ -87,21 +105,23 @@ const uploadToS3 = async (req, res, next) => {
         ContentEncoding: 'base64',
     };
 
-
     try {
-        const data = await s3.upload(params).promise();
+      
+        const upload = new Upload({ 
+            client: s3Client, 
+            params: params });
 
-        console.log(`File uploaded successfully. ${data.Location}`);
+        await upload.done();
+        console.log('File uploaded successfully.');
 
-    } catch (error) {
-        console.log(`Error: ${error}`);
+    } catch (err) {
+        console.log(`Error: ${err}`);
     }
 
     next();
 }
 
 const removeFromS3 = async (req, res, next) => {
-
     var pdf_list = (req.pdf_list) ? req.pdf_list : req.body.pdf_list;
 
     let s3_keys = [];
@@ -118,12 +138,12 @@ const removeFromS3 = async (req, res, next) => {
     };
 
     try {
-        const data = await s3.deleteObjects(params).promise();
+        const command = new DeleteObjectsCommand(params);
+        const data = await s3Client.send(command);
 
         console.log(`File(s) deleted successfully. ${data}`);
-
-    } catch (error) {
-        console.log(`Error: ${error}`);
+    } catch (err) {
+        console.log(`Error: ${err}`);
     }
 
     next();
