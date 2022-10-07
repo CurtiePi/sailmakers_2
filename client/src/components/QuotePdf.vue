@@ -22,11 +22,12 @@ import AuthenticationService from '@/services/AuthenticationService'
 
 export default {
   name: 'QuotePdf',
+  props: ['payload'], 
   components: { VuePdfEmbed },
   data () {
     return {
       caller: 'Home',
-      pdfBytes: null,
+      pdfBytes: '',
       quote: null,
       page: 1,
       numPages: 0,
@@ -48,8 +49,6 @@ export default {
   methods: {
     getPdfContent: async function (filename) {
       var response = await AuthenticationService.pdfView(filename)
-      // let blob = new Blob([response.data], {type: 'application/pdf'})
-      // this.pdfBytes = `data:application/pdf;base64,${btoa(blob)}`
       this.pdfBytes = `data:application/pdf;base64,${response.data}`
     },
     goBack: function () {

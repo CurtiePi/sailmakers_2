@@ -344,10 +344,8 @@ export default {
   },
   mounted () {
     if (this.$route.params.payload) {
-      console.log('We have a payload')
       this.loadQuoteData(JSON.parse(this.$route.params.payload))
     } else {
-      console.log('We have NO payload')
       this.getQuotes()
     }
   }
