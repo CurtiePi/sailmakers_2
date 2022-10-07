@@ -8,7 +8,7 @@ if (devIps.includes(window.location.origin)) {
     baseurl = "http://192.168.1.4";
 } else {
     console.log(`Using : ${window.location.origin}`);
-    baseurl = `${window.location.origin}:8860`;
+    baseurl = `${window.location.origin}`;
 }
 
 export default () => {
