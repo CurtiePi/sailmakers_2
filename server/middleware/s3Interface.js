@@ -72,7 +72,7 @@ const downloadFromS3 = async (req, res, next) => {
     try {
         // Create a helper function to convert a ReadableStream to a Buffer.
         
-        const streamToString = (stream) =>
+        const streamToBuffer = (stream) =>
             new Promise((resolve, reject) => {
                 const chunks = [];
                 stream.on("data", (chunk) => chunks.push(chunk));
@@ -84,7 +84,7 @@ const downloadFromS3 = async (req, res, next) => {
         const data = await s3Client.send(command);
 
         // Convert the ReadableStream to a Buffer.
-        const byte_buffer = await streamToString(data.Body);
+        const byte_buffer = await streamToBuffer(data.Body);
         res.send(byte_buffer);
 
         res.end();
