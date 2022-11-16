@@ -3,6 +3,10 @@ import { DeleteObjectsCommand, GetObjectCommand, PutObjectCommand } from '@aws-s
 import { Upload } from '@aws-sdk/lib-storage';
 import config from '../config/config.js';
 
+/*
+ * Save a newly (PDF) file to Amazon S3 storage.
+ */
+
 const saveToS3 = async (req, res, next) => {
     let filename = req.pdf_filename;
     let filecontent = req.pdf_bytes;
@@ -27,6 +31,14 @@ const saveToS3 = async (req, res, next) => {
 
     next();
 }
+
+/*
+ * Retrieve a (PDF) file from Amazon S3 storage.
+ * 
+ * Return type is a base64 string to be used for viewing a PDF
+ * onscreen using vue-pdf-embed library, and adding file as an
+ * attachment to an email.
+ */
 
 const getFromS3 = async (req, res, next) => {
     let filename = req.params.filename;
@@ -61,6 +73,12 @@ const getFromS3 = async (req, res, next) => {
     next();
 }
 
+/*
+ * Retrieve a (PDF) file from Amazon S3 storage.
+ * Return type is a Buffer to be used for downloading
+ * a PDF to a user's local file storage.
+ */
+
 const downloadFromS3 = async (req, res, next) => {
     let filename = req.params.filename;
 
@@ -93,6 +111,10 @@ const downloadFromS3 = async (req, res, next) => {
     }
 }
 
+/*
+ * Save a (PDF) file from local file stroage to Amazon S3 storage.
+ */
+
 const uploadToS3 = async (req, res, next) => {
     let filename = req.body.pdf_filename;
     const filecontent = Buffer.from(req.body.pdf_bytes, 'base64');
@@ -120,6 +142,10 @@ const uploadToS3 = async (req, res, next) => {
 
     next();
 }
+
+/*
+ * Remove one or many (PDF) file(s) from Amazon S3 storage.
+ */
 
 const removeFromS3 = async (req, res, next) => {
     var pdf_list = (req.pdf_list) ? req.pdf_list : req.body.pdf_list;
